@@ -1,31 +1,64 @@
-<nav class="navbar" [class.scrolled]="isScrolled">
-  <div class="nav-container">
-    <div class="nav-logo">
-      <div class="logo-placeholder">
-        <i class="bi bi-grid-fill"></i>
-        <span>Tu Logo Aquí</span>
-      </div>
+<nav class="navbar" aria-label="Navegación principal">
+  <div class="navbar-panel">
+    <div class="ambient ambient-left"></div>
+    <div class="ambient ambient-right"></div>
+    <div class="tech-line" aria-hidden="true"></div>
+    <div class="particles" aria-hidden="true">
+      <span class="particle p1"></span>
+      <span class="particle p2"></span>
+      <span class="particle p3"></span>
+      <span class="particle p4"></span>
+      <span class="particle p5"></span>
+      <span class="particle p6"></span>
+      <span class="particle p7"></span>
+      <span class="particle p8"></span>
     </div>
-    <ul class="nav-links" [class.open]="menuOpen">
-      <li><a routerLink="/web" (click)="closeMenu()">Inicio</a></li>
-      <li><a routerLink="/productos" (click)="closeMenu()">Productos</a></li>
-      <li *ngIf="store.isLoggedIn()">
-        <button class="nav-icon-btn" type="button" (click)="handleLogout()" aria-label="Cerrar sesión" title="Cerrar sesión">
-          <i class="bi bi-box-arrow-right"></i>
-        </button>
-      </li>
-      <li *ngIf="!store.isLoggedIn()"><a class="nav-cta" (click)="openLoginModal()">Ingresar</a></li>
-    </ul>
-    <button class="hamburger" (click)="toggleMenu()" [class.active]="menuOpen">
-      <span></span><span></span><span></span>
-    </button>
+    <div class="panel-grid">
+      <a class="brand" routerLink="/web" aria-label="UKI.UKI Korean Food">
+        <span class="brand-mark" aria-hidden="true">
+          <span class="bear">
+            <span class="bear-ear bear-ear-left"></span>
+            <span class="bear-ear bear-ear-right"></span>
+            <span class="bear-face">
+              <span class="bear-bow"></span>
+              <span class="bear-eye bear-eye-left"></span>
+              <span class="bear-eye bear-eye-right"></span>
+              <span class="bear-cheek bear-cheek-left"></span>
+              <span class="bear-cheek bear-cheek-right"></span>
+              <span class="bear-nose"></span>
+              <span class="bear-mouth"></span>
+            </span>
+          </span>
+        </span>
+        <span class="brand-copy">
+          <span class="brand-name">UKI.UKI</span>
+          <span class="brand-tag">KOREAN FOOD</span>
+        </span>
+      </a>
+
+      <ul class="nav-links" role="list">
+        <li *ngFor="let item of navItems">
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="is-active"
+            [routerLinkActiveOptions]="{ exact: item.exact }"
+          >
+            <span class="link-core">
+              <span class="link-dot" aria-hidden="true"></span>
+              <span>{{ item.label }}</span>
+            </span>
+            <span class="nav-underline" aria-hidden="true"></span>
+            <span class="link-frame" aria-hidden="true"></span>
+          </a>
+        </li>
+      </ul>
+
+      <button class="register-btn" type="button" aria-label="Registrarse">
+        <span class="register-icon" aria-hidden="true">
+          <i class="bi bi-person"></i>
+        </span>
+        <span>Registrarse</span>
+      </button>
+    </div>
   </div>
 </nav>
-
-<!-- Login Modal -->
-@if (showLoginModal) {
-  <app-login-modal 
-    (close)="closeLoginModal()" 
-    (login)="handleLogin($event)"
-  ></app-login-modal>
-}

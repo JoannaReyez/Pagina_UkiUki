@@ -205,6 +205,143 @@
     animation-delay: -2.5s;
   }
 
+  .tech-line {
+    position: absolute;
+    height: 2px;
+    border-radius: 999px;
+    opacity: 0.95;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.9) 18%, rgba(236, 72, 153, 0.95) 42%, rgba(168, 85, 247, 0.75) 72%, transparent 100%);
+    filter: blur(0.8px);
+    box-shadow: 0 0 18px rgba(236, 72, 153, 0.18), 0 0 30px rgba(168, 85, 247, 0.14);
+  }
+
+  .tech-line::before,
+  .tech-line::after {
+    content: '';
+    position: absolute;
+    height: 2px;
+    border-radius: 999px;
+    background: inherit;
+    opacity: 0.95;
+  }
+
+  .tech-line-1 {
+    width: 60%;
+    top: 18%;
+    left: -12%;
+    transform: rotate(8deg);
+  }
+  .tech-line-1::before {
+    width: 20%;
+    top: -12px;
+    left: 26%;
+    transform: rotate(-14deg);
+  }
+  .tech-line-1::after {
+    width: 24%;
+    top: 14px;
+    left: 45%;
+    transform: rotate(12deg);
+  }
+
+  .tech-line-2 {
+    width: 48%;
+    top: 36%;
+    right: -8%;
+    transform: rotate(-10deg);
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.9) 18%, rgba(168, 85, 247, 0.95) 45%, rgba(236, 72, 153, 0.7) 70%, transparent 100%);
+  }
+  .tech-line-2::before {
+    width: 22%;
+    top: -14px;
+    right: 22%;
+    transform: rotate(12deg);
+  }
+  .tech-line-2::after {
+    width: 18%;
+    top: 16px;
+    right: 42%;
+    transform: rotate(-10deg);
+  }
+
+  .tech-line-3 {
+    width: 42%;
+    top: 70%;
+    left: 8%;
+    transform: rotate(12deg);
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.9) 20%, rgba(236, 72, 153, 0.9) 45%, rgba(255, 255, 255, 0.18) 72%, transparent 100%);
+  }
+  .tech-line-3::before {
+    width: 16%;
+    top: -12px;
+    left: 56%;
+    transform: rotate(-12deg);
+  }
+  .tech-line-3::after {
+    width: 14%;
+    top: 16px;
+    left: 78%;
+    transform: rotate(8deg);
+  }
+
+  .tech-dot {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.05));
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.5), 0 0 20px rgba(236, 72, 153, 0.2);
+    opacity: 0.95;
+  }
+
+  .tech-dot-1 { top: 20%; left: 48%; }
+  .tech-dot-2 { top: 40%; right: 18%; }
+  .tech-dot-3 { top: 68%; left: 26%; }
+  .tech-dot-4 { top: 74%; right: 24%; }
+  .tech-dot-5 { top: 14%; right: 12%; width: 7px; height: 7px; box-shadow: 0 0 18px rgba(255, 255, 255, 0.7), 0 0 22px rgba(168, 85, 247, 0.28); }
+
+  .tech-line-4 {
+    width: 52%;
+    top: 10%;
+    right: -14%;
+    transform: rotate(16deg);
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.9) 22%, rgba(236, 72, 153, 0.9) 48%, rgba(168, 85, 247, 0.6) 78%, transparent 100%);
+  }
+  .tech-line-4::before {
+    width: 18%;
+    top: -10px;
+    right: 22%;
+    transform: rotate(-20deg);
+  }
+  .tech-line-4::after {
+    width: 14%;
+    top: 10px;
+    right: 40%;
+    transform: rotate(14deg);
+  }
+
+  .tech-line-5 {
+    width: 44%;
+    top: 84%;
+    right: -10%;
+    transform: rotate(-8deg);
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.9) 20%, rgba(168, 85, 247, 0.95) 44%, rgba(236, 72, 153, 0.8) 68%, transparent 100%);
+  }
+  .tech-line-5::before {
+    width: 20%;
+    top: -12px;
+    right: 18%;
+    transform: rotate(8deg);
+  }
+  .tech-line-5::after {
+    width: 18%;
+    top: 14px;
+    right: 38%;
+    transform: rotate(-10deg);
+  }
+
+  .tech-dot-6 { top: 82%; right: 10%; width: 6px; height: 6px; box-shadow: 0 0 18px rgba(255, 255, 255, 0.76), 0 0 22px rgba(236, 72, 153, 0.26); }
+
 }
 
 @keyframes float {
@@ -1305,7 +1442,9 @@
   .hero-stats .stat { min-width: 88px; padding: 12px 14px; }
   .hero-visual { min-height: 420px; display: none; }
   .hero-bg-shapes .bubble,
-  .hero-bg-shapes .spark { display: none; }
+  .hero-bg-shapes .spark,
+  .hero-bg-shapes .tech-line,
+  .hero-bg-shapes .tech-dot { display: none; }
   .orb-field { min-height: 420px; }
   .orb-field::before { inset: 8% 3%; border-radius: 36px; }
   .bubble-photo {
@@ -1338,7 +1477,9 @@
   .btn-outline { justify-content: center; width: 100%; }
   .hero-visual { display: none; }
   .hero-bg-shapes .bubble,
-  .hero-bg-shapes .spark { display: none; }
+  .hero-bg-shapes .spark,
+  .hero-bg-shapes .tech-line,
+  .hero-bg-shapes .tech-dot { display: none; }
   .hero-desc { max-width: 100%; }
   .hero-title { font-size: clamp(2.4rem, 10vw, 3.4rem); }
   .hero-slogan { font-size: 0.95rem; }

@@ -13,6 +13,7 @@ import { StoreService } from '../../app/store.service';
 })
 export class Navbar {
   constructor(private router: Router, public store: StoreService) {}
+
   isScrolled = false;
   menuOpen = false;
   showLoginModal = false;
@@ -31,7 +32,7 @@ export class Navbar {
   }
 
   openLoginModal(): void {
-    this.closeMenu(); // Cierra el menú móvil si está abierto
+    this.closeMenu();
     this.showLoginModal = true;
   }
 
@@ -44,6 +45,7 @@ export class Navbar {
     if (!loggedIn) {
       return;
     }
+
     this.closeMenu();
     this.router.navigate(['/usuario/dashboard']);
   }

@@ -12,14 +12,27 @@ import { InventoryCategory } from '../../../data/inventory-mock';
   styleUrl: './admin-categories.scss'
 })
 export class AdminCategoriesPage {
+  showModal = false;
   editingId: number | null = null;
   form: Omit<InventoryCategory, 'id'> = { name: '', description: '', productsCount: 0, active: true };
 
   constructor(public store: StoreService) {}
 
+  openCreateModal(): void {
+    this.editingId = null;
+    this.form = { name: '', description: '', productsCount: 0, active: true };
+    this.showModal = true;
+  }
+
   startEdit(category: InventoryCategory): void {
     this.editingId = category.id;
     this.form = { ...category };
+    this.showModal = true;
+  }
+
+  closeModal(): void {
+    this.showModal = false;
+    this.reset();
   }
 
   reset(): void {
@@ -37,7 +50,7 @@ export class AdminCategoriesPage {
       this.store.addCategory({ id: nextId, ...this.form });
     }
 
-    this.reset();
+    this.closeModal();
   }
 
   remove(categoryId: number): void {

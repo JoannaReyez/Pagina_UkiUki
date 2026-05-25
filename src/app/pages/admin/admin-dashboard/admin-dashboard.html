@@ -58,166 +58,156 @@
     <article class="panel chart-panel">
       <div class="panel-head">
         <div>
-          <h2>Movimientos del inventario</h2>
-          <p>Últimos 30 días</p>
-        </div>
-        <div class="panel-controls">
-          <button type="button" class="control-pill active">Últimos 30 días</button>
-          <button type="button" class="control-pill">Este mes</button>
-        </div>
-      </div>
-
-      <div class="chart-toolbar">
-        <div class="chart-meta">
-          <span class="chart-kicker">Tendencia general</span>
-          <strong>+18.4%</strong>
-          <small>respecto al período anterior</small>
+          <h2>Nivel del stock por semana</h2>
+          <p>Últimas 4 semanas</p>
         </div>
         <div class="chart-status">
           <span class="chart-status-dot"></span>
-          Datos actualizados hoy
+          Basado en movimientos reales
         </div>
       </div>
 
-      <div class="mini-insights">
-        <span class="mini-pill pill-pink">+12% nuevos clientes</span>
-        <span class="mini-pill pill-lilac">+9% rotación</span>
-        <span class="mini-pill pill-yellow">+18% margen</span>
-      </div>
-
-      <div class="chart-wrap">
-        <svg viewBox="0 0 800 260" class="chart-svg" aria-label="Gráfica de inventario">
-          <defs>
-            <linearGradient id="inventoryLine" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stop-color="#fb7185" stop-opacity="0.35" />
-              <stop offset="100%" stop-color="#fcd34d" stop-opacity="0.05" />
-            </linearGradient>
-            <linearGradient id="chartGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#f9a8d4" stop-opacity="0.22" />
-              <stop offset="100%" stop-color="#fcd34d" stop-opacity="0.08" />
-            </linearGradient>
-          </defs>
-          <g opacity="0.55" stroke="#e2e8f0" stroke-width="1">
-            <line x1="10" y1="42" x2="790" y2="42" stroke-dasharray="5 8" />
-            <line x1="10" y1="104" x2="790" y2="104" stroke-dasharray="5 8" />
-            <line x1="10" y1="166" x2="790" y2="166" stroke-dasharray="5 8" />
-            <line x1="10" y1="228" x2="790" y2="228" stroke-dasharray="5 8" />
-          </g>
-          <ellipse cx="730" cy="54" rx="92" ry="60" fill="url(#chartGlow)" />
-          <path [attr.d]="'M' + chartPoints"
-                fill="none" stroke="#ec4899" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
-          <polygon [attr.points]="'10,215 50,185 90,170 130,145 170,160 210,118 250,88 290,82 330,112 370,134 410,130 450,100 490,147 530,120 570,92 610,132 650,94 690,78 730,58 770,26 770,260 10,260'"
-                   fill="url(#inventoryLine)" />
-          <g fill="#ec4899" opacity="0.95">
-            <circle cx="10" cy="215" r="6" />
-            <circle cx="50" cy="185" r="6" />
-            <circle cx="90" cy="170" r="6" />
-            <circle cx="130" cy="145" r="6" />
-            <circle cx="170" cy="160" r="6" />
-            <circle cx="210" cy="118" r="6" />
-            <circle cx="250" cy="88" r="6" />
-            <circle cx="290" cy="82" r="6" />
-            <circle cx="330" cy="112" r="6" />
-            <circle cx="370" cy="134" r="6" />
-            <circle cx="410" cy="130" r="6" />
-            <circle cx="450" cy="100" r="6" />
-            <circle cx="490" cy="147" r="6" />
-            <circle cx="530" cy="120" r="6" />
-            <circle cx="570" cy="92" r="6" />
-            <circle cx="610" cy="132" r="6" />
-            <circle cx="650" cy="94" r="6" />
-            <circle cx="690" cy="78" r="6" />
-            <circle cx="730" cy="58" r="6" />
-            <circle cx="770" cy="26" r="6" />
-          </g>
-        </svg>
-      </div>
-
-      <div class="chart-footer">
-        <div>
-          <strong>1,248 unidades</strong>
-          <span>Stock disponible en el periodo</span>
+      <ng-container *ngIf="weeklyStockTrendSignal() as trend">
+        <div class="chart-toolbar">
+          <div class="chart-meta">
+            <span class="chart-kicker">Índice de stock</span>
+            <strong>{{ trend.overallChange > 0 ? '+' : '' }}{{ trend.overallChange }}%</strong>
+            <small>comparado con la primera semana</small>
+          </div>
+          <div class="trend-pill">
+            <span>Rango</span>
+            <strong>{{ trend.minValue }} - {{ trend.maxValue }}</strong>
+          </div>
         </div>
-        <div>
-          <strong>64 movimientos</strong>
-          <span>Entradas y salidas registradas</span>
+
+        <div class="chart-wrap chart-wrap-trend">
+          <svg viewBox="0 0 740 280" class="chart-svg trend-svg" aria-label="Evolución semanal del stock">
+            <defs>
+              <linearGradient id="stockTrendFill" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#fb7185" stop-opacity="0.28" />
+                <stop offset="100%" stop-color="#fbbf24" stop-opacity="0.03" />
+              </linearGradient>
+              <linearGradient id="stockTrendLine" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#ec4899" />
+                <stop offset="100%" stop-color="#f97316" />
+              </linearGradient>
+            </defs>
+
+            <g opacity="0.45" stroke="#e2e8f0" stroke-width="1">
+              <line x1="20" y1="40" x2="720" y2="40" stroke-dasharray="4 8" />
+              <line x1="20" y1="100" x2="720" y2="100" stroke-dasharray="4 8" />
+              <line x1="20" y1="160" x2="720" y2="160" stroke-dasharray="4 8" />
+              <line x1="20" y1="220" x2="720" y2="220" stroke-dasharray="4 8" />
+            </g>
+
+            <polygon [attr.points]="trend.areaPoints" fill="url(#stockTrendFill)"></polygon>
+            <path [attr.d]="trend.linePath" fill="none" stroke="url(#stockTrendLine)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
+
+            <g fill="#ec4899">
+              <circle *ngFor="let point of trend.points" [attr.cx]="point.x" [attr.cy]="point.y" r="6"></circle>
+            </g>
+
+            <g class="trend-labels">
+              <g *ngFor="let point of trend.points">
+                <text [attr.x]="point.x" y="256" text-anchor="middle">{{ point.label }}</text>
+                <text [attr.x]="point.x" [attr.y]="point.y - 16" text-anchor="middle" class="trend-value">{{ point.value }}%</text>
+              </g>
+            </g>
+          </svg>
         </div>
-      </div>
+
+        <ng-container *ngIf="stockHealthSignal() as health">
+          <div class="trend-footer">
+            <div class="trend-card">
+              <strong>{{ trend.points[0].value }}%</strong>
+              <span>Semana inicial</span>
+            </div>
+            <div class="trend-card">
+              <strong>{{ trend.points[trend.points.length - 1].value }}%</strong>
+              <span>Semana actual</span>
+            </div>
+            <div class="trend-card">
+              <strong>{{ trend.overallChange }}%</strong>
+              <span>Variación total</span>
+            </div>
+            <div class="trend-card">
+              <strong>{{ health.lowStock }}</strong>
+              <span>Productos críticos</span>
+            </div>
+          </div>
+        </ng-container>
+      </ng-container>
     </article>
 
-    <article class="panel stock-panel">
+    <article class="panel sales-panel">
       <div class="panel-head">
         <div>
-          <h2>Stock por categoría</h2>
-          <p>Una vista más útil del inventario real</p>
+          <h2>Más vendidos</h2>
+          <p>Productos y categorías con más salidas</p>
         </div>
         <a routerLink="/admin/productos" class="link-action">Ver todos</a>
       </div>
 
-      <ng-container *ngIf="stockHealth() as health">
-        <div class="stock-overview">
-          <div class="stock-stats">
-            <div class="stock-stat">
-              <span>Stock total</span>
-              <strong>{{ health.totalStock }}</strong>
-            </div>
-            <div class="stock-stat">
-              <span>Promedio</span>
-              <strong>{{ health.averageStock }}</strong>
-            </div>
-            <div class="stock-stat">
-              <span>Críticos</span>
-              <strong>{{ health.lowStock }}</strong>
-            </div>
+      <ng-container *ngIf="salesOverviewSignal() as overview">
+        <div class="sales-summary">
+          <div class="sales-highlight">
+            <span>Más vendido</span>
+            <strong>{{ overview.topProduct.name }}</strong>
+            <small>{{ overview.topProduct.value }} unidades · {{ overview.topProduct.category }}</small>
           </div>
+          <div class="sales-highlight muted">
+            <span>Mejor categoría</span>
+            <strong>{{ overview.topCategory.name }}</strong>
+            <small>{{ overview.topCategory.value }} unidades vendidas</small>
+          </div>
+        </div>
 
-          <div class="stock-chart">
-            <div class="stock-chart-head">
-              <strong>Distribución de stock</strong>
-              <span>Comparativo por categoría</span>
+        <div class="sales-grid">
+          <section class="sales-block">
+            <div class="sales-block-head">
+              <strong>Productos</strong>
+              <span>{{ overview.totalSold }} salidas registradas</span>
             </div>
 
-            <ng-container *ngIf="stockByCategory() as bars">
-              <div class="stock-bars">
-                <div class="stock-bar-row" *ngFor="let bar of bars">
-                  <div class="stock-bar-label">
-                    <span>{{ bar.name }}</span>
-                    <small>{{ bar.stock }} u · {{ bar.products }} productos</small>
+            <ng-container *ngIf="topProductsSignal() as products">
+              <div class="ranking-list">
+                <div class="ranking-row" *ngFor="let item of products">
+                  <div class="ranking-copy">
+                    <strong>{{ item.name }}</strong>
+                    <small>{{ item.category }}</small>
                   </div>
-                  <div class="stock-bar-track">
-                    <div class="stock-bar-fill" [style.width.%]="bar.width"></div>
+                  <div class="ranking-track">
+                    <div class="ranking-fill ranking-fill-pink" [style.width.%]="item.width"></div>
                   </div>
+                  <div class="ranking-value">{{ item.value }} u</div>
                 </div>
               </div>
             </ng-container>
-          </div>
-        </div>
+          </section>
 
-        <div class="low-stock-list" *ngIf="lowStockProducts() as lowStock; else noLowStockState">
-          <article class="stock-item" *ngFor="let item of lowStock">
-            <div class="stock-item-left">
-              <img [src]="item.image" [alt]="item.name" />
-              <div class="stock-copy">
-                <strong>{{ item.name }}</strong>
-                <span>{{ item.category }} · Stock: {{ item.stock }} u</span>
-              </div>
+          <section class="sales-block">
+            <div class="sales-block-head">
+              <strong>Categorías</strong>
+              <span>Comparativo por salidas</span>
             </div>
-            <span class="status-pill" [class.critical]="item.stock <= 5">{{ item.stock <= 5 ? 'Crítico' : 'Bajo' }}</span>
-          </article>
+
+            <ng-container *ngIf="topCategoriesSignal() as categories">
+              <div class="ranking-list">
+                <div class="ranking-row" *ngFor="let item of categories">
+                  <div class="ranking-copy">
+                    <strong>{{ item.name }}</strong>
+                    <small>Categoría de venta</small>
+                  </div>
+                  <div class="ranking-track">
+                    <div class="ranking-fill ranking-fill-violet" [style.width.%]="item.width"></div>
+                  </div>
+                  <div class="ranking-value">{{ item.value }} u</div>
+                </div>
+              </div>
+            </ng-container>
+          </section>
         </div>
       </ng-container>
-
-      <ng-template #noLowStockState>
-        <div class="stock-empty">
-          <div class="stock-empty-icon">
-            <i class="bi bi-check2-circle"></i>
-          </div>
-          <div class="stock-empty-copy">
-            <strong>Todo bajo control</strong>
-            <p>Por ahora no hay productos críticos. La gráfica sigue mostrando el balance general del inventario.</p>
-          </div>
-        </div>
-      </ng-template>
     </article>
   </div>
 

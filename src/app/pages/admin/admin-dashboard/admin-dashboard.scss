@@ -400,6 +400,224 @@
   font-size: 0.84rem;
 }
 
+.trend-pill {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(226, 232, 240, 0.92);
+  min-width: 142px;
+  text-align: right;
+}
+
+.trend-pill span {
+  color: #64748b;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 800;
+}
+
+.trend-pill strong {
+  color: #0f172a;
+  font-size: 1.2rem;
+}
+
+.chart-wrap-trend {
+  padding: 16px 12px 8px;
+}
+
+.trend-svg text {
+  fill: #94a3b8;
+  font-size: 11px;
+}
+
+.trend-svg .trend-value {
+  fill: #475569;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.trend-labels {
+  pointer-events: none;
+}
+
+.trend-footer {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.trend-card {
+  padding: 14px 16px;
+  border-radius: 20px;
+  display: grid;
+  gap: 4px;
+  background: rgba(248, 250, 252, 0.94);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+}
+
+.trend-card strong {
+  color: #0f172a;
+  font-size: 1.2rem;
+}
+
+.trend-card span {
+  color: #64748b;
+  font-size: 0.84rem;
+}
+
+.sales-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.sales-panel::before {
+  content: '';
+  position: absolute;
+  inset: -80px auto auto -80px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.08), transparent 68%);
+  pointer-events: none;
+}
+
+.sales-summary {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.sales-highlight {
+  padding: 16px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(255, 247, 250, 0.96), rgba(255, 255, 255, 0.98));
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  display: grid;
+  gap: 4px;
+}
+
+.sales-highlight.muted {
+  background: linear-gradient(180deg, rgba(245, 239, 255, 0.96), rgba(255, 255, 255, 0.98));
+}
+
+.sales-highlight span {
+  color: #64748b;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 800;
+}
+
+.sales-highlight strong {
+  color: #0f172a;
+  font-size: 1.15rem;
+}
+
+.sales-highlight small {
+  color: #64748b;
+  font-size: 0.88rem;
+}
+
+.sales-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 12px;
+}
+
+.sales-block {
+  padding: 18px;
+  border-radius: 24px;
+  background: rgba(248, 250, 252, 0.9);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+}
+
+.sales-block-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.sales-block-head strong {
+  color: #0f172a;
+  font-size: 1rem;
+}
+
+.sales-block-head span {
+  color: #64748b;
+  font-size: 0.82rem;
+}
+
+.ranking-list {
+  display: grid;
+  gap: 12px;
+}
+
+.ranking-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1.6fr auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.ranking-copy {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.ranking-copy strong {
+  color: #0f172a;
+  font-size: 0.96rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ranking-copy small {
+  color: #64748b;
+  font-size: 0.84rem;
+}
+
+.ranking-track {
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(226, 232, 240, 0.9);
+}
+
+.ranking-fill {
+  height: 100%;
+  border-radius: inherit;
+}
+
+.ranking-fill-pink {
+  background: linear-gradient(90deg, #ec4899 0%, #fb7185 55%, #fbbf24 100%);
+}
+
+.ranking-fill-violet {
+  background: linear-gradient(90deg, #8b5cf6 0%, #a78bfa 50%, #34d399 100%);
+}
+
+.ranking-value {
+  color: #0f172a;
+  font-weight: 800;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
 .stock-panel {
   position: relative;
   overflow: hidden;
@@ -765,6 +983,11 @@
     grid-template-columns: 1fr;
     padding: 20px 20px;
   }
+
+  .sales-summary,
+  .trend-footer {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 860px) {
@@ -795,21 +1018,22 @@
     flex-direction: column;
   }
 
-  .chart-footer {
+  .trend-footer,
+  .sales-summary {
     grid-template-columns: 1fr;
   }
 
-  .stock-stats {
+  .ranking-row {
     grid-template-columns: 1fr;
   }
 
-  .stock-bar-label {
+  .ranking-track {
+    width: 100%;
+  }
+
+  .sales-block-head {
     align-items: flex-start;
     flex-direction: column;
-  }
-
-  .stock-empty {
-    align-items: flex-start;
   }
 
   .hero-aside {

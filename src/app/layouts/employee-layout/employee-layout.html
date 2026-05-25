@@ -1,4 +1,6 @@
 <div class="employee-shell" [class.sidebar-collapsed]="!sidebarOpen()">
+  <button type="button" class="sidebar-backdrop" [class.show]="sidebarOpen()" (click)="closeSidebar()" aria-label="Cerrar menu"></button>
+
   <aside class="employee-sidebar" [class.open]="sidebarOpen()">
     <div class="brand-card">
       <div class="brand-logo">
@@ -6,21 +8,21 @@
       </div>
       <div class="brand-copy">
         <strong>{{ auth.user()?.name || 'Empleado' }}</strong>
-        <span>Employee Panel</span>
+        <span>Panel empleado</span>
       </div>
     </div>
 
     <nav class="side-nav">
-      <a *ngFor="let item of menuItems" [routerLink]="item.path" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.path === '/empleado' }">
-        <i class="bi" [class]="item.icon"></i>
+      <a *ngFor="let item of menuItems" [routerLink]="item.path" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.path === '/empleado' }" (click)="closeSidebar()">
+        <i class="bi" [ngClass]="item.icon"></i>
         <span>{{ item.label }}</span>
       </a>
     </nav>
 
-    <button type="button" class="promo-card" (click)="router.navigate(['/empleado/mi-reporte'])">
+    <button type="button" class="promo-card" (click)="router.navigate(['/empleado/mi-reporte']); closeSidebar()">
       <span class="promo-badge">Hoy</span>
-      <strong>Tu desempeño</strong>
-      <p>Revisa tus ventas, productos y movimientos del día.</p>
+      <strong>Tu desempeno</strong>
+      <p>Revisa tus ventas, productos y movimientos del dia.</p>
       <span class="promo-link">Abrir reporte <i class="bi bi-arrow-right"></i></span>
     </button>
   </aside>
@@ -28,7 +30,7 @@
   <div class="employee-main">
     <header class="topbar">
       <div class="topbar-left">
-        <button type="button" class="icon-btn" (click)="toggleSidebar()">
+        <button type="button" class="icon-btn" (click)="toggleSidebar()" aria-label="Abrir menu">
           <i class="bi bi-list"></i>
         </button>
         <div class="title-copy">
@@ -38,7 +40,7 @@
       </div>
 
       <div class="topbar-right">
-        <button type="button" class="icon-btn notification">
+        <button type="button" class="icon-btn notification" aria-label="Notificaciones">
           <i class="bi bi-bell"></i>
           <span class="badge">2</span>
         </button>
@@ -49,7 +51,7 @@
             <span>{{ auth.user()?.email || 'empleado@empleado.com' }}</span>
           </div>
         </div>
-        <button type="button" class="logout-btn" (click)="logout()">
+        <button type="button" class="logout-btn" (click)="logout()" aria-label="Cerrar sesion">
           <i class="bi bi-box-arrow-right"></i>
         </button>
       </div>

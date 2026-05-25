@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="Ramen picante">
+  <rect width="240" height="240" rx="42" fill="#fff3e8"/>
+  <rect x="46" y="52" width="148" height="136" rx="22" fill="#db2f35"/>
+  <path d="M46 78h148v33H46z" fill="#111827"/>
+  <path d="M67 135c17-17 45-17 63 0 12 12 31 13 43 1" fill="none" stroke="#ffd166" stroke-width="12" stroke-linecap="round"/>
+  <path d="M67 154c17-17 45-17 63 0 12 12 31 13 43 1" fill="none" stroke="#ffd166" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="87" cy="94" r="16" fill="#fff"/>
+  <circle cx="128" cy="94" r="16" fill="#fff"/>
+  <circle cx="89" cy="96" r="6" fill="#111827"/>
+  <circle cx="126" cy="96" r="6" fill="#111827"/>
+  <path d="M144 64c17 6 25 20 20 37 17-9 31 2 34 18 14-33-16-70-54-55z" fill="#ff9f1c"/>
+  <path d="M67 176h106" stroke="#7f1d1d" stroke-width="10" stroke-linecap="round"/>
+</svg>

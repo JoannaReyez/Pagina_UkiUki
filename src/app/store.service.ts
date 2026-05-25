@@ -112,6 +112,33 @@ export class StoreService {
     );
   }
 
+  sellInventoryProduct(productId: number, quantity: number): boolean {
+    const product = this.inventoryProducts().find(item => item.id === productId);
+    const saleQuantity = Math.max(1, Math.floor(quantity));
+
+    if (!product || product.stock < saleQuantity) {
+      return false;
+    }
+
+    const nextStock = product.stock - saleQuantity;
+
+    this.updateProduct(productId, {
+      stock: nextStock,
+      status: this.getInventoryStatus(nextStock)
+    });
+
+    this.addMovement({
+      id: Math.max(0, ...this.inventoryMovements().map(item => item.id)) + 1,
+      type: 'Salida',
+      product: product.name,
+      quantity: saleQuantity,
+      date: new Intl.DateTimeFormat('es-MX', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date()),
+      reason: 'Venta registrada por empleado'
+    });
+
+    return true;
+  }
+
   removeProduct(productId: number): void {
     this.inventoryProducts.update(current => current.filter(product => product.id !== productId));
   }
@@ -154,5 +181,13 @@ export class StoreService {
 
   toggleNotifications(): void {
     this.notificationsEnabled.set(!this.notificationsEnabled());
+  }
+
+  private getInventoryStatus(stock: number): InventoryProduct['status'] {
+    if (stock <= 0) {
+      return 'Agotado';
+    }
+
+    return stock <= 10 ? 'Bajo stock' : 'Activo';
   }
 }

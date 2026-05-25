@@ -2,19 +2,49 @@
   <div class="page-header">
     <div>
       <p class="eyebrow">Empleado</p>
-      <h1>Categorías</h1>
-      <p>Solo visualización, sin acciones de edición.</p>
+      <h1>Categorias</h1>
+      <p>Consulta las categorias disponibles y revisa cuantos productos tiene cada una.</p>
     </div>
   </div>
 
   <article class="panel">
-    <div class="category-list">
-      <article class="category-item" *ngFor="let category of store.inventoryCategories()">
-        <div>
+    <div class="toolbar">
+      <label class="search-box">
+        <i class="bi bi-search"></i>
+        <input type="search" placeholder="Buscar categoria..." [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" />
+      </label>
+
+      <button type="button" class="toggle-btn" [class.active]="activeOnly()" (click)="activeOnly.set(!activeOnly())">
+        <i class="bi bi-check2-circle"></i>
+        Solo activas
+      </button>
+
+      <button type="button" class="clear-btn" (click)="clearFilters()">Limpiar</button>
+    </div>
+
+    <div class="table-head">
+      <h2>Listado de categorias</h2>
+      <span>{{ filteredCategories().length }} de {{ store.inventoryCategories().length }} categorias</span>
+    </div>
+
+    <div class="empty-state" *ngIf="filteredCategories().length === 0">
+      <i class="bi bi-tags"></i>
+      <strong>Sin categorias</strong>
+      <p>No hay coincidencias con los filtros actuales.</p>
+    </div>
+
+    <div class="category-list" *ngIf="filteredCategories().length > 0">
+      <article class="category-item" *ngFor="let category of filteredCategories()">
+        <div class="category-copy">
           <strong>{{ category.name }}</strong>
           <p>{{ category.description }}</p>
+          <span class="status-pill" [class.inactive]="!category.active">{{ category.active ? 'Activa' : 'Inactiva' }}</span>
         </div>
-        <span>{{ category.productsCount }} productos</span>
+        <div class="category-meta">
+          <strong>{{ productsInCategory(category.name) }}</strong>
+          <span>productos vinculados</span>
+          <small>{{ category.productsCount }} registrados</small>
+        </div>
       </article>
     </div>
   </article>

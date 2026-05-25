@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="Caja de mochi">
+  <rect width="240" height="240" rx="42" fill="#fff0f7"/>
+  <rect x="48" y="69" width="144" height="112" rx="24" fill="#f6b8d2"/>
+  <path d="M48 99h144" stroke="#fff" stroke-width="10"/>
+  <path d="M90 69v112" stroke="#fff" stroke-width="10"/>
+  <circle cx="74" cy="127" r="21" fill="#fff8e7"/>
+  <circle cx="121" cy="127" r="21" fill="#dff7e4"/>
+  <circle cx="166" cy="127" r="21" fill="#fce1ef"/>
+  <circle cx="98" cy="160" r="17" fill="#efe5ff"/>
+  <circle cx="144" cy="160" r="17" fill="#fff3b0"/>
+  <path d="M71 55c24-22 74-22 98 0" fill="none" stroke="#d86aa1" stroke-width="11" stroke-linecap="round"/>
+</svg>

@@ -18,33 +18,37 @@
 
   <div class="metric-grid">
     <article class="metric-card metric-pink">
-      <div>
-        <span>Productos</span>
-        <strong>{{ store.dashboardMetrics[0]?.value || '0' }}</strong>
+      <div class="metric-copy">
+        <span class="metric-label">Productos</span>
+        <strong class="metric-value">{{ store.dashboardMetrics[0]?.value || '0' }}</strong>
+        <small class="metric-note">Inventario activo</small>
       </div>
       <div class="metric-icon"><i class="bi bi-box-seam"></i></div>
     </article>
 
     <article class="metric-card metric-yellow">
-      <div>
-        <span>Stock total</span>
-        <strong>1,248</strong>
+      <div class="metric-copy">
+        <span class="metric-label">Stock total</span>
+        <strong class="metric-value">1,248</strong>
+        <small class="metric-note">Unidades disponibles</small>
       </div>
       <div class="metric-icon"><i class="bi bi-stack"></i></div>
     </article>
 
     <article class="metric-card metric-green">
-      <div>
-        <span>Categorías</span>
-        <strong>{{ store.dashboardMetrics[2]?.value || '0' }}</strong>
+      <div class="metric-copy">
+        <span class="metric-label">Categorías</span>
+        <strong class="metric-value">{{ store.dashboardMetrics[2]?.value || '0' }}</strong>
+        <small class="metric-note">Organización del catálogo</small>
       </div>
       <div class="metric-icon"><i class="bi bi-tags"></i></div>
     </article>
 
     <article class="metric-card metric-violet">
-      <div>
-        <span>Proveedores</span>
-        <strong>8</strong>
+      <div class="metric-copy">
+        <span class="metric-label">Proveedores</span>
+        <strong class="metric-value">8</strong>
+        <small class="metric-note">Socios activos</small>
       </div>
       <div class="metric-icon"><i class="bi bi-people"></i></div>
     </article>
@@ -63,6 +67,18 @@
         </div>
       </div>
 
+      <div class="chart-toolbar">
+        <div class="chart-meta">
+          <span class="chart-kicker">Tendencia general</span>
+          <strong>+18.4%</strong>
+          <small>respecto al período anterior</small>
+        </div>
+        <div class="chart-status">
+          <span class="chart-status-dot"></span>
+          Datos actualizados hoy
+        </div>
+      </div>
+
       <div class="mini-insights">
         <span class="mini-pill pill-pink">+12% nuevos clientes</span>
         <span class="mini-pill pill-lilac">+9% rotación</span>
@@ -76,7 +92,18 @@
               <stop offset="0%" stop-color="#fb7185" stop-opacity="0.35" />
               <stop offset="100%" stop-color="#fcd34d" stop-opacity="0.05" />
             </linearGradient>
+            <linearGradient id="chartGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#f9a8d4" stop-opacity="0.22" />
+              <stop offset="100%" stop-color="#fcd34d" stop-opacity="0.08" />
+            </linearGradient>
           </defs>
+          <g opacity="0.55" stroke="#e2e8f0" stroke-width="1">
+            <line x1="10" y1="42" x2="790" y2="42" stroke-dasharray="5 8" />
+            <line x1="10" y1="104" x2="790" y2="104" stroke-dasharray="5 8" />
+            <line x1="10" y1="166" x2="790" y2="166" stroke-dasharray="5 8" />
+            <line x1="10" y1="228" x2="790" y2="228" stroke-dasharray="5 8" />
+          </g>
+          <ellipse cx="730" cy="54" rx="92" ry="60" fill="url(#chartGlow)" />
           <path [attr.d]="'M' + chartPoints"
                 fill="none" stroke="#ec4899" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
           <polygon [attr.points]="'10,215 50,185 90,170 130,145 170,160 210,118 250,88 290,82 330,112 370,134 410,130 450,100 490,147 530,120 570,92 610,132 650,94 690,78 730,58 770,26 770,260 10,260'"
@@ -105,29 +132,92 @@
           </g>
         </svg>
       </div>
+
+      <div class="chart-footer">
+        <div>
+          <strong>1,248 unidades</strong>
+          <span>Stock disponible en el periodo</span>
+        </div>
+        <div>
+          <strong>64 movimientos</strong>
+          <span>Entradas y salidas registradas</span>
+        </div>
+      </div>
     </article>
 
     <article class="panel stock-panel">
       <div class="panel-head">
         <div>
-          <h2>Productos con bajo stock</h2>
-          <p>Revisa y repón rápido</p>
+          <h2>Stock por categoría</h2>
+          <p>Una vista más útil del inventario real</p>
         </div>
         <a routerLink="/admin/productos" class="link-action">Ver todos</a>
       </div>
 
-      <div class="low-stock-list">
-        <article class="stock-item" *ngFor="let item of store.getLowStockProducts()">
-          <div class="stock-item-left">
-            <img [src]="item.image" [alt]="item.name" />
-            <div class="stock-copy">
-              <strong>{{ item.name }}</strong>
-              <span>{{ item.category }} · Stock: {{ item.stock }} u</span>
+      <ng-container *ngIf="stockHealth() as health">
+        <div class="stock-overview">
+          <div class="stock-stats">
+            <div class="stock-stat">
+              <span>Stock total</span>
+              <strong>{{ health.totalStock }}</strong>
+            </div>
+            <div class="stock-stat">
+              <span>Promedio</span>
+              <strong>{{ health.averageStock }}</strong>
+            </div>
+            <div class="stock-stat">
+              <span>Críticos</span>
+              <strong>{{ health.lowStock }}</strong>
             </div>
           </div>
-          <span class="status-pill" [class.critical]="item.stock <= 5">{{ item.stock <= 5 ? 'Crítico' : 'Bajo' }}</span>
-        </article>
-      </div>
+
+          <div class="stock-chart">
+            <div class="stock-chart-head">
+              <strong>Distribución de stock</strong>
+              <span>Comparativo por categoría</span>
+            </div>
+
+            <ng-container *ngIf="stockByCategory() as bars">
+              <div class="stock-bars">
+                <div class="stock-bar-row" *ngFor="let bar of bars">
+                  <div class="stock-bar-label">
+                    <span>{{ bar.name }}</span>
+                    <small>{{ bar.stock }} u · {{ bar.products }} productos</small>
+                  </div>
+                  <div class="stock-bar-track">
+                    <div class="stock-bar-fill" [style.width.%]="bar.width"></div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="low-stock-list" *ngIf="lowStockProducts() as lowStock; else noLowStockState">
+          <article class="stock-item" *ngFor="let item of lowStock">
+            <div class="stock-item-left">
+              <img [src]="item.image" [alt]="item.name" />
+              <div class="stock-copy">
+                <strong>{{ item.name }}</strong>
+                <span>{{ item.category }} · Stock: {{ item.stock }} u</span>
+              </div>
+            </div>
+            <span class="status-pill" [class.critical]="item.stock <= 5">{{ item.stock <= 5 ? 'Crítico' : 'Bajo' }}</span>
+          </article>
+        </div>
+      </ng-container>
+
+      <ng-template #noLowStockState>
+        <div class="stock-empty">
+          <div class="stock-empty-icon">
+            <i class="bi bi-check2-circle"></i>
+          </div>
+          <div class="stock-empty-copy">
+            <strong>Todo bajo control</strong>
+            <p>Por ahora no hay productos críticos. La gráfica sigue mostrando el balance general del inventario.</p>
+          </div>
+        </div>
+      </ng-template>
     </article>
   </div>
 

@@ -180,13 +180,22 @@
 
 <div
   class="modal-overlay"
-  *ngIf="showModal()">
+  *ngIf="showModal()"
+  (click)="closeModal()">
 
-  <div class="modal-card">
+  <div
+    class="modal-card"
+    (click)="$event.stopPropagation()">
+
+    <!-- HEADER -->
 
     <div class="modal-header">
 
-      <div>
+      <div class="modal-title">
+
+        <span class="modal-badge">
+          PRODUCTO
+        </span>
 
         <h2>
           {{ editingId ? 'Editar producto' : 'Nuevo producto' }}
@@ -208,9 +217,13 @@
 
     </div>
 
+    <!-- BODY -->
+
     <div class="form-grid">
 
-      <label class="image-upload">
+      <!-- IMAGE -->
+
+      <label class="image-upload full">
 
         <input
           type="file"
@@ -223,57 +236,64 @@
             *ngIf="form.image"
             [src]="form.image">
 
-          <span *ngIf="!form.image">
-            Seleccionar imagen
-          </span>
+          <div
+            class="upload-placeholder"
+            *ngIf="!form.image">
+
+            <span>+</span>
+
+            <p>Subir imagen</p>
+
+          </div>
 
         </div>
 
       </label>
 
+      <!-- NAME -->
+
       <label>
 
-        Nombre
+        <span>Nombre</span>
 
         <input
           [(ngModel)]="form.name"
-          type="text">
+          type="text"
+          placeholder="Ej. Buldak Carbonara">
 
       </label>
 
+      <!-- PRICE -->
+
       <label>
 
-        Precio
+        <span>Precio</span>
 
         <input
           [(ngModel)]="form.price"
-          type="number">
+          type="number"
+          placeholder="$0">
 
       </label>
 
+      <!-- STOCK -->
+
       <label>
 
-        Stock
+        <span>Stock</span>
 
         <input
           [(ngModel)]="form.stock"
-          type="number">
+          type="number"
+          placeholder="0">
 
       </label>
 
-      <label class="full">
-
-        Descripción
-
-        <textarea
-          [(ngModel)]="form.description"
-          rows="4"></textarea>
-
-      </label>
+      <!-- CATEGORY -->
 
       <label>
 
-        Categoría
+        <span>Categoría</span>
 
         <select [(ngModel)]="form.category">
 
@@ -286,9 +306,11 @@
 
       </label>
 
+      <!-- STATUS -->
+
       <label>
 
-        Estado
+        <span>Estado</span>
 
         <select [(ngModel)]="form.status">
 
@@ -300,7 +322,22 @@
 
       </label>
 
+      <!-- DESCRIPTION -->
+
+      <label class="full">
+
+        <span>Descripción</span>
+
+        <textarea
+          [(ngModel)]="form.description"
+          rows="5"
+          placeholder="Describe el producto..."></textarea>
+
+      </label>
+
     </div>
+
+    <!-- FOOTER -->
 
     <div class="modal-actions">
 

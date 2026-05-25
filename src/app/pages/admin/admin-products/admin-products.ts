@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { StoreService } from '../../../store.service';
 import { InventoryProduct } from '../../../data/inventory-mock';
@@ -12,10 +12,18 @@ import { InventoryProduct } from '../../../data/inventory-mock';
   styleUrl: './admin-products.scss'
 })
 export class AdminProductsPage {
+
+  constructor(public store: StoreService) {}
+
+  showModal = signal(false);
   editingId: number | null = null;
 
+  selectedCategory = signal('Todos');
+  lowStockOnly = signal(false);
+  searchTerm = signal('');
+
   form: Omit<InventoryProduct, 'id'> = {
-    image: '/koro1.png',
+    image: '',
     name: '',
     price: 0,
     stock: 0,
@@ -24,17 +32,59 @@ export class AdminProductsPage {
     status: 'Activo'
   };
 
-  constructor(public store: StoreService) {}
+  readonly categories = computed(() => {
+    const unique = new Set(
+      this.store.inventoryProducts().map(p => p.category)
+    );
 
-  startEdit(product: InventoryProduct): void {
-    this.editingId = product.id;
-    this.form = { ...product };
+    return ['Todos', ...Array.from(unique)];
+  });
+
+  readonly filteredProducts = computed(() => {
+
+  let products = [...this.store.inventoryProducts()];
+
+  // FILTRO POR CATEGORÍA
+
+  if (this.selectedCategory() !== 'Todos') {
+
+    products = products.filter(
+      p => p.category === this.selectedCategory()
+    );
+
   }
 
-  resetForm(): void {
+  // FILTRO BAJO STOCK
+
+  if (this.lowStockOnly()) {
+
+    products = products.filter(
+      p => p.stock <= 10
+    );
+
+  }
+
+  // FILTRO POR BUSCADOR
+
+  if (this.searchTerm().trim()) {
+
+    const term = this.searchTerm().toLowerCase();
+
+    products = products.filter(product =>
+      product.name.toLowerCase().includes(term)
+    );
+
+  }
+
+  return products;
+
+});
+
+  openCreateModal(): void {
     this.editingId = null;
+
     this.form = {
-      image: '/koro1.png',
+      image: '',
       name: '',
       price: 0,
       stock: 0,
@@ -42,24 +92,63 @@ export class AdminProductsPage {
       category: 'Snacks',
       status: 'Activo'
     };
+
+    this.showModal.set(true);
+  }
+
+  startEdit(product: InventoryProduct): void {
+    this.editingId = product.id;
+    this.form = { ...product };
+    this.showModal.set(true);
+  }
+
+  closeModal(): void {
+    this.showModal.set(false);
   }
 
   save(): void {
-    if (!this.form.name.trim()) {
-      return;
-    }
+
+    if (!this.form.name.trim()) return;
 
     if (this.editingId) {
+
       this.store.updateProduct(this.editingId, this.form);
+
     } else {
-      const nextId = Math.max(0, ...this.store.inventoryProducts().map(item => item.id)) + 1;
-      this.store.addProduct({ id: nextId, ...this.form });
+
+      const nextId =
+        Math.max(
+          0,
+          ...this.store.inventoryProducts().map(p => p.id)
+        ) + 1;
+
+      this.store.addProduct({
+        id: nextId,
+        ...this.form
+      });
     }
 
-    this.resetForm();
+    this.closeModal();
   }
 
   remove(productId: number): void {
     this.store.removeProduct(productId);
+  }
+
+  onImageSelected(event: Event): void {
+
+    const input = event.target as HTMLInputElement;
+
+    if (!input.files?.length) return;
+
+    const file = input.files[0];
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      this.form.image = reader.result as string;
+    };
+
+    reader.readAsDataURL(file);
   }
 }

@@ -15,35 +15,17 @@ export interface Product {
   relatedIds?: number[];
 }
 
-export interface Order {
-  id: number;
-  date: string;
-  total: number;
-  status: 'entregado' | 'en proceso' | 'cancelado';
-  items: { name: string; quantity: number; price: string }[];
-}
-
-export interface UserProfile {
-  name: string;
-  username: string;
-  email: string;
-  phone: string;
-  address: string;
-  memberSince: string;
-  avatarText: string;
-}
-
 export const products: Product[] = [
   {
     id: 1,
     name: 'Producto Premium',
-    description: 'Descubre nuestro producto estrella con calidad incomparable y diseño moderno.',
-    fullDescription: 'Este es nuestro producto más vendido. Cuenta con materiales de primera calidad, diseño ergonómico y garantía extendida.',
+    description: 'Descubre nuestro producto estrella con calidad incomparable y diseÃ±o moderno.',
+    fullDescription: 'Este es nuestro producto mÃ¡s vendido. Cuenta con materiales de primera calidad, diseÃ±o ergonÃ³mico y garantÃ­a extendida.',
     price: '$299',
     priceNum: 299,
     oldPrice: '$399',
     category: 'destacados',
-    badge: 'Más Vendido',
+    badge: 'MÃ¡s Vendido',
     imageText: 'Producto Premium',
     rating: 5,
     reviews: 128,
@@ -53,8 +35,8 @@ export const products: Product[] = [
   {
     id: 2,
     name: 'Producto Nuevo',
-    description: 'La última innovación en su categoría. Disponible por tiempo limitado.',
-    fullDescription: 'Lanzamiento exclusivo con tecnología de punta. Incluye accesorios adicionales y manual digital.',
+    description: 'La Ãºltima innovaciÃ³n en su categorÃ­a. Disponible por tiempo limitado.',
+    fullDescription: 'Lanzamiento exclusivo con tecnologÃ­a de punta. Incluye accesorios adicionales y manual digital.',
     price: '$199',
     priceNum: 199,
     category: 'nuevos',
@@ -68,7 +50,7 @@ export const products: Product[] = [
   {
     id: 3,
     name: 'Oferta Especial',
-    description: 'Aprovecha esta promoción única con descuento especial por tiempo limitado.',
+    description: 'Aprovecha esta promociÃ³n Ãºnica con descuento especial por tiempo limitado.',
     fullDescription: 'Lanzamiento especial con precio rebajado. Ideal para clientes que buscan calidad y ahorro.',
     price: '$149',
     priceNum: 149,
@@ -85,7 +67,7 @@ export const products: Product[] = [
     id: 4,
     name: 'Paquete VIP',
     description: 'El paquete completo con beneficios exclusivos para clientes premium.',
-    fullDescription: 'Accede a beneficios exclusivos como envío prioritario, atención personalizada y regalos sorpresa.',
+    fullDescription: 'Accede a beneficios exclusivos como envÃ­o prioritario, atenciÃ³n personalizada y regalos sorpresa.',
     price: '$499',
     priceNum: 499,
     oldPrice: '$699',
@@ -99,13 +81,13 @@ export const products: Product[] = [
   },
   {
     id: 5,
-    name: 'Producto Estándar',
-    description: 'La opción perfecta para empezar. Calidad garantizada a un precio accesible.',
-    fullDescription: 'Producto equilibrado que combina buen diseño, funcionalidad y precio accesible para cualquier cliente.',
+    name: 'Producto EstÃ¡ndar',
+    description: 'La opciÃ³n perfecta para empezar. Calidad garantizada a un precio accesible.',
+    fullDescription: 'Producto equilibrado que combina buen diseÃ±o, funcionalidad y precio accesible para cualquier cliente.',
     price: '$99',
     priceNum: 99,
     category: 'destacados',
-    imageText: 'Producto Estándar',
+    imageText: 'Producto EstÃ¡ndar',
     rating: 4.2,
     reviews: 234,
     status: 'Disponible',
@@ -129,14 +111,14 @@ export const products: Product[] = [
   },
   {
     id: 7,
-    name: 'Edición Limitada',
-    description: 'Colección exclusiva con diseño único. Disponible solo por temporada.',
-    fullDescription: 'Edición de colección con detalles premium y piezas limitadas para clientes que buscan algo especial.',
+    name: 'EdiciÃ³n Limitada',
+    description: 'ColecciÃ³n exclusiva con diseÃ±o Ãºnico. Disponible solo por temporada.',
+    fullDescription: 'EdiciÃ³n de colecciÃ³n con detalles premium y piezas limitadas para clientes que buscan algo especial.',
     price: '$349',
     priceNum: 349,
     category: 'nuevos',
-    badge: 'Edición Limitada',
-    imageText: 'Edición Limitada',
+    badge: 'EdiciÃ³n Limitada',
+    imageText: 'EdiciÃ³n Limitada',
     rating: 4.7,
     reviews: 34,
     status: 'Disponible',
@@ -145,12 +127,12 @@ export const products: Product[] = [
   {
     id: 8,
     name: 'Servicio Premium',
-    description: 'Accede a beneficios exclusivos y atención prioritaria durante todo el año.',
+    description: 'Accede a beneficios exclusivos y atenciÃ³n prioritaria durante todo el aÃ±o.',
     fullDescription: 'Servicio mensual con beneficios especiales, soporte prioritario y acceso VIP a novedades.',
     price: '$99/mes',
     priceNum: 99,
     category: 'vip',
-    badge: 'Suscripción',
+    badge: 'SuscripciÃ³n',
     imageText: 'Servicio Premium',
     rating: 4.6,
     reviews: 178,
@@ -158,45 +140,3 @@ export const products: Product[] = [
     relatedIds: [4, 7]
   }
 ];
-
-export const defaultOrders: Order[] = [
-  {
-    id: 1024,
-    date: '15 mayo 2026',
-    total: 649,
-    status: 'entregado',
-    items: [
-      { name: 'Producto Premium', quantity: 1, price: '$299' },
-      { name: 'Servicio Premium', quantity: 1, price: '$99' },
-      { name: 'Producto Estándar', quantity: 2, price: '$99' }
-    ]
-  },
-  {
-    id: 1025,
-    date: '10 mayo 2026',
-    total: 348,
-    status: 'en proceso',
-    items: [
-      { name: 'Paquete VIP', quantity: 1, price: '$499' }
-    ]
-  },
-  {
-    id: 1026,
-    date: '03 mayo 2026',
-    total: 149,
-    status: 'cancelado',
-    items: [
-      { name: 'Oferta Especial', quantity: 1, price: '$149' }
-    ]
-  }
-];
-
-export const defaultProfile: UserProfile = {
-  name: 'Usuario1',
-  username: 'usuario1',
-  email: 'usuario1@ejemplo.com',
-  phone: '+52 123 456 7890',
-  address: 'Av. Principal 123, Ciudad',
-  memberSince: 'Enero 2024',
-  avatarText: 'U1'
-};

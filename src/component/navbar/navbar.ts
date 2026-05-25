@@ -40,14 +40,9 @@ export class Navbar {
     this.showLoginModal = false;
   }
 
-  handleLogin(credentials: { email: string; password: string }): void {
-    const loggedIn = this.store.login(credentials.email, credentials.password);
-    if (!loggedIn) {
-      return;
-    }
-
+  handleLogin(_credentials: { email: string; password: string; role?: string }): void {
     this.closeMenu();
-    this.router.navigate(['/usuario/dashboard']);
+    this.router.navigate(['/productos']);
   }
 
   handleLogout(): void {

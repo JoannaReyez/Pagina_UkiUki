@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { LoginModal } from '../../modales/login-modal/login-modal';
 import { Footer } from '../footer/footer';
 import { Navbar } from '../navbar/navbar';
@@ -39,7 +39,7 @@ export class Productos implements OnInit, OnDestroy {
   menuOpen = false;
   showLoginModal = false;
 
-  constructor(private router: Router) {}
+  constructor() {}
 
   activeCategory = 'all';
   searchTerm = '';
@@ -238,12 +238,10 @@ export class Productos implements OnInit, OnDestroy {
     document.body.style.overflow = '';
   }
 
-  handleLogin(credentials: { email: string; password: string }): void {
-    console.log('Login desde productos:', credentials);
+  handleLogin(_credentials: { email: string; password: string; role?: string }): void {
     this.showToast = true;
-    this.toastMessage = `Bienvenido ${credentials.email}`;
+    this.toastMessage = 'Sesión iniciada correctamente';
     setTimeout(() => { this.showToast = false; }, 3000);
-    this.router.navigate(['/usuario/dashboard']);
   }
 
   // CARRITO

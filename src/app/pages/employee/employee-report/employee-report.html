@@ -1,0 +1,27 @@
+<section class="section-page">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Empleado</p>
+      <h1>Mi Reporte</h1>
+      <p>Reporte diario personal con ventas, total vendido e historial del día.</p>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <article class="stat-card" *ngFor="let report of store.employeeReportSummary">
+      <span>{{ report.label }}</span>
+      <strong>{{ report.value }}</strong>
+      <small>{{ report.caption }}</small>
+    </article>
+  </div>
+
+  <article class="panel">
+    <h2>Historial del día</h2>
+    <div class="history-list">
+      <div class="history-row" *ngFor="let movement of store.inventoryMovements().slice(0, 4)">
+        <strong>{{ movement.product }}</strong>
+        <span>{{ movement.type }} · {{ movement.quantity }}</span>
+      </div>
+    </div>
+  </article>
+</section>

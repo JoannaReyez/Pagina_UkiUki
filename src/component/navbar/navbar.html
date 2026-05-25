@@ -14,12 +14,12 @@
       <ul class="nav-links" [class.open]="menuOpen">
         <li><a routerLink="/web" (click)="closeMenu()">Inicio</a></li>
         <li><a routerLink="/productos" (click)="closeMenu()">Productos</a></li>
-        <li *ngIf="store.isLoggedIn()">
+        <li *ngIf="auth.isAuthenticated()">
           <button class="nav-icon-btn" type="button" (click)="handleLogout()" aria-label="Cerrar sesión" title="Cerrar sesión">
             <i class="bi bi-box-arrow-right"></i>
           </button>
         </li>
-        <li *ngIf="!store.isLoggedIn()">
+        <li *ngIf="!auth.isAuthenticated()">
           <button class="nav-cta" type="button" (click)="openLoginModal()">Ingresar</button>
         </li>
       </ul>

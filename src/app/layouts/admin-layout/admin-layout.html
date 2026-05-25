@@ -1,0 +1,63 @@
+<div class="admin-shell" [class.sidebar-collapsed]="!sidebarOpen()">
+  <aside class="admin-sidebar" [class.open]="sidebarOpen()">
+    <div class="brand-card">
+      <div class="brand-logo">
+        <img src="/koro1.png" alt="Uki Uki" />
+      </div>
+      <div class="brand-copy">
+        <strong>UKI.UKI</strong>
+        <span>Korean Food</span>
+      </div>
+    </div>
+
+    <nav class="side-nav">
+      <a *ngFor="let item of menuItems" [routerLink]="item.path" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.path === '/admin' }">
+        <i class="bi" [class]="item.icon"></i>
+        <span>{{ item.label }}</span>
+      </a>
+    </nav>
+
+    <button type="button" class="promo-card" (click)="router.navigate(['/admin/productos'])">
+      <span class="promo-badge">Novedad</span>
+      <strong>Catálogo coreano</strong>
+      <p>Revisa el inventario con una vista limpia y premium.</p>
+      <span class="promo-link">Ver productos <i class="bi bi-arrow-right"></i></span>
+    </button>
+  </aside>
+
+  <div class="admin-main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button type="button" class="icon-btn" (click)="toggleSidebar()">
+          <i class="bi bi-list"></i>
+        </button>
+        <div class="search-field">
+          <i class="bi bi-search"></i>
+          <input type="text" placeholder="Buscar..." />
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <button type="button" class="icon-btn notification">
+          <i class="bi bi-bell"></i>
+          <span class="badge">3</span>
+        </button>
+        <div class="profile-chip">
+          <div class="avatar">{{ auth.user()?.avatarText || 'AD' }}</div>
+          <div class="profile-copy">
+            <strong>{{ auth.user()?.name || 'Admin' }}</strong>
+            <span>{{ auth.user()?.email || 'admin@admin.com' }}</span>
+          </div>
+          <i class="bi bi-chevron-down"></i>
+        </div>
+        <button type="button" class="logout-btn" (click)="logout()">
+          <i class="bi bi-box-arrow-right"></i>
+        </button>
+      </div>
+    </header>
+
+    <main class="admin-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

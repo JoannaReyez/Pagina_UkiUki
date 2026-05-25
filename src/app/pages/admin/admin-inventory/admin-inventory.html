@@ -1,0 +1,48 @@
+<section class="section-page">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Administrador</p>
+      <h1>Inventario</h1>
+      <p>Entradas, salidas y control de stock con historial de movimientos.</p>
+    </div>
+  </div>
+
+  <div class="page-grid">
+    <article class="panel form-panel">
+      <h2>Nuevo movimiento</h2>
+      <label>Tipo
+        <select [(ngModel)]="form.type">
+          <option>Entrada</option>
+          <option>Salida</option>
+        </select>
+      </label>
+      <label>Producto<input [(ngModel)]="form.product" /></label>
+      <label>Cantidad<input [(ngModel)]="form.quantity" type="number" min="0" /></label>
+      <label>Fecha<input [(ngModel)]="form.date" /></label>
+      <label>Motivo<textarea [(ngModel)]="form.reason" rows="4"></textarea></label>
+      <div class="form-actions">
+        <button type="button" class="btn-primary" (click)="save()">Registrar</button>
+      </div>
+    </article>
+
+    <article class="panel list-panel">
+      <div class="table-head">
+        <h2>Historial de movimientos</h2>
+        <span>{{ store.inventoryMovements().length }} registros</span>
+      </div>
+      <div class="movement-list">
+        <article class="movement-item" *ngFor="let move of store.inventoryMovements()">
+          <div class="movement-badge" [class.out]="move.type === 'Salida'">{{ move.type === 'Entrada' ? '+' : '-' }}</div>
+          <div class="movement-copy">
+            <strong>{{ move.product }}</strong>
+            <p>{{ move.reason }}</p>
+          </div>
+          <div class="movement-meta">
+            <span>{{ move.date }}</span>
+            <strong>{{ move.quantity }}</strong>
+          </div>
+        </article>
+      </div>
+    </article>
+  </div>
+</section>

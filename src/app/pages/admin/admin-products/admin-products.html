@@ -1,0 +1,85 @@
+<section class="section-page">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Administrador</p>
+      <h1>Productos</h1>
+      <p>CRUD completo con imagen, precio, stock, descripción, categoría y estado.</p>
+    </div>
+    <div class="header-metric">
+      <span>Productos activos</span>
+      <strong>{{ store.inventoryProducts().length }}</strong>
+    </div>
+  </div>
+
+  <div class="page-grid">
+    <article class="panel form-panel">
+      <h2>{{ editingId ? 'Editar producto' : 'Nuevo producto' }}</h2>
+
+      <div class="form-grid">
+        <label>
+          Imagen
+          <input [(ngModel)]="form.image" type="text" placeholder="/koro1.png" />
+        </label>
+        <label>
+          Nombre
+          <input [(ngModel)]="form.name" type="text" placeholder="Nombre del producto" />
+        </label>
+        <label>
+          Precio
+          <input [(ngModel)]="form.price" type="number" min="0" />
+        </label>
+        <label>
+          Stock
+          <input [(ngModel)]="form.stock" type="number" min="0" />
+        </label>
+        <label class="full">
+          Descripción
+          <textarea [(ngModel)]="form.description" rows="4"></textarea>
+        </label>
+        <label>
+          Categoría
+          <input [(ngModel)]="form.category" type="text" />
+        </label>
+        <label>
+          Estado
+          <select [(ngModel)]="form.status">
+            <option>Activo</option>
+            <option>Bajo stock</option>
+            <option>Agotado</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="resetForm()">Limpiar</button>
+        <button type="button" class="btn-primary" (click)="save()">{{ editingId ? 'Guardar cambios' : 'Crear producto' }}</button>
+      </div>
+    </article>
+
+    <article class="panel list-panel">
+      <div class="table-head">
+        <h2>Catálogo</h2>
+        <span>{{ store.getLowStockProducts().length }} con bajo stock</span>
+      </div>
+
+      <div class="product-table">
+        <div class="table-row table-header">
+          <span>Imagen</span><span>Nombre</span><span>Precio</span><span>Stock</span><span>Estado</span><span>Acciones</span>
+        </div>
+        <div class="table-row" *ngFor="let product of store.inventoryProducts()">
+          <span class="thumb"><img [src]="product.image" [alt]="product.name" /></span>
+          <span>{{ product.name }}</span>
+          <span>${{ product.price }}</span>
+          <span>{{ product.stock }}</span>
+          <span>
+            <span class="status-pill" [class.critical]="product.status === 'Agotado'">{{ product.status }}</span>
+          </span>
+          <span class="actions">
+            <button type="button" (click)="startEdit(product)">Editar</button>
+            <button type="button" class="danger" (click)="remove(product.id)">Eliminar</button>
+          </span>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>

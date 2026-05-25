@@ -2,7 +2,7 @@ import { Component, Output, EventEmitter, HostListener, inject } from '@angular/
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { StoreService } from '../../app/store.service';
+import { AuthService } from '../../app/auth/auth.service';
 
 @Component({
   selector: 'app-login-modal',
@@ -13,10 +13,10 @@ import { StoreService } from '../../app/store.service';
 })
 export class LoginModal {
   @Output() close = new EventEmitter<void>();
-  @Output() login = new EventEmitter<{ email: string; password: string; role: string }>();
+  @Output() login = new EventEmitter<{ email: string; password: string; role: 'admin' | 'employee' }>();
 
   private router = inject(Router);
-  private store = inject(StoreService);
+  private auth = inject(AuthService);
 
   email = '';
   password = '';
@@ -39,14 +39,15 @@ export class LoginModal {
     this.loginError = '';
 
     setTimeout(() => {
-      const result = this.store.login(this.email, this.password);
+      const result = this.auth.login(this.email, this.password);
 
       if (result.success) {
-        this.login.emit({ email: this.email, password: this.password, role: result.role });
-        this.router.navigate(['/productos']);
+        const role = result.role ?? 'employee';
+        this.login.emit({ email: this.email, password: this.password, role });
+        this.router.navigate([role === 'admin' ? '/admin' : '/empleado']);
         this.closeModal();
       } else {
-        this.loginError = 'Usuario o contrasena incorrectos.';
+        this.loginError = result.message ?? 'Usuario o contrasena incorrectos.';
       }
 
       this.isLoading = false;

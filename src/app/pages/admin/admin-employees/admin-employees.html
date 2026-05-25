@@ -1,0 +1,53 @@
+<section class="section-page">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Administrador</p>
+      <h1>Empleados</h1>
+      <p>Solo el administrador puede crear, editar, eliminar y asignar credenciales.</p>
+    </div>
+  </div>
+
+  <div class="page-grid">
+    <article class="panel form-panel">
+      <h2>{{ editingId ? 'Editar empleado' : 'Nuevo empleado' }}</h2>
+      <label>Nombre<input [(ngModel)]="form.name" /></label>
+      <label>Email<input [(ngModel)]="form.email" type="email" /></label>
+      <label>Iniciales<input [(ngModel)]="form.avatarText" maxlength="2" /></label>
+      <label>Actividad<textarea [(ngModel)]="form.activity" rows="4"></textarea></label>
+      <label>Status
+        <select [(ngModel)]="form.status">
+          <option>Activo</option>
+          <option>Inactivo</option>
+        </select>
+      </label>
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="reset()">Limpiar</button>
+        <button type="button" class="btn-primary" (click)="save()">{{ editingId ? 'Guardar' : 'Crear' }}</button>
+      </div>
+    </article>
+
+    <article class="panel list-panel">
+      <div class="table-head">
+        <h2>Registro de empleados</h2>
+        <span>{{ store.getActiveEmployees().length }} activos</span>
+      </div>
+      <div class="employee-list">
+        <article class="employee-item" *ngFor="let employee of store.employees()">
+          <div class="avatar">{{ employee.avatarText }}</div>
+          <div class="employee-copy">
+            <strong>{{ employee.name }}</strong>
+            <p>{{ employee.email }}</p>
+            <small>{{ employee.activity }}</small>
+          </div>
+          <div class="employee-meta">
+            <span class="status-pill" [class.inactive]="employee.status === 'Inactivo'">{{ employee.status }}</span>
+            <div class="actions">
+              <button type="button" (click)="startEdit(employee)">Editar</button>
+              <button type="button" class="danger" (click)="remove(employee.id)">Eliminar</button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </article>
+  </div>
+</section>

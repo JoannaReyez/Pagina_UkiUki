@@ -1,0 +1,46 @@
+<section class="section-page">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Administrador</p>
+      <h1>Reportes</h1>
+      <p>Ventas por empleado, historial de ventas y exportación de reportes.</p>
+    </div>
+    <button type="button" class="export-btn">
+      <i class="bi bi-download"></i> Exportar
+    </button>
+  </div>
+
+  <div class="stats-grid">
+    <article class="stat-card" *ngFor="let report of store.adminReportSummary">
+      <span>{{ report.label }}</span>
+      <strong>{{ report.value }}</strong>
+      <small>{{ report.caption }}</small>
+    </article>
+  </div>
+
+  <div class="page-grid">
+    <article class="panel">
+      <h2>Ventas por empleado</h2>
+      <div class="report-list">
+        <div class="report-row" *ngFor="let employee of store.employees()">
+          <div class="avatar">{{ employee.avatarText }}</div>
+          <div>
+            <strong>{{ employee.name }}</strong>
+            <p>{{ employee.activity }}</p>
+          </div>
+          <span>{{ employee.status }}</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="panel">
+      <h2>Estadísticas por fechas</h2>
+      <div class="date-list">
+        <div class="date-item" *ngFor="let item of store.inventoryMovements()">
+          <strong>{{ item.date }}</strong>
+          <span>{{ item.product }} · {{ item.quantity }}</span>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>

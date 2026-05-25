@@ -1,0 +1,43 @@
+<section class="section-page">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Administrador</p>
+      <h1>Categorías</h1>
+      <p>Creación, edición y eliminación de categorías para organizar el catálogo.</p>
+    </div>
+  </div>
+
+  <div class="page-grid">
+    <article class="panel form-panel">
+      <h2>{{ editingId ? 'Editar categoría' : 'Nueva categoría' }}</h2>
+      <label>Nombre<input [(ngModel)]="form.name" /></label>
+      <label>Descripción<textarea [(ngModel)]="form.description" rows="4"></textarea></label>
+      <label>Productos asociados<input [(ngModel)]="form.productsCount" type="number" min="0" /></label>
+      <label class="toggle-row"><input [(ngModel)]="form.active" type="checkbox" /> Activa</label>
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="reset()">Limpiar</button>
+        <button type="button" class="btn-primary" (click)="save()">{{ editingId ? 'Guardar' : 'Crear' }}</button>
+      </div>
+    </article>
+
+    <article class="panel list-panel">
+      <div class="table-head">
+        <h2>Categorías registradas</h2>
+        <span>{{ store.inventoryCategories().length }} categorías</span>
+      </div>
+      <div class="category-list">
+        <article class="category-item" *ngFor="let category of store.inventoryCategories()">
+          <div>
+            <strong>{{ category.name }}</strong>
+            <p>{{ category.description }}</p>
+          </div>
+          <div class="category-meta">
+            <span>{{ category.productsCount }} productos</span>
+            <button type="button" (click)="startEdit(category)">Editar</button>
+            <button type="button" class="danger" (click)="remove(category.id)">Eliminar</button>
+          </div>
+        </article>
+      </div>
+    </article>
+  </div>
+</section>

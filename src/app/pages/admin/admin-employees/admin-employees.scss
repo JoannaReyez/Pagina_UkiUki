@@ -26,4 +26,19 @@ input, textarea, select { width: 100%; border: 1px solid rgba(115,124,179,.12); 
 .status-pill { padding: 8px 12px; border-radius: 999px; background: #d9f6e7; color: #1b9b62; font-size: 0.78rem; font-weight: 700; }
 .status-pill.inactive { background: #eef1fb; color: #65709d; }
 .danger { background: #ffe3ee; color: #ff4fa0; }
-@media (max-width: 1100px) { .page-grid { grid-template-columns: 1fr; } }
+@media (max-width: 1100px) {
+  .page-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 20px;
+  }
+
+  .panel {
+    padding: 18px;
+  }
+}

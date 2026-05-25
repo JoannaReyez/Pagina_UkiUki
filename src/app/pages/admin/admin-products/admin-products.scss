@@ -190,6 +190,44 @@
   color: white;
 }
 
+@media (max-width: 980px) {
+  .filters-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .filter-group {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  .products-count {
+    text-align: right;
+  }
+}
+
+@media (max-width: 680px) {
+  .filter-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-group select,
+  .stock-filter {
+    width: 100%;
+  }
+
+  .products-count {
+    text-align: left;
+  }
+}
+
 /* TABLE */
 
 .table-card {

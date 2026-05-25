@@ -68,49 +68,48 @@
       </div>
 
       <ng-container *ngIf="weeklyStockTrendSignal() as trend">
-        <div class="chart-toolbar">
-          <div class="chart-meta">
-            <span class="chart-kicker">Índice de stock</span>
-            <strong>{{ trend.overallChange > 0 ? '+' : '' }}{{ trend.overallChange }}%</strong>
-            <small>comparado con la primera semana</small>
-          </div>
-          <div class="trend-pill">
-            <span>Rango</span>
-            <strong>{{ trend.minValue }} - {{ trend.maxValue }}</strong>
-          </div>
-        </div>
-
-        <div class="chart-wrap chart-wrap-trend">
-          <svg viewBox="0 0 740 280" class="chart-svg trend-svg" aria-label="Evolución semanal del stock">
+        <div class="chart-wrap chart-wrap-trend compact">
+          <svg viewBox="0 0 740 300" class="chart-svg trend-svg" aria-label="Evolución semanal del stock">
             <defs>
               <linearGradient id="stockTrendFill" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stop-color="#fb7185" stop-opacity="0.28" />
-                <stop offset="100%" stop-color="#fbbf24" stop-opacity="0.03" />
+                <stop offset="0%" stop-color="#f472b6" stop-opacity="0.82" />
+                <stop offset="30%" stop-color="#c084fc" stop-opacity="0.55" />
+                <stop offset="65%" stop-color="#8b5cf6" stop-opacity="0.28" />
+                <stop offset="100%" stop-color="#ffffff" stop-opacity="0.06" />
               </linearGradient>
               <linearGradient id="stockTrendLine" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stop-color="#ec4899" />
+                <stop offset="55%" stop-color="#9333ea" />
                 <stop offset="100%" stop-color="#f97316" />
               </linearGradient>
+              <radialGradient id="stockTrendDotGlow">
+                <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.4" />
+                <stop offset="100%" stop-color="#f97316" stop-opacity="0.05" />
+              </radialGradient>
+              <filter id="dotShadow" x="-50%" y="-50%" width="200%" height="200%">
+                <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.25" />
+              </filter>
             </defs>
 
-            <g opacity="0.45" stroke="#e2e8f0" stroke-width="1">
-              <line x1="20" y1="40" x2="720" y2="40" stroke-dasharray="4 8" />
-              <line x1="20" y1="100" x2="720" y2="100" stroke-dasharray="4 8" />
-              <line x1="20" y1="160" x2="720" y2="160" stroke-dasharray="4 8" />
-              <line x1="20" y1="220" x2="720" y2="220" stroke-dasharray="4 8" />
+            <g opacity="0.32" stroke="#d8d8e8" stroke-width="1.2">
+              <line x1="30" y1="40" x2="720" y2="40" stroke-dasharray="6 8" />
+              <line x1="30" y1="98" x2="720" y2="98" stroke-dasharray="6 8" />
+              <line x1="30" y1="156" x2="720" y2="156" stroke-dasharray="6 8" />
+              <line x1="30" y1="214" x2="720" y2="214" stroke-dasharray="6 8" />
             </g>
 
-            <polygon [attr.points]="trend.areaPoints" fill="url(#stockTrendFill)"></polygon>
-            <path [attr.d]="trend.linePath" fill="none" stroke="url(#stockTrendLine)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
+            <polygon [attr.points]="trend.areaPoints" fill="url(#stockTrendFill)" opacity="0.9"></polygon>
+            <path [attr.d]="trend.linePath" fill="none" stroke="url(#stockTrendLine)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></path>
 
-            <g fill="#ec4899">
-              <circle *ngFor="let point of trend.points" [attr.cx]="point.x" [attr.cy]="point.y" r="6"></circle>
+            <g>
+              <circle *ngFor="let point of trend.points" [attr.cx]="point.x" [attr.cy]="point.y" r="12" fill="url(#stockTrendDotGlow)" opacity="0.75"></circle>
+              <circle *ngFor="let point of trend.points" [attr.cx]="point.x" [attr.cy]="point.y" r="6" fill="url(#stockTrendLine)" filter="url(#dotShadow)"></circle>
             </g>
 
             <g class="trend-labels">
               <g *ngFor="let point of trend.points">
-                <text [attr.x]="point.x" y="256" text-anchor="middle">{{ point.label }}</text>
-                <text [attr.x]="point.x" [attr.y]="point.y - 16" text-anchor="middle" class="trend-value">{{ point.value }}%</text>
+                <text [attr.x]="point.x" [attr.y]="point.y - 22" text-anchor="middle" class="trend-value">{{ point.value }}%</text>
+                <text [attr.x]="point.x" [attr.y]="252" text-anchor="middle" class="trend-week">{{ point.label }}</text>
               </g>
             </g>
           </svg>

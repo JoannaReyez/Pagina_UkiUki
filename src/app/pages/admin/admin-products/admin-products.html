@@ -98,10 +98,7 @@
     <div class="table-header">
 
       <span>Producto</span>
-      <span>Precio</span>
-      <span>Stock</span>
-      <span>Categoría</span>
-      <span>Estado</span>
+      <span>Detalles</span>
       <span>Acciones</span>
 
     </div>
@@ -130,25 +127,29 @@
 
       </div>
 
-      <span class="price">
-        ${{ product.price }}
-      </span>
+      <div class="product-meta">
+        <div class="product-detail-row">
+          <span class="detail-label">Precio</span>
+          <strong class="price">${{ product.price }}</strong>
+        </div>
 
-      <span class="stock">
-        {{ product.stock }}
-      </span>
+        <div class="product-detail-row">
+          <span class="detail-label">Stock</span>
+          <strong class="stock">{{ product.stock }}</strong>
+        </div>
 
-      <span class="category-pill">
-        {{ product.category }}
-      </span>
+        <div class="product-tags">
+          <span class="category-pill">
+            {{ product.category }}
+          </span>
 
-      <span
-        class="status-pill"
-        [class.low]="product.stock <= 10">
-
-        {{ product.status }}
-
-      </span>
+          <span
+            class="status-pill"
+            [class.low]="product.stock <= 10">
+            {{ product.status }}
+          </span>
+        </div>
+      </div>
 
       <div class="actions">
 

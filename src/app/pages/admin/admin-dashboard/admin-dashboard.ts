@@ -67,23 +67,41 @@ export class AdminDashboardPage {
       return { ...point, x, y };
     });
 
-    const linePath = points.map((point, index) => `${index === 0 ? 'M' : 'L'}${point.x},${point.y}`).join(' ');
-    const areaPoints = [
-      `${points[0].x},${chartBottom}`,
-      ...points.map(point => `${point.x},${point.y}`),
-      `${points[points.length - 1].x},${chartBottom}`
-    ].join(' ');
+    const smoothPath = `
+  M ${points[0].x} ${points[0].y}
+  C ${points[0].x + 80} ${points[0].y},
+    ${points[1].x - 80} ${points[1].y},
+    ${points[1].x} ${points[1].y}
 
-    const overallChange = Math.round(((points[points.length - 1].value - points[0].value) / points[0].value) * 100);
+  C ${points[1].x + 80} ${points[1].y},
+    ${points[2].x - 80} ${points[2].y},
+    ${points[2].x} ${points[2].y}
 
-    return {
-      points,
-      linePath,
-      areaPoints,
-      overallChange,
-      minValue,
-      maxValue
-    };
+  C ${points[2].x + 80} ${points[2].y},
+    ${points[3].x - 80} ${points[3].y},
+    ${points[3].x} ${points[3].y}
+`;
+
+const areaPath = `
+  ${smoothPath}
+  L ${points[points.length - 1].x} ${chartBottom}
+  L ${points[0].x} ${chartBottom}
+  Z
+`;
+
+const overallChange = Math.round(
+  ((points[points.length - 1].value - points[0].value)
+  / points[0].value) * 100
+);
+
+return {
+  points,
+  smoothPath,
+  areaPath,
+  overallChange,
+  minValue,
+  maxValue
+};
   });
 
   readonly salesOverviewSignal = computed<SalesOverview>(() => {

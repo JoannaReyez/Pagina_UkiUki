@@ -55,88 +55,137 @@
   </div>
 
   <div class="content-grid">
-    <article class="panel chart-panel">
-      <div class="panel-head">
-        <div>
-          <h2>Nivel del stock por semana</h2>
-          <p>Últimas 4 semanas</p>
-        </div>
-        <div class="chart-status">
-          <span class="chart-status-dot"></span>
-          Basado en movimientos reales
-        </div>
+    <article class="panel chart-panel modern-chart-panel">
+  <div class="panel-head modern-head">
+    <div>
+      <span class="chart-badge">Analytics</span>
+      <h2>Stock semanal del mes</h2>
+      <p>Monitoreo del inventario en tiempo real</p>
+    </div>
+
+    <div class="chart-info-card">
+      <strong>{{ stockHealthSignal().totalStock }}</strong>
+      <span>Unidades disponibles</span>
+    </div>
+  </div>
+
+  <ng-container *ngIf="weeklyStockTrendSignal() as trend">
+
+    <div class="modern-chart-wrapper">
+
+      <!-- EJE Y -->
+      <div class="chart-y-axis">
+        <span>100%</span>
+        <span>80%</span>
+        <span>60%</span>
+        <span>40%</span>
+        <span>20%</span>
       </div>
 
-      <ng-container *ngIf="weeklyStockTrendSignal() as trend">
-        <div class="chart-wrap chart-wrap-trend compact">
-          <svg viewBox="0 0 740 300" class="chart-svg trend-svg" aria-label="Evolución semanal del stock">
-            <defs>
-              <linearGradient id="stockTrendFill" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stop-color="#f472b6" stop-opacity="0.82" />
-                <stop offset="30%" stop-color="#c084fc" stop-opacity="0.55" />
-                <stop offset="65%" stop-color="#8b5cf6" stop-opacity="0.28" />
-                <stop offset="100%" stop-color="#ffffff" stop-opacity="0.06" />
-              </linearGradient>
-              <linearGradient id="stockTrendLine" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#ec4899" />
-                <stop offset="55%" stop-color="#9333ea" />
-                <stop offset="100%" stop-color="#f97316" />
-              </linearGradient>
-              <radialGradient id="stockTrendDotGlow">
-                <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.4" />
-                <stop offset="100%" stop-color="#f97316" stop-opacity="0.05" />
-              </radialGradient>
-              <filter id="dotShadow" x="-50%" y="-50%" width="200%" height="200%">
-                <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.25" />
-              </filter>
-            </defs>
+      <!-- GRAFICA -->
+      <div class="chart-container">
 
-            <g opacity="0.32" stroke="#d8d8e8" stroke-width="1.2">
-              <line x1="30" y1="40" x2="720" y2="40" stroke-dasharray="6 8" />
-              <line x1="30" y1="98" x2="720" y2="98" stroke-dasharray="6 8" />
-              <line x1="30" y1="156" x2="720" y2="156" stroke-dasharray="6 8" />
-              <line x1="30" y1="214" x2="720" y2="214" stroke-dasharray="6 8" />
-            </g>
+        <svg viewBox="0 0 800 320" class="modern-chart-svg">
 
-            <polygon [attr.points]="trend.areaPoints" fill="url(#stockTrendFill)" opacity="0.9"></polygon>
-            <path [attr.d]="trend.linePath" fill="none" stroke="url(#stockTrendLine)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></path>
+          <defs>
+            <linearGradient id="modernGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.45"/>
+              <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"/>
+            </linearGradient>
 
-            <g>
-              <circle *ngFor="let point of trend.points" [attr.cx]="point.x" [attr.cy]="point.y" r="12" fill="url(#stockTrendDotGlow)" opacity="0.75"></circle>
-              <circle *ngFor="let point of trend.points" [attr.cx]="point.x" [attr.cy]="point.y" r="6" fill="url(#stockTrendLine)" filter="url(#dotShadow)"></circle>
-            </g>
+            <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#ec4899"/>
+              <stop offset="50%" stop-color="#8b5cf6"/>
+              <stop offset="100%" stop-color="#3b82f6"/>
+            </linearGradient>
+          </defs>
 
-            <g class="trend-labels">
-              <g *ngFor="let point of trend.points">
-                <text [attr.x]="point.x" [attr.y]="point.y - 22" text-anchor="middle" class="trend-value">{{ point.value }}%</text>
-                <text [attr.x]="point.x" [attr.y]="252" text-anchor="middle" class="trend-week">{{ point.label }}</text>
-              </g>
-            </g>
-          </svg>
+          <!-- GRID -->
+          <g class="grid-lines">
+            <line x1="60" y1="40" x2="760" y2="40"></line>
+            <line x1="60" y1="90" x2="760" y2="90"></line>
+            <line x1="60" y1="140" x2="760" y2="140"></line>
+            <line x1="60" y1="190" x2="760" y2="190"></line>
+            <line x1="60" y1="240" x2="760" y2="240"></line>
+          </g>
+
+          <!-- AREA -->
+          <path
+            [attr.d]="trend.areaPath"
+            fill="url(#modernGradient)">
+          </path>
+
+          <!-- LINEA -->
+          <path
+            [attr.d]="trend.smoothPath"
+            class="chart-line">
+          </path>
+
+          <!-- PUNTOS -->
+          <g *ngFor="let point of trend.points">
+
+            <circle
+              class="point-glow"
+              [attr.cx]="point.x"
+              [attr.cy]="point.y"
+              r="14">
+            </circle>
+
+            <circle
+              class="point-core"
+              [attr.cx]="point.x"
+              [attr.cy]="point.y"
+              r="6">
+            </circle>
+
+            <text
+              class="point-value"
+              [attr.x]="point.x"
+              [attr.y]="point.y - 18">
+              {{ point.value }}%
+            </text>
+
+          </g>
+
+        </svg>
+
+        <!-- SEMANAS -->
+        <div class="week-labels">
+          <div *ngFor="let point of trend.points">
+            {{ point.label }}
+          </div>
         </div>
 
-        <ng-container *ngIf="stockHealthSignal() as health">
-          <div class="trend-footer">
-            <div class="trend-card">
-              <strong>{{ trend.points[0].value }}%</strong>
-              <span>Semana inicial</span>
-            </div>
-            <div class="trend-card">
-              <strong>{{ trend.points[trend.points.length - 1].value }}%</strong>
-              <span>Semana actual</span>
-            </div>
-            <div class="trend-card">
-              <strong>{{ trend.overallChange }}%</strong>
-              <span>Variación total</span>
-            </div>
-            <div class="trend-card">
-              <strong>{{ health.lowStock }}</strong>
-              <span>Productos críticos</span>
-            </div>
-          </div>
-        </ng-container>
-      </ng-container>
-    </article>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="modern-stats-grid">
+
+      <div class="modern-stat-card">
+        <strong>{{ trend.points[0].value }}%</strong>
+        <span>Semana inicial</span>
+      </div>
+
+      <div class="modern-stat-card">
+        <strong>{{ trend.points[trend.points.length - 1].value }}%</strong>
+        <span>Semana actual</span>
+      </div>
+
+      <div class="modern-stat-card">
+        <strong>{{ trend.overallChange }}%</strong>
+        <span>Crecimiento</span>
+      </div>
+
+      <div class="modern-stat-card">
+        <strong>{{ stockHealthSignal().lowStock }}</strong>
+        <span>Stock crítico</span>
+      </div>
+
+    </div>
+
+  </ng-container>
+</article>
 
     <article class="panel sales-panel">
       <div class="panel-head">

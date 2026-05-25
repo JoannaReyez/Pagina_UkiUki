@@ -1,26 +1,53 @@
-<section class="dashboard-page">
-  <div class="hero-panel">
+﻿<section class="dashboard-page">
+  <div class="dashboard-hero">
     <div>
-      <p class="eyebrow">Inventario Premium</p>
-      <h1>¡Bienvenida, {{ auth.user()?.name || 'Admin' }}! 👋</h1>
-      <p class="hero-copy">Aquí tienes un resumen general del sistema de inventario, productos, categorías y actividad reciente.</p>
+      <span class="eyebrow">Dashboard</span>
+      <h1>Bienvenida, {{ userName }}</h1>
+      <p class="hero-copy">Visualiza el inventario, pedidos y stock con datos recientes para tomar decisiones rápidas.</p>
     </div>
 
-    <div class="date-chip">
-      <i class="bi bi-calendar3"></i>
-      <span>12 May 2024 - 12 Jun 2024</span>
-      <i class="bi bi-chevron-down"></i>
+    <div class="hero-actions">
+      <div class="date-chip">
+        <i class="bi bi-calendar3"></i>
+        <span>12 May 2024 - 12 Jun 2024</span>
+        <i class="bi bi-chevron-down"></i>
+      </div>
+      <button type="button" class="btn-primary"><i class="bi bi-plus-lg"></i> Agregar producto</button>
     </div>
   </div>
 
   <div class="metric-grid">
-    <app-stat-card *ngFor="let metric of store.dashboardMetrics; let i = index"
-      [label]="metric.label"
-      [value]="metric.value"
-      [caption]="metric.caption"
-      [icon]="['bi-box-seam','bi-archive','bi-tags','bi-people'][i]"
-      [accent]="metric.accent">
-    </app-stat-card>
+    <article class="metric-card metric-pink">
+      <div>
+        <span>Productos</span>
+        <strong>{{ store.dashboardMetrics[0]?.value || '0' }}</strong>
+      </div>
+      <div class="metric-icon"><i class="bi bi-box-seam"></i></div>
+    </article>
+
+    <article class="metric-card metric-yellow">
+      <div>
+        <span>Stock total</span>
+        <strong>1,248</strong>
+      </div>
+      <div class="metric-icon"><i class="bi bi-stack"></i></div>
+    </article>
+
+    <article class="metric-card metric-green">
+      <div>
+        <span>Categorías</span>
+        <strong>{{ store.dashboardMetrics[2]?.value || '0' }}</strong>
+      </div>
+      <div class="metric-icon"><i class="bi bi-tags"></i></div>
+    </article>
+
+    <article class="metric-card metric-violet">
+      <div>
+        <span>Proveedores</span>
+        <strong>8</strong>
+      </div>
+      <div class="metric-icon"><i class="bi bi-people"></i></div>
+    </article>
   </div>
 
   <div class="content-grid">
@@ -30,42 +57,51 @@
           <h2>Movimientos del inventario</h2>
           <p>Últimos 30 días</p>
         </div>
-        <button type="button" class="chip-button">Ver detalle <i class="bi bi-chevron-down"></i></button>
+        <div class="panel-controls">
+          <button type="button" class="control-pill active">Últimos 30 días</button>
+          <button type="button" class="control-pill">Este mes</button>
+        </div>
+      </div>
+
+      <div class="mini-insights">
+        <span class="mini-pill pill-pink">+12% nuevos clientes</span>
+        <span class="mini-pill pill-lilac">+9% rotación</span>
+        <span class="mini-pill pill-yellow">+18% margen</span>
       </div>
 
       <div class="chart-wrap">
         <svg viewBox="0 0 800 260" class="chart-svg" aria-label="Gráfica de inventario">
           <defs>
-            <linearGradient id="adminLine" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stop-color="#ff4fa0" stop-opacity="0.4" />
-              <stop offset="100%" stop-color="#ff4fa0" stop-opacity="0.02" />
+            <linearGradient id="inventoryLine" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#fb7185" stop-opacity="0.35" />
+              <stop offset="100%" stop-color="#fcd34d" stop-opacity="0.05" />
             </linearGradient>
           </defs>
           <path [attr.d]="'M' + chartPoints"
-                fill="none" stroke="#ff4fa0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
-          <polygon [attr.points]="'10,215 50,195 90,180 130,150 170,158 210,122 250,96 290,92 330,118 370,140 410,132 450,105 490,152 530,124 570,98 610,136 650,92 690,76 730,54 770,20 770,260 10,260'"
-                   fill="url(#adminLine)" />
-          <g fill="#ff4fa0">
+                fill="none" stroke="#ec4899" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+          <polygon [attr.points]="'10,215 50,185 90,170 130,145 170,160 210,118 250,88 290,82 330,112 370,134 410,130 450,100 490,147 530,120 570,92 610,132 650,94 690,78 730,58 770,26 770,260 10,260'"
+                   fill="url(#inventoryLine)" />
+          <g fill="#ec4899" opacity="0.95">
             <circle cx="10" cy="215" r="6" />
-            <circle cx="50" cy="195" r="6" />
-            <circle cx="90" cy="180" r="6" />
-            <circle cx="130" cy="150" r="6" />
-            <circle cx="170" cy="158" r="6" />
-            <circle cx="210" cy="122" r="6" />
-            <circle cx="250" cy="96" r="6" />
-            <circle cx="290" cy="92" r="6" />
-            <circle cx="330" cy="118" r="6" />
-            <circle cx="370" cy="140" r="6" />
-            <circle cx="410" cy="132" r="6" />
-            <circle cx="450" cy="105" r="6" />
-            <circle cx="490" cy="152" r="6" />
-            <circle cx="530" cy="124" r="6" />
-            <circle cx="570" cy="98" r="6" />
-            <circle cx="610" cy="136" r="6" />
-            <circle cx="650" cy="92" r="6" />
-            <circle cx="690" cy="76" r="6" />
-            <circle cx="730" cy="54" r="6" />
-            <circle cx="770" cy="20" r="6" />
+            <circle cx="50" cy="185" r="6" />
+            <circle cx="90" cy="170" r="6" />
+            <circle cx="130" cy="145" r="6" />
+            <circle cx="170" cy="160" r="6" />
+            <circle cx="210" cy="118" r="6" />
+            <circle cx="250" cy="88" r="6" />
+            <circle cx="290" cy="82" r="6" />
+            <circle cx="330" cy="112" r="6" />
+            <circle cx="370" cy="134" r="6" />
+            <circle cx="410" cy="130" r="6" />
+            <circle cx="450" cy="100" r="6" />
+            <circle cx="490" cy="147" r="6" />
+            <circle cx="530" cy="120" r="6" />
+            <circle cx="570" cy="92" r="6" />
+            <circle cx="610" cy="132" r="6" />
+            <circle cx="650" cy="94" r="6" />
+            <circle cx="690" cy="78" r="6" />
+            <circle cx="730" cy="58" r="6" />
+            <circle cx="770" cy="26" r="6" />
           </g>
         </svg>
       </div>
@@ -75,17 +111,19 @@
       <div class="panel-head">
         <div>
           <h2>Productos con bajo stock</h2>
-          <p>Acción recomendada</p>
+          <p>Revisa y repón rápido</p>
         </div>
         <a routerLink="/admin/productos" class="link-action">Ver todos</a>
       </div>
 
       <div class="low-stock-list">
         <article class="stock-item" *ngFor="let item of store.getLowStockProducts()">
-          <img [src]="item.image" [alt]="item.name" />
-          <div class="stock-copy">
-            <strong>{{ item.name }}</strong>
-            <span>Stock: {{ item.stock }} unidades</span>
+          <div class="stock-item-left">
+            <img [src]="item.image" [alt]="item.name" />
+            <div class="stock-copy">
+              <strong>{{ item.name }}</strong>
+              <span>{{ item.category }} · Stock: {{ item.stock }} u</span>
+            </div>
           </div>
           <span class="status-pill" [class.critical]="item.stock <= 5">{{ item.stock <= 5 ? 'Crítico' : 'Bajo' }}</span>
         </article>
@@ -93,44 +131,26 @@
     </article>
   </div>
 
-  <div class="bottom-grid">
-    <article class="panel activity-panel">
-      <div class="panel-head">
-        <div>
-          <h2>Actividad reciente</h2>
-          <p>Movimientos y eventos del sistema</p>
-        </div>
-      </div>
-
-      <div class="activity-list">
-        <article class="activity-item" *ngFor="let movement of store.inventoryMovements()">
-          <div class="activity-badge" [class.out]="movement.type === 'Salida'">
-            {{ movement.type === 'Entrada' ? '+' : '-' }}
-          </div>
-          <div>
-            <strong>{{ movement.product }}</strong>
-            <p>{{ movement.reason }} · {{ movement.date }}</p>
-          </div>
-          <span>{{ movement.quantity }}</span>
-        </article>
-      </div>
+  <div class="summary-grid">
+    <article class="summary-chip summary-pink">
+      <span>Total de productos</span>
+      <strong>{{ store.products.length }}</strong>
+      <small>Activos</small>
     </article>
-
-    <article class="panel summary-panel">
-      <div class="panel-head">
-        <div>
-          <h2>Resumen rápido</h2>
-          <p>Indicadores clave</p>
-        </div>
-      </div>
-
-      <div class="summary-list">
-        <div class="summary-row" *ngFor="let item of store.adminReportSummary">
-          <span>{{ item.label }}</span>
-          <strong>{{ item.value }}</strong>
-          <small>{{ item.caption }}</small>
-        </div>
-      </div>
+    <article class="summary-chip summary-yellow">
+      <span>Stock total</span>
+      <strong>1,248</strong>
+      <small>Unidades</small>
+    </article>
+    <article class="summary-chip summary-green">
+      <span>Categorías</span>
+      <strong>12</strong>
+      <small>Registradas</small>
+    </article>
+    <article class="summary-chip summary-lilac">
+      <span>Proveedores</span>
+      <strong>8</strong>
+      <small>Activos</small>
     </article>
   </div>
 </section>

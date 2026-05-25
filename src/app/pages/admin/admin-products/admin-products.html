@@ -91,43 +91,52 @@
 
   </div>
 
-  <!-- TABLE -->
+  <!-- PRODUCT CARDS -->
 
-  <div class="table-card">
+  <div class="cards-grid">
 
-    <div class="table-header">
+    <article class="product-card" *ngFor="let product of filteredProducts()">
 
-      <span>Producto</span>
-      <span>Detalles</span>
-      <span>Acciones</span>
+      <div class="product-card-header">
 
-    </div>
+        <div class="product-info">
+          <img
+            [src]="product.image"
+            [alt]="product.name">
 
-    <div
-      class="table-row"
-      *ngFor="let product of filteredProducts()">
+          <div>
+            <strong>
+              {{ product.name }}
+            </strong>
+            <small>
+              {{ product.description }}
+            </small>
+          </div>
+        </div>
 
-      <div class="product-info">
-
-        <img
-          [src]="product.image"
-          [alt]="product.name">
-
-        <div>
-
-          <strong>
-            {{ product.name }}
-          </strong>
-
-          <small>
-            {{ product.description }}
-          </small>
-
+        <div class="card-actions">
+          <button
+            class="edit-btn icon-btn"
+            type="button"
+            (click)="startEdit(product)"
+            aria-label="Editar producto"
+            title="Editar producto">
+            <i class="bi bi-pencil-fill"></i>
+          </button>
+          <button
+            class="delete-btn icon-btn"
+            type="button"
+            (click)="remove(product.id)"
+            aria-label="Eliminar producto"
+            title="Eliminar producto">
+            <i class="bi bi-trash-fill"></i>
+          </button>
         </div>
 
       </div>
 
-      <div class="product-meta">
+      <div class="product-card-body">
+
         <div class="product-detail-row">
           <span class="detail-label">Precio</span>
           <strong class="price">${{ product.price }}</strong>
@@ -149,29 +158,10 @@
             {{ product.status }}
           </span>
         </div>
-      </div>
-
-      <div class="actions">
-
-        <button
-          class="edit-btn"
-          (click)="startEdit(product)">
-
-          Editar
-
-        </button>
-
-        <button
-          class="delete-btn"
-          (click)="remove(product.id)">
-
-          Eliminar
-
-        </button>
 
       </div>
 
-    </div>
+    </article>
 
   </div>
 

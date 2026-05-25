@@ -209,7 +209,7 @@
 .content-grid,
 .bottom-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1fr;
   gap: 16px;
 }
 
@@ -531,6 +531,7 @@
   position: relative;
   z-index: 1;
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
 
@@ -1020,6 +1021,10 @@
 
   .trend-footer,
   .sales-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .sales-grid {
     grid-template-columns: 1fr;
   }
 

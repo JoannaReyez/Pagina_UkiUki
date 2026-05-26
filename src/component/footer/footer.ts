@@ -20,13 +20,6 @@ export class Footer {
     { icon: 'bi-youtube', url: '#', name: 'YouTube' },
   ];
 
-  navigationLinks = [
-    { label: 'Nosotros', url: '#about' },
-    { label: 'Servicios', url: '#services' },
-    { label: 'Galeria', url: '#gallery' },
-    { label: 'Testimonios', url: '#testimonials' },
-  ];
-
   schedule = [
     { day: 'Lunes - Viernes', time: '9:00 - 20:00' },
     { day: 'Sabado', time: '10:00 - 18:00' },

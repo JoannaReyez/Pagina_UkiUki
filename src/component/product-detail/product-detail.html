@@ -70,7 +70,7 @@
         <h2>Productos relacionados</h2>
         <p>Explora opciones parecidas con una vista más compacta y limpia.</p>
       </div>
-      <a routerLink="/usuario/tienda" class="link-button">Volver a tienda</a>
+      <a routerLink="/productos" class="link-button">Volver a tienda</a>
     </div>
 
     <div class="related-grid">
@@ -86,7 +86,7 @@
             <span>{{ related.price }}</span>
           </div>
           <p>{{ related.description }}</p>
-          <a routerLink="/usuario/producto/{{ related.id }}" class="btn-small">Ver</a>
+          <a routerLink="/producto/{{ related.id }}" class="btn-small">Ver</a>
         </div>
       </article>
     </div>
@@ -98,6 +98,6 @@
     <i class="bi bi-exclamation-circle"></i>
     <h3>Producto no encontrado</h3>
     <p>Regresa a la tienda para elegir otro producto.</p>
-    <a routerLink="/usuario/tienda" class="btn-primary">Volver a tienda</a>
+    <a routerLink="/productos" class="btn-primary">Volver a tienda</a>
   </div>
 </ng-template>

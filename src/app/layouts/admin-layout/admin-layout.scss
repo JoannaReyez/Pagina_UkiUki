@@ -1,0 +1,348 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(248, 213, 255, 0.8), transparent 28%),
+    radial-gradient(circle at top right, rgba(199, 233, 255, 0.72), transparent 26%),
+    linear-gradient(180deg, #f7f5fb 0%, #eef2ff 100%);
+}
+
+.admin-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 24px;
+  padding: 24px;
+}
+
+.admin-sidebar {
+  position: sticky;
+  top: 24px;
+  align-self: start;
+  height: calc(100vh - 48px);
+  padding: 22px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(115, 124, 179, 0.12);
+  box-shadow: 0 24px 80px rgba(79, 74, 124, 0.09);
+  backdrop-filter: blur(18px);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 20px;
+}
+
+.brand-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 4px 2px 12px;
+
+  strong {
+    display: block;
+    font-size: 1.4rem;
+    color: #1f2355;
+    letter-spacing: -0.03em;
+  }
+
+  span {
+    color: #8a90b7;
+    font-size: 0.95rem;
+  }
+}
+
+.brand-logo {
+  width: 70px;
+  height: 70px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #f7e9ff, #e6f5ff);
+  display: grid;
+  place-items: center;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+
+  img {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+  }
+}
+
+.side-nav {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+
+  a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    border-radius: 18px;
+    color: #39416b;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.25s ease;
+    border: 1px solid transparent;
+
+    i {
+      font-size: 1.05rem;
+      width: 18px;
+    }
+
+    &:hover,
+    &.active {
+      color: #fff;
+      background: linear-gradient(135deg, #9966ff 0%, #6d7cff 100%);
+      box-shadow: 0 14px 30px rgba(116, 103, 255, 0.28);
+      transform: translateX(4px);
+    }
+  }
+}
+
+.promo-card {
+  text-align: left;
+  border: 0;
+  border-radius: 24px;
+  padding: 20px;
+  cursor: pointer;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.45), transparent 30%),
+    linear-gradient(180deg, #ffdff0 0%, #f7e8ff 100%);
+  box-shadow: 0 18px 50px rgba(222, 160, 203, 0.28);
+  color: #80296e;
+  display: grid;
+  gap: 10px;
+
+  strong {
+    font-size: 1.05rem;
+    color: #5f2064;
+  }
+
+  p {
+    margin: 0;
+    color: #7c4679;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+}
+
+.promo-badge {
+  width: fit-content;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.55);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.promo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+}
+
+.admin-main {
+  min-width: 0;
+  display: grid;
+  gap: 20px;
+}
+
+.topbar {
+  min-height: 108px;
+  padding: 22px 28px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(115, 124, 179, 0.1);
+  box-shadow: 0 20px 60px rgba(79, 74, 124, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.topbar-left,
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.icon-btn,
+.logout-btn {
+  width: 52px;
+  height: 52px;
+  border: 0;
+  border-radius: 18px;
+  background: #f7f8fd;
+  color: #47507a;
+  box-shadow: inset 0 0 0 1px rgba(115, 124, 179, 0.08);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 28px rgba(79, 74, 124, 0.12);
+  }
+}
+
+.notification {
+  position: relative;
+
+  .badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    background: #ff4fa0;
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    box-shadow: 0 10px 20px rgba(255, 79, 160, 0.28);
+  }
+}
+
+.search-field {
+  min-width: min(430px, 42vw);
+  padding: 0 18px;
+  height: 52px;
+  border-radius: 18px;
+  background: #f7f8fd;
+  box-shadow: inset 0 0 0 1px rgba(115, 124, 179, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #8b92b7;
+
+  input {
+    border: 0;
+    background: transparent;
+    flex: 1;
+    outline: none;
+    color: #1f2355;
+    font-size: 0.95rem;
+  }
+}
+
+.profile-chip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px 8px 8px;
+  border-radius: 22px;
+  background: #f7f8fd;
+  box-shadow: inset 0 0 0 1px rgba(115, 124, 179, 0.08);
+  color: #1f2355;
+
+  .avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, #ffe1c9 0%, #c6d9ff 100%);
+    font-weight: 800;
+  }
+
+  .profile-copy {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+
+    strong {
+      font-size: 0.95rem;
+    }
+
+    span {
+      color: #8088ad;
+      font-size: 0.78rem;
+    }
+  }
+}
+
+.admin-content {
+  min-width: 0;
+  padding-bottom: 8px;
+}
+
+@media (max-width: 1180px) {
+  .admin-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-sidebar {
+    position: fixed;
+    z-index: 20;
+    left: 18px;
+    top: 18px;
+    width: min(320px, calc(100vw - 36px));
+    transform: translateX(-110%);
+    transition: transform 0.28s ease;
+    height: calc(100vh - 36px);
+    padding: 20px;
+  }
+
+  .admin-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .admin-shell.sidebar-collapsed .admin-main {
+    width: 100%;
+  }
+}
+
+@media (max-width: 760px) {
+  .admin-shell {
+    padding: 14px;
+    gap: 14px;
+  }
+
+  .admin-sidebar {
+    left: 12px;
+    top: 12px;
+    width: min(90vw, 320px);
+    height: calc(100vh - 24px);
+    padding: 18px;
+  }
+
+  .topbar {
+    padding: 16px;
+    border-radius: 24px;
+    min-height: auto;
+    flex-wrap: wrap;
+  }
+
+  .topbar-left,
+  .topbar-right {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .search-field {
+    min-width: 100%;
+  }
+
+  .topbar-right {
+    gap: 10px;
+  }
+
+  .profile-chip {
+    flex: 1;
+    min-width: 0;
+    justify-content: space-between;
+  }
+
+  .profile-copy {
+    display: none;
+  }
+
+  .icon-btn,
+  .logout-btn {
+    width: 44px;
+    height: 44px;
+  }
+}

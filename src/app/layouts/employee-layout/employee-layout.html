@@ -1,0 +1,62 @@
+<div class="employee-shell" [class.sidebar-collapsed]="!sidebarOpen()">
+  <aside class="employee-sidebar" [class.open]="sidebarOpen()">
+    <div class="brand-card">
+      <div class="brand-logo">
+        <img src="/koro2.png" alt="Uki Uki" />
+      </div>
+      <div class="brand-copy">
+        <strong>{{ auth.user()?.name || 'Empleado' }}</strong>
+        <span>Employee Panel</span>
+      </div>
+    </div>
+
+    <nav class="side-nav">
+      <a *ngFor="let item of menuItems" [routerLink]="item.path" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.path === '/empleado' }">
+        <i class="bi" [class]="item.icon"></i>
+        <span>{{ item.label }}</span>
+      </a>
+    </nav>
+
+    <button type="button" class="promo-card" (click)="router.navigate(['/empleado/mi-reporte'])">
+      <span class="promo-badge">Hoy</span>
+      <strong>Tu desempeño</strong>
+      <p>Revisa tus ventas, productos y movimientos del día.</p>
+      <span class="promo-link">Abrir reporte <i class="bi bi-arrow-right"></i></span>
+    </button>
+  </aside>
+
+  <div class="employee-main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button type="button" class="icon-btn" (click)="toggleSidebar()">
+          <i class="bi bi-list"></i>
+        </button>
+        <div class="title-copy">
+          <span>Panel del empleado</span>
+          <strong>{{ auth.user()?.name || 'Empleado' }}</strong>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <button type="button" class="icon-btn notification">
+          <i class="bi bi-bell"></i>
+          <span class="badge">2</span>
+        </button>
+        <div class="profile-chip">
+          <div class="avatar">{{ auth.user()?.avatarText || 'EM' }}</div>
+          <div class="profile-copy">
+            <strong>{{ auth.user()?.name || 'Empleado' }}</strong>
+            <span>{{ auth.user()?.email || 'empleado@empleado.com' }}</span>
+          </div>
+        </div>
+        <button type="button" class="logout-btn" (click)="logout()">
+          <i class="bi bi-box-arrow-right"></i>
+        </button>
+      </div>
+    </header>
+
+    <main class="employee-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

@@ -1,0 +1,26 @@
+<section class="section-page">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Administrador</p>
+      <h1>Ajustes</h1>
+      <p>Configuración del sistema, perfil y seguridad.</p>
+    </div>
+  </div>
+
+  <div class="page-grid">
+    <article class="panel">
+      <h2>Perfil</h2>
+      <div class="setting-box">
+        <strong>{{ store.getActiveEmployees()[0]?.name || 'Admin' }}</strong>
+        <p>Foto de perfil, nombre y datos de contacto.</p>
+      </div>
+    </article>
+    <article class="panel">
+      <h2>Seguridad</h2>
+      <div class="setting-box">
+        <strong>Control de acceso</strong>
+        <p>La sesión se mantiene con persistencia local y rutas protegidas por rol.</p>
+      </div>
+    </article>
+  </div>
+</section>

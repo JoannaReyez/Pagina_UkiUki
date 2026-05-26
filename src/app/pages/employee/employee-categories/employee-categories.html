@@ -1,0 +1,21 @@
+<section class="section-page">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Empleado</p>
+      <h1>Categorías</h1>
+      <p>Solo visualización, sin acciones de edición.</p>
+    </div>
+  </div>
+
+  <article class="panel">
+    <div class="category-list">
+      <article class="category-item" *ngFor="let category of store.inventoryCategories()">
+        <div>
+          <strong>{{ category.name }}</strong>
+          <p>{{ category.description }}</p>
+        </div>
+        <span>{{ category.productsCount }} productos</span>
+      </article>
+    </div>
+  </article>
+</section>

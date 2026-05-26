@@ -1,22 +1,38 @@
 <nav class="navbar" [class.scrolled]="isScrolled">
   <div class="nav-container">
-    <div class="nav-logo">
-      <div class="logo-placeholder">
-        <i class="bi bi-grid-fill"></i>
-        <span>Tu Logo Aquí</span>
-      </div>
+    <a class="nav-brand" routerLink="/web" (click)="closeMenu()" aria-label="Ir al inicio">
+      <span class="brand-mark" aria-hidden="true">
+        <img src="/koro1.png" alt="" />
+      </span>
+      <span class="brand-copy">
+        <span class="brand-title">UKI.UKI KOREAN FOOD</span>
+        <span class="brand-subtitle">Modern Korean comfort food</span>
+      </span>
+    </a>
+
+    <div class="nav-shell">
+      <ul class="nav-links" [class.open]="menuOpen">
+        <li><a routerLink="/web" (click)="closeMenu()">Inicio</a></li>
+        <li><a routerLink="/productos" (click)="closeMenu()">Productos</a></li>
+        <li *ngIf="auth.isAuthenticated()">
+          <button class="nav-icon-btn" type="button" (click)="handleLogout()" aria-label="Cerrar sesión" title="Cerrar sesión">
+            <i class="bi bi-box-arrow-right"></i>
+          </button>
+        </li>
+        <li *ngIf="!auth.isAuthenticated()">
+          <button class="nav-cta" type="button" (click)="openLoginModal()">Ingresar</button>
+        </li>
+      </ul>
     </div>
-    <ul class="nav-links" [class.open]="menuOpen">
-      <li><a routerLink="/web" (click)="closeMenu()">Inicio</a></li>
-      <li><a routerLink="/productos" (click)="closeMenu()">Productos</a></li>
-      <li *ngIf="store.isLoggedIn()">
-        <button class="nav-icon-btn" type="button" (click)="handleLogout()" aria-label="Cerrar sesión" title="Cerrar sesión">
-          <i class="bi bi-box-arrow-right"></i>
-        </button>
-      </li>
-      <li *ngIf="!store.isLoggedIn()"><a class="nav-cta" (click)="openLoginModal()">Ingresar</a></li>
-    </ul>
-    <button class="hamburger" (click)="toggleMenu()" [class.active]="menuOpen">
+
+    <button
+      class="hamburger"
+      type="button"
+      (click)="toggleMenu()"
+      [class.active]="menuOpen"
+      [attr.aria-expanded]="menuOpen"
+      aria-label="Abrir o cerrar menú de navegación"
+    >
       <span></span><span></span><span></span>
     </button>
   </div>
@@ -24,8 +40,8 @@
 
 <!-- Login Modal -->
 @if (showLoginModal) {
-  <app-login-modal 
-    (close)="closeLoginModal()" 
+  <app-login-modal
+    (close)="closeLoginModal()"
     (login)="handleLogin($event)"
   ></app-login-modal>
 }

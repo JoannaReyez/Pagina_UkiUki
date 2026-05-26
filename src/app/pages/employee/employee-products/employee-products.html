@@ -1,0 +1,30 @@
+<section class="section-page">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Empleado</p>
+      <h1>Productos</h1>
+      <p>Vista de solo lectura con nombre, stock, precio, descripción y categoría.</p>
+    </div>
+  </div>
+
+  <article class="panel">
+    <div class="table-head">
+      <h2>Catálogo visible</h2>
+      <span>{{ store.inventoryProducts().length }} productos</span>
+    </div>
+    <div class="product-list">
+      <div class="product-row" *ngFor="let product of store.inventoryProducts()">
+        <img [src]="product.image" [alt]="product.name" />
+        <div class="product-copy">
+          <strong>{{ product.name }}</strong>
+          <p>{{ product.description }}</p>
+        </div>
+        <div class="product-meta">
+          <span>Categoría: {{ product.category }}</span>
+          <span>Stock: {{ product.stock }}</span>
+          <strong>${{ product.price }}</strong>
+        </div>
+      </div>
+    </div>
+  </article>
+</section>

@@ -1,0 +1,40 @@
+<section class="dashboard-page">
+  <div class="hero-panel">
+    <div>
+      <p class="eyebrow">Empleado</p>
+      <h1>Bienvenido, {{ auth.user()?.name || 'Empleado' }} 👋</h1>
+      <p class="hero-copy">Resumen personal del día con productos vendidos y actividad reciente.</p>
+    </div>
+  </div>
+
+  <div class="metric-grid">
+    <app-stat-card label="Productos vendidos" value="31" caption="Hoy" icon="bi-bag-check" accent="pink"></app-stat-card>
+    <app-stat-card label="Total vendido" value="$2,180" caption="Reporte personal" icon="bi-cash-coin" accent="yellow"></app-stat-card>
+    <app-stat-card label="Actividad" value="12" caption="Eventos" icon="bi-clock-history" accent="green"></app-stat-card>
+  </div>
+
+  <div class="content-grid">
+    <article class="panel">
+      <h2>Actividad reciente</h2>
+      <div class="activity-list">
+        <div class="activity-row" *ngFor="let movement of store.inventoryMovements().slice(0, 4)">
+          <div class="badge">{{ movement.type === 'Entrada' ? '+' : '-' }}</div>
+          <div>
+            <strong>{{ movement.product }}</strong>
+            <p>{{ movement.reason }}</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="panel">
+      <h2>Productos vendidos</h2>
+      <div class="sold-list">
+        <div class="sold-row" *ngFor="let item of store.inventoryProducts().slice(0, 4)">
+          <strong>{{ item.name }}</strong>
+          <span>Stock: {{ item.stock }}</span>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>

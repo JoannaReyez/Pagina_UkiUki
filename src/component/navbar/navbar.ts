@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { LoginModal } from '../../modales/login-modal/login-modal';
 import { StoreService } from '../../app/store.service';
+import { AuthService } from '../../app/auth/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -12,7 +13,12 @@ import { StoreService } from '../../app/store.service';
   styleUrl: './navbar.scss',
 })
 export class Navbar {
-  constructor(private router: Router, public store: StoreService) {}
+  constructor(
+    private router: Router,
+    public store: StoreService,
+    public auth: AuthService
+  ) {}
+
   isScrolled = false;
   menuOpen = false;
   showLoginModal = false;
@@ -31,7 +37,7 @@ export class Navbar {
   }
 
   openLoginModal(): void {
-    this.closeMenu(); // Cierra el menú móvil si está abierto
+    this.closeMenu();
     this.showLoginModal = true;
   }
 
@@ -39,17 +45,13 @@ export class Navbar {
     this.showLoginModal = false;
   }
 
-  handleLogin(credentials: { email: string; password: string }): void {
-    const loggedIn = this.store.login(credentials.email, credentials.password);
-    if (!loggedIn) {
-      return;
-    }
+  handleLogin(_credentials: { email: string; password: string; role?: string }): void {
     this.closeMenu();
-    this.router.navigate(['/usuario/dashboard']);
   }
 
   handleLogout(): void {
     this.store.logout();
+    this.auth.logout();
     this.closeMenu();
     this.router.navigate(['/web']);
   }

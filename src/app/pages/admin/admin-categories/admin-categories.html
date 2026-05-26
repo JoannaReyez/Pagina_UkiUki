@@ -1,0 +1,77 @@
+<section class="section-page">
+  <div class="hero-card">
+    <div>
+      <p class="eyebrow">Administrador</p>
+      <h1>Categorías</h1>
+      <p>Organiza el catálogo con estilo pastel y administra categorías de forma sencilla.</p>
+    </div>
+    <button class="create-btn" type="button" (click)="openCreateModal()">+ Nueva categoría</button>
+  </div>
+
+  <div class="categories-grid">
+    <article class="category-card" *ngFor="let category of store.inventoryCategories()">
+      <div class="category-top">
+        <div>
+          <span class="category-label">Categoría</span>
+          <h2>{{ category.name }}</h2>
+        </div>
+        <span class="status-pill" [class.inactive]="!category.active">
+          {{ category.active ? 'Activa' : 'Inactiva' }}
+        </span>
+      </div>
+
+      <p class="category-description">{{ category.description }}</p>
+
+      <div class="category-footer">
+        <div class="product-count">
+          <strong>{{ category.productsCount }}</strong>
+          <small>productos</small>
+        </div>
+        <div class="card-actions">
+          <button type="button" class="edit-btn" (click)="startEdit(category)">Editar</button>
+          <button type="button" class="delete-btn" (click)="remove(category.id)">Eliminar</button>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div>
+        <span class="modal-badge">Categoría</span>
+        <h2>{{ editingId ? 'Editar categoría' : 'Nueva categoría' }}</h2>
+        <p>Completa el formulario y guarda para agregar la categoría.</p>
+      </div>
+      <button class="close-btn" type="button" (click)="closeModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <label>
+        <span>Nombre</span>
+        <input [(ngModel)]="form.name" type="text" placeholder="Ej. Snacks" />
+      </label>
+
+      <label>
+        <span>Descripción</span>
+        <textarea [(ngModel)]="form.description" rows="4" placeholder="Describe la categoría..."></textarea>
+      </label>
+
+      <label>
+        <span>Productos asociados</span>
+        <input [(ngModel)]="form.productsCount" type="number" min="0" />
+      </label>
+
+      <label class="toggle-row">
+        <input [(ngModel)]="form.active" type="checkbox" />
+        Activa
+      </label>
+    </div>
+
+    <div class="modal-actions">
+      <button class="cancel-btn" type="button" (click)="closeModal()">Cancelar</button>
+      <button class="save-btn" type="button" (click)="save()">{{ editingId ? 'Guardar cambios' : 'Crear categoría' }}</button>
+    </div>
+  </div>
+</div>

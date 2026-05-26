@@ -109,8 +109,8 @@
   --radius-lg: 24px;
   --radius-xl: 32px;
   --radius-full: 999px;
-  --font-display: 'Syne', sans-serif;
-  --font-body: 'DM Sans', sans-serif;
+  --font-display: 'Syne', 'DM Sans', sans-serif;
+  --font-body: 'DM Sans', 'Syne', sans-serif;
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -130,7 +130,7 @@ html {
 }
 
 body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-body);
   color: var(--text);
   background: var(--white);
   overflow-x: hidden;

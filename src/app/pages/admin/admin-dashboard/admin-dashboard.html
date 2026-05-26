@@ -1,0 +1,262 @@
+﻿<section class="dashboard-page">
+  <div class="dashboard-hero">
+    <div>
+      <span class="eyebrow">Dashboard</span>
+      <h1>Bienvenida, {{ userName }}</h1>
+      <p class="hero-copy">Visualiza el inventario, pedidos y stock con datos recientes para tomar decisiones rápidas.</p>
+    </div>
+
+    <div class="hero-actions">
+      <div class="date-chip">
+        <i class="bi bi-calendar3"></i>
+        <span>12 May 2024 - 12 Jun 2024</span>
+        <i class="bi bi-chevron-down"></i>
+      </div>
+      <button type="button" class="btn-primary"><i class="bi bi-plus-lg"></i> Agregar producto</button>
+    </div>
+  </div>
+
+  <div class="metric-grid">
+    <article class="metric-card metric-pink">
+      <div class="metric-copy">
+        <span class="metric-label">Productos</span>
+        <strong class="metric-value">{{ store.dashboardMetrics[0]?.value || '0' }}</strong>
+        <small class="metric-note">Inventario activo</small>
+      </div>
+      <div class="metric-icon"><i class="bi bi-box-seam"></i></div>
+    </article>
+
+    <article class="metric-card metric-yellow">
+      <div class="metric-copy">
+        <span class="metric-label">Stock total</span>
+        <strong class="metric-value">1,248</strong>
+        <small class="metric-note">Unidades disponibles</small>
+      </div>
+      <div class="metric-icon"><i class="bi bi-stack"></i></div>
+    </article>
+
+    <article class="metric-card metric-green">
+      <div class="metric-copy">
+        <span class="metric-label">Categorías</span>
+        <strong class="metric-value">{{ store.dashboardMetrics[2]?.value || '0' }}</strong>
+        <small class="metric-note">Organización del catálogo</small>
+      </div>
+      <div class="metric-icon"><i class="bi bi-tags"></i></div>
+    </article>
+
+    <article class="metric-card metric-violet">
+      <div class="metric-copy">
+        <span class="metric-label">Proveedores</span>
+        <strong class="metric-value">8</strong>
+        <small class="metric-note">Socios activos</small>
+      </div>
+      <div class="metric-icon"><i class="bi bi-people"></i></div>
+    </article>
+  </div>
+
+  <div class="content-grid">
+    <article class="panel chart-panel modern-chart-panel">
+  <div class="panel-head modern-head">
+    <div>
+      <span class="chart-badge">Analytics</span>
+      <h2>Stock semanal del mes</h2>
+      <p>Monitoreo del inventario en tiempo real</p>
+    </div>
+
+    <div class="chart-info-card">
+      <strong>{{ stockHealthSignal().totalStock }}</strong>
+      <span>Unidades disponibles</span>
+    </div>
+  </div>
+
+  <ng-container *ngIf="weeklyStockTrendSignal() as trend">
+
+    <div class="modern-chart-wrapper">
+
+      <!-- EJE Y -->
+      <div class="chart-y-axis">
+        <span>100%</span>
+        <span>80%</span>
+        <span>60%</span>
+        <span>40%</span>
+        <span>20%</span>
+      </div>
+
+      <!-- GRAFICA -->
+      <div class="chart-container">
+
+        <svg viewBox="0 0 800 320" class="modern-chart-svg">
+
+          <defs>
+            <linearGradient id="modernGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.45"/>
+              <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"/>
+            </linearGradient>
+
+            <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#ec4899"/>
+              <stop offset="50%" stop-color="#8b5cf6"/>
+              <stop offset="100%" stop-color="#3b82f6"/>
+            </linearGradient>
+          </defs>
+
+          <!-- GRID -->
+          <g class="grid-lines">
+            <line x1="60" y1="40" x2="760" y2="40"></line>
+            <line x1="60" y1="90" x2="760" y2="90"></line>
+            <line x1="60" y1="140" x2="760" y2="140"></line>
+            <line x1="60" y1="190" x2="760" y2="190"></line>
+            <line x1="60" y1="240" x2="760" y2="240"></line>
+          </g>
+
+          <!-- AREA -->
+          <path
+            [attr.d]="trend.areaPath"
+            fill="url(#modernGradient)">
+          </path>
+
+          <!-- LINEA -->
+          <path
+            [attr.d]="trend.smoothPath"
+            class="chart-line">
+          </path>
+
+          <!-- PUNTOS -->
+          <g *ngFor="let point of trend.points">
+
+            <circle
+              class="point-glow"
+              [attr.cx]="point.x"
+              [attr.cy]="point.y"
+              r="14">
+            </circle>
+
+            <circle
+              class="point-core"
+              [attr.cx]="point.x"
+              [attr.cy]="point.y"
+              r="6">
+            </circle>
+
+            <text
+              class="point-value"
+              [attr.x]="point.x"
+              [attr.y]="point.y - 18">
+              {{ point.value }}%
+            </text>
+
+          </g>
+
+        </svg>
+
+        <!-- SEMANAS -->
+        <div class="week-labels">
+          <div *ngFor="let point of trend.points">
+            {{ point.label }}
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="modern-stats-grid">
+
+      <div class="modern-stat-card">
+        <strong>{{ trend.points[0].value }}%</strong>
+        <span>Semana inicial</span>
+      </div>
+
+      <div class="modern-stat-card">
+        <strong>{{ trend.points[trend.points.length - 1].value }}%</strong>
+        <span>Semana actual</span>
+      </div>
+
+      <div class="modern-stat-card">
+        <strong>{{ trend.overallChange }}%</strong>
+        <span>Crecimiento</span>
+      </div>
+
+      <div class="modern-stat-card">
+        <strong>{{ stockHealthSignal().lowStock }}</strong>
+        <span>Stock crítico</span>
+      </div>
+
+    </div>
+
+  </ng-container>
+</article>
+
+    <article class="panel sales-panel">
+      <div class="panel-head">
+        <div>
+          <h2>Más vendidos</h2>
+          <p>Productos y categorías con más salidas</p>
+        </div>
+        <a routerLink="/admin/productos" class="link-action">Ver todos</a>
+      </div>
+
+      <ng-container *ngIf="salesOverviewSignal() as overview">
+        <div class="sales-summary">
+          <div class="sales-highlight">
+            <span>Más vendido</span>
+            <strong>{{ overview.topProduct.name }}</strong>
+            <small>{{ overview.topProduct.value }} unidades · {{ overview.topProduct.category }}</small>
+          </div>
+          <div class="sales-highlight muted">
+            <span>Mejor categoría</span>
+            <strong>{{ overview.topCategory.name }}</strong>
+            <small>{{ overview.topCategory.value }} unidades vendidas</small>
+          </div>
+        </div>
+
+        <div class="sales-grid">
+          <section class="sales-block">
+            <div class="sales-block-head">
+              <strong>Productos</strong>
+              <span>{{ overview.totalSold }} salidas registradas</span>
+            </div>
+
+            <ng-container *ngIf="topProductsSignal() as products">
+              <div class="ranking-list">
+                <div class="ranking-row" *ngFor="let item of products">
+                  <div class="ranking-copy">
+                    <strong>{{ item.name }}</strong>
+                    <small>{{ item.category }}</small>
+                  </div>
+                  <div class="ranking-track">
+                    <div class="ranking-fill ranking-fill-pink" [style.width.%]="item.width"></div>
+                  </div>
+                  <div class="ranking-value">{{ item.value }} u</div>
+                </div>
+              </div>
+            </ng-container>
+          </section>
+
+          <section class="sales-block">
+            <div class="sales-block-head">
+              <strong>Categorías</strong>
+              <span>Comparativo por salidas</span>
+            </div>
+
+            <ng-container *ngIf="topCategoriesSignal() as categories">
+              <div class="ranking-list">
+                <div class="ranking-row" *ngFor="let item of categories">
+                  <div class="ranking-copy">
+                    <strong>{{ item.name }}</strong>
+                    <small>Categoría de venta</small>
+                  </div>
+                  <div class="ranking-track">
+                    <div class="ranking-fill ranking-fill-violet" [style.width.%]="item.width"></div>
+                  </div>
+                  <div class="ranking-value">{{ item.value }} u</div>
+                </div>
+              </div>
+            </ng-container>
+          </section>
+        </div>
+      </ng-container>
+    </article>
+  </div>
+
+</section>

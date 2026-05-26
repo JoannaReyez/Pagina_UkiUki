@@ -3,149 +3,329 @@
 
 <!-- Login Modal -->
 @if (showLoginModal) {
-  <app-login-modal 
-    (close)="closeLoginModal()" 
+  <app-login-modal
+    (close)="closeLoginModal()"
     (login)="handleLogin($event)"
   ></app-login-modal>
 }
 
-<!-- PRODUCTOS HERO -->
-<section class="products-hero">
-  <div class="hero-bg-shapes">
-    <div class="shape shape-1"></div>
-    <div class="shape shape-2"></div>
-    <div class="shape shape-3"></div>
-  </div>
-  <div class="container">
-    <div class="products-hero-content">
-      <div class="section-tag">
-        <i class="bi bi-box-seam"></i>
-        <span>Nuestros Productos</span>
-      </div>
-      <h1>Productos <span class="gradient-text">Premium</span></h1>
-      <p>Descubre nuestra colección de productos diseñados para superar tus expectativas.</p>
+<main class="products-page">
+  <!-- HERO -->
+  <section class="products-hero">
+    <div class="hero-bg" aria-hidden="true">
+      <div class="hero-grid"></div>
+      <div class="hero-noise"></div>
+      <div class="hero-blob hero-blob-1"></div>
+      <div class="hero-blob hero-blob-2"></div>
+      <div class="hero-blob hero-blob-3"></div>
+      <div class="hero-blob hero-blob-4"></div>
+      <div class="hero-shine hero-shine-1"></div>
+      <div class="hero-shine hero-shine-2"></div>
+      <div class="hero-orb hero-orb-1"></div>
+      <div class="hero-orb hero-orb-2"></div>
+      <div class="hero-orb hero-orb-3"></div>
+      <div class="hero-orb hero-orb-4"></div>
+      <div class="hero-orb hero-orb-5"></div>
+      <div class="hero-orb hero-orb-6"></div>
+      <div class="hero-bubble hero-bubble-1"></div>
+      <div class="hero-bubble hero-bubble-2"></div>
+      <div class="hero-bubble hero-bubble-3"></div>
+      <div class="hero-bubble hero-bubble-4"></div>
+      <div class="hero-bubble hero-bubble-5"></div>
+      <div class="hero-bubble hero-bubble-6"></div>
+      <div class="hero-particle hero-particle-1"></div>
+      <div class="hero-particle hero-particle-2"></div>
+      <div class="hero-particle hero-particle-3"></div>
+      <div class="hero-particle hero-particle-4"></div>
+      <div class="hero-particle hero-particle-5"></div>
+      <div class="hero-particle hero-particle-6"></div>
     </div>
-  </div>
-</section>
 
-<!-- FILTROS -->
-<section class="filters-section">
-  <div class="container">
-    <div class="filters-wrapper">
-      <div class="filter-tabs">
-        <button
-          *ngFor="let category of categories"
-          class="filter-btn"
-          [class.active]="activeCategory === category.id"
-          (click)="filterByCategory(category.id)">
-          <i [class]="'bi ' + category.icon"></i>
-          {{ category.name }}
-        </button>
-      </div>
-      <div class="search-box">
-        <i class="bi bi-search"></i>
-        <input
-          type="text"
-          placeholder="Buscar productos..."
-          [(ngModel)]="searchTerm"
-          (input)="onSearch()">
-      </div>
-    </div>
-  </div>
-</section>
+    <div class="container hero-layout">
+      <div class="hero-copy">
+        <div class="section-tag hero-tag">
+          <i class="bi bi-stars"></i>
+          <span>Productos premium</span>
+        </div>
 
-<!-- PRODUCTOS GRID -->
-<section class="products-section">
-  <div class="container">
-    <div class="products-grid">
-      <div class="product-card" *ngFor="let product of filteredProducts; let i = index" [style.animation-delay]="i * 50 + 'ms'">
-        <div class="product-badge" *ngIf="product.badge">{{ product.badge }}</div>
-        <div class="product-image">
-          <div class="image-placeholder">
-            <i class="bi bi-image"></i>
-            <span>{{ product.imageText }}</span>
+        <h1>
+          Un catálogo <span class="gradient-text">vivo</span>,
+          <br />
+          elegante y futurista
+        </h1>
+
+        <p class="hero-lead">
+          Una experiencia visual premium con glassmorphism, profundidad, brillo suave y movimiento continuo para que la sección de productos se sienta como una marca de alto nivel.
+        </p>
+
+        <p class="hero-copy-note">
+          Inspirado en Stripe, Linear, Apple y Webflow, pero con una identidad cálida, colorida y más inmersiva.
+        </p>
+
+        <div class="hero-actions">
+          <button type="button" class="btn-primary" (click)="toggleCart()">
+            <i class="bi bi-bag-heart"></i>
+            Ver carrito
+          </button>
+          <a href="https://wa.me/521234567890" target="_blank" class="btn-secondary">
+            <i class="bi bi-whatsapp"></i>
+            Hablar por WhatsApp
+          </a>
+        </div>
+
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <strong>{{ filteredProducts.length }}</strong>
+            <span>productos activos</span>
           </div>
-          <div class="product-actions">
-            <button class="action-btn" (click)="quickView(product)" title="Vista rápida">
-              <i class="bi bi-eye"></i>
-            </button>
-            <button class="action-btn" (click)="addToCart(product)" title="Agregar al carrito">
-              <i class="bi bi-cart-plus"></i>
-            </button>
+          <div class="hero-stat">
+            <strong>Glass</strong>
+            <span>UI premium</span>
+          </div>
+          <div class="hero-stat">
+            <strong>Soft glow</strong>
+            <span>animación fluida</span>
           </div>
         </div>
-        <div class="product-info">
-          <div class="product-category">{{ product.category }}</div>
-          <h3>{{ product.name }}</h3>
-          <p>{{ product.description }}</p>
-          <div class="product-price">
-            <span class="current-price">{{ product.price }}</span>
-            <span class="old-price" *ngIf="product.oldPrice">{{ product.oldPrice }}</span>
+      </div>
+
+      <div class="hero-visual" aria-hidden="true">
+        <div class="hero-core">
+          <div class="hero-core-ring"></div>
+          <div class="hero-core-card">
+            <span>Luxury Product Lab</span>
+            <strong>Explora cada detalle</strong>
+            <p>Movimiento suave, color, profundidad y una presentación más editorial.</p>
           </div>
-          <div class="product-rating" *ngIf="product.rating">
-            <i class="bi bi-star-fill" *ngFor="let star of getRatingStars(product.rating)"></i>
-            <i class="bi bi-star" *ngFor="let star of getEmptyStars(product.rating)"></i>
-            <span>({{ product.reviews }})</span>
+        </div>
+
+        <figure class="floating-product floating-product-1">
+          <div class="floating-frame">
+            <img src="/dulce.png" alt="" />
           </div>
-          <button class="btn-add-cart" (click)="addToCart(product)">
-            <i class="bi bi-cart-check"></i>
-            Agregar al carrito
+        </figure>
+        <figure class="floating-product floating-product-2">
+          <div class="floating-frame">
+            <img src="/dulce1.png" alt="" />
+          </div>
+        </figure>
+        <figure class="floating-product floating-product-3">
+          <div class="floating-frame">
+            <img src="/dulce3.png" alt="" />
+          </div>
+        </figure>
+        <figure class="floating-product floating-product-4">
+          <div class="floating-frame">
+            <img src="/dulce4.png" alt="" />
+          </div>
+        </figure>
+        <figure class="floating-product floating-product-5">
+          <div class="floating-frame">
+            <img src="/dulce5.png" alt="" />
+          </div>
+        </figure>
+        <figure class="floating-product floating-product-6">
+          <div class="floating-frame">
+            <img src="/dulce6.png" alt="" />
+          </div>
+        </figure>
+        <figure class="floating-product floating-product-7">
+          <div class="floating-frame">
+            <img src="/dulce7.png" alt="" />
+          </div>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- FILTROS -->
+  <section class="filters-section">
+    <div class="container">
+      <div class="filters-shell">
+        <div class="filters-topline">
+          <div>
+            <div class="filters-label">Colección</div>
+            <h2>Filtra y descubre</h2>
+          </div>
+          <div class="filters-count">
+            <i class="bi bi-grid-1x2-fill"></i>
+            <span>{{ filteredProducts.length }} resultados</span>
+          </div>
+        </div>
+
+        <div class="filters-row">
+          <div class="filter-tabs">
+            <button
+              *ngFor="let category of categories"
+              type="button"
+              class="filter-btn"
+              [class.active]="activeCategory === category.id"
+              (click)="filterByCategory(category.id)">
+              <i [class]="'bi ' + category.icon"></i>
+              <span>{{ category.name }}</span>
+            </button>
+          </div>
+
+          <label class="search-box">
+            <i class="bi bi-search"></i>
+            <input
+              type="text"
+              placeholder="Buscar productos, promos o badges..."
+              [(ngModel)]="searchTerm"
+              (input)="onSearch()">
+          </label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTOS GRID -->
+  <section class="products-section">
+    <div class="container">
+      <div class="products-grid" *ngIf="filteredProducts.length > 0; else emptyState">
+        <article
+          class="product-card"
+          *ngFor="let product of filteredProducts; let i = index"
+          [style.animation-delay]="i * 80 + 'ms'"
+          [class.featured]="i % 4 === 0">
+          <div class="card-glow"></div>
+          <div class="product-badge" *ngIf="product.badge">{{ product.badge }}</div>
+
+          <div class="product-media">
+            <div class="product-media-backdrop"></div>
+            <img [src]="product.image" [alt]="product.name" />
+            <div class="product-media-orb orb-1"></div>
+            <div class="product-media-orb orb-2"></div>
+            <div class="product-media-orb orb-3"></div>
+            <div class="product-actions">
+              <button type="button" class="action-btn" (click)="quickView(product)" title="Vista rápida">
+                <i class="bi bi-eye"></i>
+              </button>
+              <button type="button" class="action-btn" (click)="addToCart(product)" title="Agregar al carrito">
+                <i class="bi bi-cart-plus"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="product-info">
+            <div class="product-meta-row">
+              <span class="product-category">{{ categoryLabel(product.category) }}</span>
+              <span class="product-chip" *ngIf="product.badge">{{ product.badge }}</span>
+            </div>
+
+            <h3>{{ product.name }}</h3>
+            <p>{{ product.description }}</p>
+
+            <div class="product-price">
+              <div>
+                <span class="price-label">Desde</span>
+                <span class="current-price">{{ product.price }}</span>
+              </div>
+              <span class="old-price" *ngIf="product.oldPrice">{{ product.oldPrice }}</span>
+            </div>
+
+            <div class="product-rating" *ngIf="product.rating">
+              <div class="rating-stars">
+                <i class="bi bi-star-fill" *ngFor="let star of getRatingStars(product.rating)"></i>
+                <i class="bi bi-star" *ngFor="let star of getEmptyStars(product.rating)"></i>
+              </div>
+              <span>({{ product.reviews }})</span>
+            </div>
+
+            <div class="feature-chips" *ngIf="product.features?.length">
+              <span *ngFor="let feature of (product.features || []).slice(0, 2)">{{ feature }}</span>
+            </div>
+
+            <div class="card-footer">
+              <button type="button" class="btn-add-cart" (click)="addToCart(product)">
+                <i class="bi bi-cart-check"></i>
+                Agregar al carrito
+              </button>
+              <button type="button" class="btn-quick-view" (click)="quickView(product)">
+                Vista rápida
+              </button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <ng-template #emptyState>
+        <div class="empty-state">
+          <div class="empty-orb"></div>
+          <i class="bi bi-search"></i>
+          <h3>No se encontraron productos</h3>
+          <p>Prueba con otra categoría o ajusta el buscador para ver más opciones.</p>
+          <button type="button" class="btn-reset" (click)="resetFilters()">
+            <i class="bi bi-arrow-repeat"></i>
+            Resetear filtros
           </button>
         </div>
-      </div>
+      </ng-template>
     </div>
-
-    <div class="empty-state" *ngIf="filteredProducts.length === 0">
-      <i class="bi bi-search"></i>
-      <h3>No se encontraron productos</h3>
-      <p>Intenta con otros términos de búsqueda o categorías</p>
-      <button class="btn-reset" (click)="resetFilters()">
-        <i class="bi bi-arrow-repeat"></i>
-        Resetear filtros
-      </button>
-    </div>
-  </div>
-</section>
+  </section>
+</main>
 
 <!-- MODAL QUICK VIEW -->
 <div class="modal-overlay" *ngIf="selectedProduct" (click)="closeModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
-    <button class="modal-close" (click)="closeModal()">
+    <button type="button" class="modal-close" (click)="closeModal()">
       <i class="bi bi-x-lg"></i>
     </button>
-    <div class="modal-grid">
-      <div class="modal-image">
-        <div class="image-placeholder large">
-          <i class="bi bi-image"></i>
-          <span>{{ selectedProduct.imageText }}</span>
+
+    <div class="modal-layout">
+      <div class="modal-visual">
+        <div class="modal-image-shell">
+          <div class="modal-image-backdrop"></div>
+          <img [src]="selectedProduct.image" [alt]="selectedProduct.name" />
+          <div class="modal-badge" *ngIf="selectedProduct.badge">{{ selectedProduct.badge }}</div>
         </div>
       </div>
+
       <div class="modal-info">
-        <div class="product-category">{{ selectedProduct.category }}</div>
+        <div class="product-meta-row">
+          <span class="product-category">{{ categoryLabel(selectedProduct.category) }}</span>
+          <span class="product-chip" *ngIf="selectedProduct.imageText">{{ selectedProduct.imageText }}</span>
+        </div>
+
         <h2>{{ selectedProduct.name }}</h2>
+
         <div class="product-price">
-          <span class="current-price">{{ selectedProduct.price }}</span>
+          <div>
+            <span class="price-label">Precio</span>
+            <span class="current-price">{{ selectedProduct.price }}</span>
+          </div>
           <span class="old-price" *ngIf="selectedProduct.oldPrice">{{ selectedProduct.oldPrice }}</span>
         </div>
+
         <div class="product-rating" *ngIf="selectedProduct.rating">
-          <i class="bi bi-star-fill" *ngFor="let star of getRatingStars(selectedProduct.rating)"></i>
-          <i class="bi bi-star" *ngFor="let star of getEmptyStars(selectedProduct.rating)"></i>
+          <div class="rating-stars">
+            <i class="bi bi-star-fill" *ngFor="let star of getRatingStars(selectedProduct.rating)"></i>
+            <i class="bi bi-star" *ngFor="let star of getEmptyStars(selectedProduct.rating)"></i>
+          </div>
           <span>({{ selectedProduct.reviews }} reseñas)</span>
         </div>
+
         <p class="product-description">{{ selectedProduct.fullDescription || selectedProduct.description }}</p>
-        <div class="product-features" *ngIf="selectedProduct.features">
-          <h4>Características:</h4>
+
+        <div class="product-features" *ngIf="selectedProduct.features?.length">
+          <h4>Características destacadas</h4>
           <ul>
             <li *ngFor="let feature of selectedProduct.features">
-              <i class="bi bi-check-circle-fill"></i>
-              {{ feature }}
+              <i class="bi bi-check2-circle"></i>
+              <span>{{ feature }}</span>
             </li>
           </ul>
         </div>
-        <button class="btn-add-cart large" (click)="addToCart(selectedProduct); closeModal()">
-          <i class="bi bi-cart-check"></i>
-          Agregar al carrito
-        </button>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-add-cart large" (click)="addToCart(selectedProduct); closeModal()">
+            <i class="bi bi-cart-check"></i>
+            Agregar al carrito
+          </button>
+          <button type="button" class="btn-secondary modal-secondary" (click)="closeModal()">
+            Seguir explorando
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -153,58 +333,66 @@
 
 <!-- CARRITO SIDEBAR -->
 <div class="cart-overlay" [class.open]="cartOpen" (click)="closeCart()"></div>
-<div class="cart-sidebar" [class.open]="cartOpen">
+<aside class="cart-sidebar" [class.open]="cartOpen">
   <div class="cart-header">
-    <h3><i class="bi bi-bag"></i> Mi Carrito <span *ngIf="cartCount > 0">({{ cartCount }})</span></h3>
-    <button class="cart-close" (click)="closeCart()">
+    <div>
+      <span class="cart-kicker">Luxury cart</span>
+      <h3>
+        <i class="bi bi-bag"></i>
+        Mi Carrito
+        <span *ngIf="cartCount > 0">({{ cartCount }})</span>
+      </h3>
+    </div>
+    <button type="button" class="cart-close" (click)="closeCart()">
       <i class="bi bi-x-lg"></i>
     </button>
   </div>
 
-  <!-- Carrito vacío -->
   <div class="cart-empty" *ngIf="cartItems.length === 0">
+    <div class="cart-empty-orb"></div>
     <i class="bi bi-bag-x"></i>
     <p>Tu carrito está vacío</p>
-    <span>Agrega productos para continuar</span>
+    <span>Agrega productos para activar el checkout premium.</span>
   </div>
 
-  <!-- Lista de productos -->
   <div class="cart-items" *ngIf="cartItems.length > 0">
-    <div class="cart-item" *ngFor="let item of cartItems; let i = index">
+    <article class="cart-item" *ngFor="let item of cartItems; let i = index">
       <div class="cart-item-img">
-        <i class="bi bi-image"></i>
+        <img [src]="item.product.image" [alt]="item.product.name" />
       </div>
+
       <div class="cart-item-info">
         <h4>{{ item.product.name }}</h4>
         <span class="cart-item-price">{{ item.product.price }}</span>
+
         <div class="cart-item-qty">
-          <button (click)="decreaseQty(i)"><i class="bi bi-dash"></i></button>
+          <button type="button" (click)="decreaseQty(i)"><i class="bi bi-dash"></i></button>
           <span>{{ item.quantity }}</span>
-          <button (click)="increaseQty(i)"><i class="bi bi-plus"></i></button>
+          <button type="button" (click)="increaseQty(i)"><i class="bi bi-plus"></i></button>
         </div>
       </div>
-      <button class="cart-item-remove" (click)="removeFromCart(i)">
+
+      <button type="button" class="cart-item-remove" (click)="removeFromCart(i)">
         <i class="bi bi-trash3"></i>
       </button>
-    </div>
+    </article>
   </div>
 
-  <!-- Footer carrito -->
   <div class="cart-footer" *ngIf="cartItems.length > 0">
     <div class="cart-subtotal">
       <span>Subtotal</span>
       <strong>${{ cartTotal }}</strong>
     </div>
-    <button class="btn-checkout" (click)="checkout()">
+    <button type="button" class="btn-checkout" (click)="checkout()">
       <i class="bi bi-whatsapp"></i>
       Pedir por WhatsApp
     </button>
-    <button class="btn-clear" (click)="clearCart()">
+    <button type="button" class="btn-clear" (click)="clearCart()">
       <i class="bi bi-trash3"></i>
       Vaciar carrito
     </button>
   </div>
-</div>
+</aside>
 
 <!-- TOAST -->
 <div class="toast-notification" [class.show]="showToast">
@@ -215,21 +403,22 @@
 <!-- FOOTER -->
 <app-footer></app-footer>
 
-<!-- BOTÓN FLOTANTE DINÁMICO: CARRITO CON ANIMACIÓN O WHATSAPP -->
-<a 
-  *ngIf="cartCount === 0" 
-  href="https://wa.me/521234567890" 
-  target="_blank" 
-  class="whatsapp-float" 
+<!-- BOTONES FLOTANTES -->
+<a
+  *ngIf="cartCount === 0"
+  href="https://wa.me/521234567890"
+  target="_blank"
+  class="whatsapp-float"
   [class.show]="isScrolled">
   <i class="bi bi-whatsapp"></i>
   <span class="wsp-tooltip">¡Escríbenos!</span>
 </a>
 
-<button 
-  *ngIf="cartCount > 0" 
-  class="cart-float-btn" 
-  [class.bounce]="cartBounce" 
+<button
+  *ngIf="cartCount > 0"
+  type="button"
+  class="cart-float-btn"
+  [class.bounce]="cartBounce"
   (click)="toggleCart()"
   title="Ver carrito">
   <i class="bi bi-bag"></i>

@@ -456,6 +456,10 @@
     gap: 16px;
   }
 
+  .footer-panels {
+    grid-template-columns: 1fr 1fr;
+  }
+
   .footer-about {
     max-width: 100%;
   }
@@ -464,6 +468,11 @@
 @media (max-width: 768px) {
   .footer {
     padding-top: 22px;
+  }
+
+  .footer-bg .shape,
+  .footer-bg .bubble {
+    display: none;
   }
 
   .footer-shell {
@@ -482,8 +491,59 @@
     padding: 12px;
   }
 
+  .footer-about h2 {
+    font-size: clamp(1.55rem, 8vw, 2.1rem);
+  }
+
+  .footer-intro,
+  .footer-body {
+    font-size: 0.82rem;
+  }
+
+  .social-link {
+    width: 32px;
+    height: 32px;
+  }
+
   .footer-bottom-inner {
     flex-direction: column;
     text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding-top: 18px;
+  }
+
+  .container {
+    padding: 0 16px;
+  }
+
+  .footer-panels {
+    gap: 10px;
+  }
+
+  .footer-card {
+    padding: 10px;
+  }
+
+  .footer-card h4 {
+    font-size: 0.72rem;
+    margin-bottom: 8px;
+  }
+
+  .footer-card a,
+  .footer-card .schedule li,
+  .contact-list li {
+    font-size: 0.78rem;
+  }
+
+  .footer-bottom {
+    padding: 8px 0 10px;
+  }
+
+  .footer-bottom p {
+    font-size: 0.68rem;
   }
 }

@@ -58,11 +58,11 @@ export const inventoryCategories: InventoryCategory[] = [
 ];
 
 export const inventoryProducts: InventoryProduct[] = [
-  { id: 1, image: '/koro1.png', name: 'Buldak Hot Chicken Ramen', price: 189, stock: 5, description: 'Ramen picante premium', category: 'Snacks', status: 'Bajo stock' },
-  { id: 2, image: '/koro2.png', name: 'Melon Soda', price: 89, stock: 6, description: 'Bebida refrescante', category: 'Bebidas', status: 'Bajo stock' },
-  { id: 3, image: '/koro3.png', name: 'Pepero Original', price: 69, stock: 8, description: 'Snack clásico coreano', category: 'Snacks', status: 'Bajo stock' },
-  { id: 4, image: '/koro4.png', name: 'Mochi Box', price: 149, stock: 24, description: 'Caja surtida de mochi', category: 'Promociones', status: 'Activo' },
-  { id: 5, image: '/koro6.png', name: 'Binggrae Milk', price: 54, stock: 36, description: 'Leche saborizada', category: 'Bebidas', status: 'Activo' }
+  { id: 1, image: '/products/buldak-ramen.svg', name: 'Buldak Hot Chicken Ramen', price: 189, stock: 5, description: 'Ramen picante premium', category: 'Snacks', status: 'Bajo stock' },
+  { id: 2, image: '/products/melon-soda.svg', name: 'Melon Soda', price: 89, stock: 6, description: 'Bebida refrescante', category: 'Bebidas', status: 'Bajo stock' },
+  { id: 3, image: '/products/pepero-original.svg', name: 'Pepero Original', price: 69, stock: 8, description: 'Snack clasico coreano', category: 'Snacks', status: 'Bajo stock' },
+  { id: 4, image: '/products/mochi-box.svg', name: 'Mochi Box', price: 149, stock: 24, description: 'Caja surtida de mochi', category: 'Promociones', status: 'Activo' },
+  { id: 5, image: '/products/binggrae-milk.svg', name: 'Binggrae Milk', price: 54, stock: 36, description: 'Leche saborizada', category: 'Bebidas', status: 'Activo' }
 ];
 
 export const inventoryMovements: InventoryMovement[] = [

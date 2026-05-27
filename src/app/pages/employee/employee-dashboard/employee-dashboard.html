@@ -2,38 +2,52 @@
   <div class="hero-panel">
     <div>
       <p class="eyebrow">Empleado</p>
-      <h1>Bienvenido, {{ auth.user()?.name || 'Empleado' }} 👋</h1>
-      <p class="hero-copy">Resumen personal del día con productos vendidos y actividad reciente.</p>
+      <h1>Bienvenido, {{ auth.user()?.name || 'Empleado' }}</h1>
+      <p class="hero-copy">Resumen del dia con ventas, movimientos y productos que necesitan atencion.</p>
     </div>
   </div>
 
   <div class="metric-grid">
-    <app-stat-card label="Productos vendidos" value="31" caption="Hoy" icon="bi-bag-check" accent="pink"></app-stat-card>
-    <app-stat-card label="Total vendido" value="$2,180" caption="Reporte personal" icon="bi-cash-coin" accent="yellow"></app-stat-card>
-    <app-stat-card label="Actividad" value="12" caption="Eventos" icon="bi-clock-history" accent="green"></app-stat-card>
+    <app-stat-card label="Productos vendidos" [value]="outputUnits().toString()" caption="Unidades registradas" icon="bi-bag-check" accent="pink"></app-stat-card>
+    <app-stat-card label="Total vendido" [value]="'$' + estimatedTotal()" caption="Estimado por salidas" icon="bi-cash-coin" accent="yellow"></app-stat-card>
+    <app-stat-card label="Stock bajo" [value]="lowStockProducts().length.toString()" caption="Productos a revisar" icon="bi-exclamation-triangle" accent="green"></app-stat-card>
   </div>
 
   <div class="content-grid">
     <article class="panel">
-      <h2>Actividad reciente</h2>
+      <div class="panel-head">
+        <h2>Actividad reciente</h2>
+        <span>{{ recentMovements().length }} movimientos</span>
+      </div>
       <div class="activity-list">
-        <div class="activity-row" *ngFor="let movement of store.inventoryMovements().slice(0, 4)">
-          <div class="badge">{{ movement.type === 'Entrada' ? '+' : '-' }}</div>
+        <div class="activity-row" *ngFor="let movement of recentMovements()">
+          <div class="badge" [class.in]="movement.type === 'Entrada'">{{ movement.type === 'Entrada' ? '+' : '-' }}</div>
           <div>
             <strong>{{ movement.product }}</strong>
-            <p>{{ movement.reason }}</p>
+            <p>{{ movement.reason }} · {{ movement.quantity }} unidades</p>
           </div>
         </div>
       </div>
     </article>
 
     <article class="panel">
-      <h2>Productos vendidos</h2>
-      <div class="sold-list">
-        <div class="sold-row" *ngFor="let item of store.inventoryProducts().slice(0, 4)">
-          <strong>{{ item.name }}</strong>
+      <div class="panel-head">
+        <h2>Productos por atender</h2>
+        <span>{{ lowStockProducts().length }} alertas</span>
+      </div>
+      <div class="sold-list" *ngIf="lowStockProducts().length > 0">
+        <div class="sold-row" *ngFor="let item of lowStockProducts()">
+          <div>
+            <strong>{{ item.name }}</strong>
+            <p>{{ item.category }}</p>
+          </div>
           <span>Stock: {{ item.stock }}</span>
         </div>
+      </div>
+      <div class="empty-state" *ngIf="lowStockProducts().length === 0">
+        <i class="bi bi-check2-circle"></i>
+        <strong>Inventario estable</strong>
+        <p>No hay productos con stock bajo.</p>
       </div>
     </article>
   </div>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="Leche saborizada">
+  <rect width="240" height="240" rx="42" fill="#eef7ff"/>
+  <path d="M83 47h74l13 36v109c0 11-9 20-20 20H90c-11 0-20-9-20-20V83z" fill="#fff"/>
+  <path d="M83 47h74l13 36H70z" fill="#f8c4d7"/>
+  <path d="M77 103h86v67H77z" fill="#ffe4ef"/>
+  <circle cx="120" cy="136" r="25" fill="#f79ab8"/>
+  <path d="M108 136c8-14 21-20 35-21-4 16-14 29-28 36-8 4-13-7-7-15z" fill="#fff6fa"/>
+  <path d="M95 65h50" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+  <path d="M96 186h48" stroke="#8bb8d9" stroke-width="9" stroke-linecap="round"/>
+</svg>

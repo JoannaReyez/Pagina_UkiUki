@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="Pepero original">
+  <rect width="240" height="240" rx="42" fill="#fff7df"/>
+  <rect x="60" y="38" width="120" height="164" rx="22" fill="#f6d24b"/>
+  <rect x="60" y="38" width="120" height="48" rx="22" fill="#6b3f24"/>
+  <path d="M83 115h74" stroke="#6b3f24" stroke-width="11" stroke-linecap="round"/>
+  <path d="M83 139h74" stroke="#6b3f24" stroke-width="11" stroke-linecap="round"/>
+  <path d="M83 163h74" stroke="#6b3f24" stroke-width="11" stroke-linecap="round"/>
+  <rect x="89" y="88" width="12" height="91" rx="6" fill="#e8b95d"/>
+  <rect x="116" y="88" width="12" height="91" rx="6" fill="#e8b95d"/>
+  <rect x="143" y="88" width="12" height="91" rx="6" fill="#e8b95d"/>
+  <path d="M82 64h76" stroke="#fff7df" stroke-width="9" stroke-linecap="round"/>
+</svg>

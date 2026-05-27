@@ -3,26 +3,96 @@
     <div>
       <p class="eyebrow">Empleado</p>
       <h1>Productos</h1>
-      <p>Vista de solo lectura con nombre, stock, precio, descripción y categoría.</p>
+      <p>Consulta el catalogo, revisa existencias y encuentra productos por nombre, categoria o estado.</p>
     </div>
   </div>
 
+  <div class="summary-grid">
+    <article>
+      <span>Resultados</span>
+      <strong>{{ filteredProducts().length }}</strong>
+      <small>Productos visibles</small>
+    </article>
+    <article>
+      <span>Stock listado</span>
+      <strong>{{ totalStock() }}</strong>
+      <small>Unidades disponibles</small>
+    </article>
+    <article>
+      <span>Bajo stock</span>
+      <strong>{{ lowStockCount() }}</strong>
+      <small>Requieren atencion</small>
+    </article>
+  </div>
+
   <article class="panel">
-    <div class="table-head">
-      <h2>Catálogo visible</h2>
-      <span>{{ store.inventoryProducts().length }} productos</span>
+    <div class="toolbar">
+      <label class="search-box">
+        <i class="bi bi-search"></i>
+        <input type="search" placeholder="Buscar producto..." [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" />
+      </label>
+
+      <select [ngModel]="selectedCategory()" (ngModelChange)="selectedCategory.set($event)" aria-label="Filtrar por categoria">
+        <option *ngFor="let category of categories()" [value]="category">{{ category }}</option>
+      </select>
+
+      <select [ngModel]="selectedStatus()" (ngModelChange)="selectedStatus.set($event)" aria-label="Filtrar por estado">
+        <option *ngFor="let status of statuses()" [value]="status">{{ status }}</option>
+      </select>
+
+      <button type="button" class="toggle-btn" [class.active]="lowStockOnly()" (click)="lowStockOnly.set(!lowStockOnly())">
+        <i class="bi bi-exclamation-triangle"></i>
+        Bajo stock
+      </button>
+
+      <button type="button" class="clear-btn" (click)="clearFilters()">Limpiar</button>
     </div>
-    <div class="product-list">
-      <div class="product-row" *ngFor="let product of store.inventoryProducts()">
+
+    <div class="table-head">
+      <h2>Catalogo visible</h2>
+      <span>{{ filteredProducts().length }} de {{ store.inventoryProducts().length }} productos</span>
+    </div>
+
+    <div class="sale-alert" *ngIf="saleMessage()">
+      <i class="bi bi-check2-circle"></i>
+      <span>{{ saleMessage() }}</span>
+    </div>
+
+    <div class="empty-state" *ngIf="filteredProducts().length === 0">
+      <i class="bi bi-search"></i>
+      <strong>Sin resultados</strong>
+      <p>Prueba con otro nombre, categoria o estado.</p>
+    </div>
+
+    <div class="product-list" *ngIf="filteredProducts().length > 0">
+      <div class="product-row" *ngFor="let product of filteredProducts()">
         <img [src]="product.image" [alt]="product.name" />
         <div class="product-copy">
           <strong>{{ product.name }}</strong>
           <p>{{ product.description }}</p>
+          <div class="tags">
+            <span>{{ product.category }}</span>
+            <span [class.warning]="product.stock <= 10">{{ product.status }}</span>
+          </div>
         </div>
         <div class="product-meta">
-          <span>Categoría: {{ product.category }}</span>
           <span>Stock: {{ product.stock }}</span>
           <strong>${{ product.price }}</strong>
+        </div>
+        <div class="sale-controls">
+          <div class="stepper" [class.disabled]="product.stock === 0">
+            <button type="button" (click)="decreaseQuantity(product)" [disabled]="product.stock === 0 || quantityFor(product.id) <= 1" aria-label="Disminuir cantidad">
+              <i class="bi bi-dash"></i>
+            </button>
+            <input type="number" min="1" [max]="product.stock" [ngModel]="quantityFor(product.id)" (ngModelChange)="setQuantity(product, $event)" [disabled]="product.stock === 0" aria-label="Cantidad a vender" />
+            <button type="button" (click)="increaseQuantity(product)" [disabled]="product.stock === 0 || quantityFor(product.id) >= product.stock" aria-label="Aumentar cantidad">
+              <i class="bi bi-plus"></i>
+            </button>
+          </div>
+          <button type="button" class="sell-btn" (click)="sellProduct(product)" [disabled]="product.stock === 0">
+            <i class="bi bi-bag-check"></i>
+            {{ product.stock === 0 ? 'Agotado' : 'Vender' }}
+          </button>
         </div>
       </div>
     </div>

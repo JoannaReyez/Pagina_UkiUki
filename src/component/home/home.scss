@@ -1933,10 +1933,11 @@
   padding: 120px 0;
 
   background:
-    radial-gradient(circle at 12% 18%, rgba(255, 173, 228, 0.30), transparent 18%),
-    radial-gradient(circle at 85% 15%, rgba(255, 214, 140, 0.22), transparent 22%),
-    radial-gradient(circle at 50% 88%, rgba(180, 132, 255, 0.18), transparent 25%),
-    #ffffff;
+    radial-gradient(circle at 12% 18%, rgba(255, 113, 168, 0.18), transparent 18%),
+    radial-gradient(circle at 85% 15%, rgba(123, 201, 248, 0.20), transparent 22%),
+    radial-gradient(circle at 50% 88%, rgba(37, 211, 102, 0.12), transparent 18%),
+    radial-gradient(circle at 50% 88%, rgba(165, 91, 255, 0.14), transparent 25%),
+    linear-gradient(180deg, #f6ecff 0%, #f7fbff 36%, #ffffff 100%);
 }
 
 // =============================================
@@ -1970,7 +1971,7 @@
 
   background:
     radial-gradient(circle,
-      rgba(143, 255, 158, 0.35),
+      rgba(255, 113, 168, 0.30),
       transparent 70%);
 }
 
@@ -1984,7 +1985,7 @@
 
   background:
     radial-gradient(circle,
-      rgba(255, 196, 104, .28),
+      rgba(123, 201, 248, .28),
       transparent 70%);
 }
 
@@ -1998,7 +1999,21 @@
 
   background:
     radial-gradient(circle,
-      rgba(167, 104, 255, .24),
+      rgba(37, 211, 102, .22),
+      transparent 70%);
+}
+
+.blob-4{
+  width: 240px;
+  height: 240px;
+  right: 12%;
+  bottom: 8%;
+
+  animation-delay: -5s;
+
+  background:
+    radial-gradient(circle,
+      rgba(165, 91, 255, .24),
       transparent 70%);
 }
 
@@ -2028,14 +2043,16 @@
       90deg,
       transparent 0%,
       rgba(255,255,255,.95) 20%,
-      rgba(255,105,180,.9) 45%,
-      rgba(255,183,77,.75) 70%,
+      rgba(255,113,168,.9) 45%,
+      rgba(37,211,102,.62) 62%,
+      rgba(123,201,248,.72) 78%,
       transparent 100%
     );
 
   box-shadow:
-    0 0 18px rgba(255, 105, 180, .18),
-    0 0 30px rgba(255,183,77,.14);
+    0 0 18px rgba(255, 113, 168, .16),
+    0 0 30px rgba(37,211,102,.10),
+    0 0 30px rgba(123,201,248,.12);
 }
 
 
@@ -2051,14 +2068,16 @@
       90deg,
       transparent 0%,
       rgba(255,255,255,.95) 18%,
-      rgba(168,85,247,.9) 42%,
-      rgba(255,105,180,.7) 70%,
+      rgba(165,91,255,.9) 42%,
+      rgba(37,211,102,.56) 62%,
+      rgba(255,113,168,.72) 76%,
       transparent 100%
     );
 
   box-shadow:
-    0 0 18px rgba(168,85,247,.18),
-    0 0 30px rgba(255,105,180,.14);
+    0 0 18px rgba(165,91,255,.16),
+    0 0 30px rgba(37,211,102,.10),
+    0 0 30px rgba(255,113,168,.12);
 }
 
 // =============================================
@@ -2084,10 +2103,11 @@
       background:
         linear-gradient(
           135deg,
-          #7f5cff 0%,
-          #ff93d3 35%,
-          #9a55ff 70%,
-          #ffbf74 100%
+          #ff71a8 0%,
+          #7bc9f8 36%,
+          #25d366 56%,
+          #a55bff 78%,
+          #ffb975 100%
         );
 
       -webkit-background-clip: text;
@@ -2155,15 +2175,15 @@
   background:
     linear-gradient(
       145deg,
-      rgba(255,255,255,.94),
-      rgba(255,244,250,.84)
+      rgba(255,255,255,.92),
+      rgba(242, 250, 245, .84)
     );
 
-  border: 1px solid rgba(255, 175, 223, .34);
+  border: 1px solid rgba(255, 255, 255, .58);
 
   box-shadow:
-    0 24px 60px rgba(255, 160, 220, .14),
-    0 10px 24px rgba(177, 119, 255, .10);
+    0 24px 60px rgba(255, 113, 168, .12),
+    0 10px 24px rgba(123, 201, 248, .10);
 
   transition: .45s ease;
 
@@ -2175,9 +2195,10 @@
     background:
       linear-gradient(
         135deg,
-        rgba(255, 143, 211, .10),
-        rgba(255, 189, 89, .08),
-        rgba(165, 107, 255, .08)
+        rgba(255, 113, 168, .10),
+        rgba(123, 201, 248, .08),
+        rgba(37, 211, 102, .08),
+        rgba(165, 91, 255, .08)
       );
 
     opacity: 0;
@@ -2209,10 +2230,10 @@
     transform: translateY(-10px) scale(1.02);
 
     box-shadow:
-      0 34px 80px rgba(255, 145, 214, .22),
-      0 18px 40px rgba(166, 102, 255, .18);
+      0 34px 80px rgba(255, 113, 168, .18),
+      0 18px 40px rgba(123, 201, 248, .16);
 
-    border-color: rgba(255, 150, 220, .52);
+    border-color: rgba(255, 255, 255, .72);
 
     &::before{
       opacity: 1;
@@ -2233,14 +2254,14 @@
     linear-gradient(
       145deg,
       rgba(255,255,255,.98),
-      rgba(255,236,247,.92)
+      rgba(242, 250, 245,.90)
     );
 
-  border: 1px solid rgba(255, 115, 196, .38);
+  border: 1px solid rgba(255, 113, 168, .34);
 
   box-shadow:
-    0 30px 80px rgba(255, 125, 195, .20),
-    0 18px 40px rgba(176, 95, 255, .16);
+    0 30px 80px rgba(255, 113, 168, .18),
+    0 18px 40px rgba(123, 201, 248, .14);
 }
 
 // =============================================
@@ -2264,9 +2285,10 @@
   background:
     linear-gradient(
       135deg,
-      rgba(255, 136, 207, .24),
-      rgba(255, 192, 94, .18),
-      rgba(160, 106, 255, .18)
+      rgba(255, 113, 168, .22),
+      rgba(123, 201, 248, .18),
+      rgba(37, 211, 102, .18),
+      rgba(165, 91, 255, .18)
     );
 
   border: 1px solid rgba(255,255,255,.55);
@@ -2294,28 +2316,28 @@
   font-weight: 800;
   letter-spacing: .06em;
 
-  color: #5a275f;
+  color: #4c2b62;
 
   background:
     linear-gradient(
       135deg,
-      rgba(255, 229, 244, .95),
-      rgba(255, 211, 234, .92)
+      rgba(255, 255, 255, .94),
+      rgba(242, 250, 245, .88)
     );
 
-  border: 1px solid rgba(255, 150, 215, .34);
+  border: 1px solid rgba(255, 255, 255, .72);
 
   backdrop-filter: blur(14px);
 }
 
 .discount{
-  color: #7b2e00;
+  color: #5a275f;
 
   background:
     linear-gradient(
       135deg,
       rgba(255, 236, 205, .96),
-      rgba(255, 198, 112, .92)
+      rgba(37, 211, 102, .62)
     );
 }
 
@@ -2347,9 +2369,9 @@
   background:
     linear-gradient(
       135deg,
-      #ff4da0,
-      #9a55ff,
-      #ffb14d
+      #ff71a8,
+      #a55bff,
+      #25d366
     );
 
   -webkit-background-clip: text;
@@ -2364,7 +2386,7 @@
 
   text-decoration: none;
 
-  color: #ff4fa7;
+  color: #ff71a8;
   font-weight: 700;
   font-size: .95rem;
 
@@ -2377,7 +2399,7 @@
 
   &:hover{
     gap: 16px;
-    color: #8062b5;
+    color: #25d366;
   }
 }
 
@@ -2505,12 +2527,12 @@
 
     linear-gradient(
       135deg,
-      rgba(255, 129, 198, .42),
-      rgba(255, 93, 166, .18)
+      rgba(255, 113, 168, .42),
+      rgba(255, 113, 168, .18)
     );
 }
 
-// AMARILLAS
+// AZULES
 
 .bubble-2,
 .bubble-5,
@@ -2525,8 +2547,8 @@
 
     linear-gradient(
       135deg,
-      rgba(255, 210, 105, .38),
-      rgba(255, 170, 65, .18)
+      rgba(123, 201, 248, .34),
+      rgba(37, 211, 102, .20)
     );
 }
 
@@ -2545,8 +2567,8 @@
 
     linear-gradient(
       135deg,
-      rgba(170, 104, 255, .38),
-      rgba(124, 58, 237, .18)
+      rgba(165, 91, 255, .32),
+      rgba(37, 211, 102, .16)
     );
 }
 
@@ -2663,7 +2685,9 @@
 
   box-shadow:
     0 0 12px rgba(255,255,255,.9),
-    0 0 24px rgba(255, 115, 196, .32);
+    0 0 24px rgba(255, 113, 168, .24),
+    0 0 30px rgba(123, 201, 248, .16),
+    0 0 28px rgba(37, 211, 102, .16);
 
   animation: sparkle 4s ease infinite;
 
@@ -2727,8 +2751,9 @@
   filter: blur(.6px);
 
   box-shadow:
-    0 0 18px rgba(255, 115, 196, .22),
-    0 0 30px rgba(168,85,247,.16);
+    0 0 18px rgba(255, 113, 168, .18),
+    0 0 30px rgba(165,91,255,.12),
+    0 0 24px rgba(37,211,102,.10);
 
   &::before,
   &::after{
@@ -2752,8 +2777,9 @@
       90deg,
       transparent 0%,
       rgba(255,255,255,.95) 18%,
-      rgba(255,105,180,.95) 42%,
-      rgba(255,183,77,.75) 72%,
+      rgba(255,113,168,.95) 42%,
+      rgba(37,211,102,.62) 62%,
+      rgba(123,201,248,.72) 78%,
       transparent 100%
     );
 }
@@ -2770,8 +2796,9 @@
       90deg,
       transparent 0%,
       rgba(255,255,255,.95) 18%,
-      rgba(168,85,247,.95) 42%,
-      rgba(255,105,180,.75) 72%,
+      rgba(165,91,255,.95) 42%,
+      rgba(37,211,102,.58) 62%,
+      rgba(255,113,168,.75) 78%,
       transparent 100%
     );
 }
@@ -2788,8 +2815,9 @@
       90deg,
       transparent 0%,
       rgba(255,255,255,.95) 20%,
-      rgba(255,183,77,.95) 42%,
-      rgba(255,105,180,.72) 72%,
+      rgba(123,201,248,.95) 42%,
+      rgba(37,211,102,.58) 62%,
+      rgba(165,91,255,.72) 78%,
       transparent 100%
     );
 }
@@ -2806,8 +2834,9 @@
       90deg,
       transparent 0%,
       rgba(255,255,255,.95) 18%,
-      rgba(168,85,247,.95) 42%,
-      rgba(255,183,77,.72) 72%,
+      rgba(255,113,168,.95) 42%,
+      rgba(37,211,102,.58) 62%,
+      rgba(123,201,248,.72) 78%,
       transparent 100%
     );
 }

@@ -19,7 +19,7 @@
   position: sticky;
   top: 24px;
   align-self: start;
-  height: calc(100vh - 48px);
+  // height: calc(100vh - 48px);
   padding: 22px;
   border-radius: 28px;
   background: rgba(255, 255, 255, 0.9);
@@ -148,7 +148,7 @@
 }
 
 .topbar {
-  min-height: 108px;
+  height: 108px;
   padding: 22px 28px;
   border-radius: 30px;
   background: rgba(255, 255, 255, 0.92);

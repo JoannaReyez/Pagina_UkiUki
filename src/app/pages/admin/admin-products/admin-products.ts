@@ -3,6 +3,7 @@ import { Component, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { StoreService } from '../../../store.service';
 import { InventoryProduct } from '../../../data/inventory-mock';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-admin-products-page',
@@ -94,16 +95,25 @@ export class AdminProductsPage {
     };
 
     this.showModal.set(true);
+    document.body.classList.add('modal-open');
+    document.documentElement.classList.add('modal-open'); // ←
+
   }
 
   startEdit(product: InventoryProduct): void {
     this.editingId = product.id;
     this.form = { ...product };
     this.showModal.set(true);
+    document.body.classList.add('modal-open');
+    document.documentElement.classList.add('modal-open'); // ←
+
   }
 
   closeModal(): void {
     this.showModal.set(false);
+    document.body.classList.remove('modal-open');
+    document.documentElement.classList.remove('modal-open'); // ←
+
   }
 
   save(): void {
@@ -133,6 +143,15 @@ export class AdminProductsPage {
 
   remove(productId: number): void {
     this.store.removeProduct(productId);
+    Swal.fire({
+      title: 'Producto eliminado',
+      text: 'El producto ha sido eliminado exitosamente.',
+      icon: 'success',
+      confirmButtonText: 'Aceptar',
+      timer: 1500,
+      timerProgressBar: true,
+      showConfirmButton: false
+    });
   }
 
   onImageSelected(event: Event): void {

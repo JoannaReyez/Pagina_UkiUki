@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { StoreService } from '../../../store.service';
 import { EmployeeRecord } from '../../../data/inventory-mock';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-admin-employees-page',
@@ -41,6 +42,29 @@ export class AdminEmployeesPage {
   }
 
   remove(employeeId: number): void {
-    this.store.removeEmployee(employeeId);
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.store.removeEmployee(employeeId);
+
+        Swal.fire({
+          title: 'Eliminado',
+          text: 'El empleado ha sido eliminado.',
+          icon: 'success',
+          confirmButtonText: 'Aceptar',
+          timer: 1500,
+          timerProgressBar: true,
+          showConfirmButton: false
+        });
+      }
+    });
   }
 }

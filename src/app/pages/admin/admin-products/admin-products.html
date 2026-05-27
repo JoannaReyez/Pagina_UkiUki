@@ -93,8 +93,8 @@
 
   <!-- PRODUCT CARDS -->
 
-  <div class="cards-grid">
-
+  <div class="cards-grid" *ngIf="filteredProducts().length > 0">
+    
     <article class="product-card" *ngFor="let product of filteredProducts()">
 
       <div class="product-card-header">
@@ -164,6 +164,13 @@
     </article>
 
   </div>
+
+  <div class="empty-state" *ngIf="filteredProducts().length === 0">
+  <span class="empty-icon"><i class="bi bi-box2"></i></span>
+  <h3>No hay productos</h3>
+  <p>Aún no tienes productos en el catálogo.<br>¡Agrega el primero para comenzar!</p>
+  <button (click)="openCreateModal()">+ Agregar producto</button>
+</div>
 
 </section>
 

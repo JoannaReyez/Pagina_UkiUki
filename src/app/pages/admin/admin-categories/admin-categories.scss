@@ -189,19 +189,44 @@
   background: rgba(20, 15, 42, 0.7);
   backdrop-filter: blur(8px);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   padding: 24px;
   z-index: 1000;
+  overflow: hidden; // ← el overlay ya NO hace scroll
 }
 
 .modal-card {
   width: min(620px, 100%);
+  margin: auto;
+  max-height: calc(100vh - 48px); // ← 48px = padding top + bottom del overlay
+  overflow-y: auto;                // ← el scroll ahora vive dentro del card
   border-radius: 32px;
   background: linear-gradient(180deg, #fff7f3, #fffdf2);
   border: 1px solid rgba(255, 187, 206, 0.45);
   box-shadow: 0 30px 80px rgba(255, 152, 181, 0.18);
   padding: 30px;
+
+  // Scrollbar pegado al card
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 143, 171, 0.5) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 143, 171, 0.5);
+    border-radius: 999px;
+
+    &:hover {
+      background: rgba(255, 143, 171, 0.85);
+    }
+  }
 }
 
 .modal-header {
@@ -276,10 +301,20 @@
 }
 
 .toggle-row {
-  display: flex;
+  display: flex !important;  // ← override al grid del label padre
+  flex-direction: row !important;
   align-items: center;
   gap: 12px;
   font-weight: 700;
+
+  input[type="checkbox"] {
+    width: 18px !important;  // ← override al width: 100% del modal-body input
+    height: 18px;
+    margin: 0;
+    flex-shrink: 0;
+    accent-color: #ff8fab;
+    cursor: pointer;
+  }
 }
 
 .modal-actions {
@@ -332,4 +367,9 @@
   .create-btn {
     width: 100%;
   }
+}
+
+
+body.modal-open {
+  overflow: hidden;
 }

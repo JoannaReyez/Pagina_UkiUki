@@ -22,17 +22,23 @@ export class AdminCategoriesPage {
     this.editingId = null;
     this.form = { name: '', description: '', productsCount: 0, active: true };
     this.showModal = true;
+    document.body.classList.add('modal-open');
+    document.documentElement.classList.add('modal-open'); // ← también el <html>
   }
 
   startEdit(category: InventoryCategory): void {
     this.editingId = category.id;
     this.form = { ...category };
     this.showModal = true;
+    document.body.classList.add('modal-open');
+    document.documentElement.classList.add('modal-open'); // ←
   }
 
   closeModal(): void {
     this.showModal = false;
     this.reset();
+    document.body.classList.remove('modal-open');
+    document.documentElement.classList.remove('modal-open'); // ←
   }
 
   reset(): void {

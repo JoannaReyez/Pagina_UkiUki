@@ -17,6 +17,7 @@ interface Product {
   category: string;
   badge?: string;
   imageText: string;
+  image: string;
   rating?: number;
   reviews?: number;
   features?: string[];
@@ -39,8 +40,6 @@ export class Productos implements OnInit, OnDestroy {
   menuOpen = false;
   showLoginModal = false;
 
-  constructor() {}
-
   activeCategory = 'all';
   searchTerm = '';
   showToast = false;
@@ -51,14 +50,6 @@ export class Productos implements OnInit, OnDestroy {
   cartOpen = false;
   cartItems: CartItem[] = [];
   cartBounce = false;
-
-  get cartCount(): number {
-    return this.cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  }
-
-  get cartTotal(): number {
-    return this.cartItems.reduce((sum, item) => sum + item.product.priceNum * item.quantity, 0);
-  }
 
   categories = [
     { id: 'all', name: 'Todos', icon: 'bi-grid-3x3-gap-fill' },
@@ -80,6 +71,7 @@ export class Productos implements OnInit, OnDestroy {
       category: 'destacados',
       badge: 'Más Vendido',
       imageText: 'Producto Premium',
+      image: '/dulce.png',
       rating: 5,
       reviews: 128,
       features: ['Material premium', 'Garantía 2 años', 'Envío gratis', 'Soporte 24/7']
@@ -94,6 +86,7 @@ export class Productos implements OnInit, OnDestroy {
       category: 'nuevos',
       badge: 'Nuevo',
       imageText: 'Producto Nuevo',
+      image: '/dulce1.png',
       rating: 4.5,
       reviews: 45,
       features: ['Tecnología avanzada', 'Incluye accesorios', 'Manual digital']
@@ -108,6 +101,7 @@ export class Productos implements OnInit, OnDestroy {
       category: 'ofertas',
       badge: '30% OFF',
       imageText: 'Oferta Especial',
+      image: '/dulce3.png',
       rating: 4.8,
       reviews: 92,
       features: ['Precio especial', 'Stock limitado', 'Envío rápido']
@@ -123,6 +117,7 @@ export class Productos implements OnInit, OnDestroy {
       category: 'vip',
       badge: 'VIP',
       imageText: 'Paquete VIP',
+      image: '/dulce4.png',
       rating: 5,
       reviews: 67,
       features: ['Envío prioritario', 'Atención personalizada', 'Regalos exclusivos', 'Soporte VIP']
@@ -135,6 +130,7 @@ export class Productos implements OnInit, OnDestroy {
       priceNum: 99,
       category: 'destacados',
       imageText: 'Producto Estándar',
+      image: '/dulce5.png',
       rating: 4.2,
       reviews: 234,
       features: ['Calidad garantizada', 'Precio accesible', 'Ideal para empezar']
@@ -149,6 +145,7 @@ export class Productos implements OnInit, OnDestroy {
       category: 'ofertas',
       badge: '33% OFF',
       imageText: 'Bundle Ahorro',
+      image: '/dulce6.png',
       rating: 4.9,
       reviews: 56,
       features: ['Ahorro garantizado', 'Productos complementarios', 'Envío incluido']
@@ -162,6 +159,7 @@ export class Productos implements OnInit, OnDestroy {
       category: 'nuevos',
       badge: 'Edición Limitada',
       imageText: 'Edición Limitada',
+      image: '/dulce7.png',
       rating: 4.7,
       reviews: 34,
       features: ['Diseño único', 'Edición limitada', 'Certificado autenticidad']
@@ -175,29 +173,45 @@ export class Productos implements OnInit, OnDestroy {
       category: 'vip',
       badge: 'Suscripción',
       imageText: 'Servicio Premium',
+      image: '/dulce2.png',
       rating: 4.6,
       reviews: 178,
       features: ['Atención prioritaria', 'Beneficios exclusivos', 'Sin permanencia']
     }
   ];
 
+  get cartCount(): number {
+    return this.cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  }
+
+  get cartTotal(): number {
+    return this.cartItems.reduce((sum, item) => sum + item.product.priceNum * item.quantity, 0);
+  }
+
   get filteredProducts(): Product[] {
     let filtered = this.products;
+
     if (this.activeCategory !== 'all') {
       filtered = filtered.filter(p => p.category === this.activeCategory);
     }
+
     if (this.searchTerm.trim()) {
       const term = this.searchTerm.toLowerCase();
       filtered = filtered.filter(p =>
         p.name.toLowerCase().includes(term) ||
-        p.description.toLowerCase().includes(term)
+        p.description.toLowerCase().includes(term) ||
+        (p.badge ?? '').toLowerCase().includes(term)
       );
     }
+
     return filtered;
   }
 
   ngOnInit(): void {}
-  ngOnDestroy(): void {}
+
+  ngOnDestroy(): void {
+    document.body.style.overflow = '';
+  }
 
   @HostListener('window:scroll', [])
   onWindowScroll(): void {
@@ -208,6 +222,18 @@ export class Productos implements OnInit, OnDestroy {
   closeMenu(): void { this.menuOpen = false; }
   filterByCategory(categoryId: string): void { this.activeCategory = categoryId; }
   onSearch(): void {}
+
+  categoryLabel(categoryId: string): string {
+    const labels: Record<string, string> = {
+      all: 'Todo el catálogo',
+      destacados: 'Destacados',
+      nuevos: 'Nuevos lanzamientos',
+      ofertas: 'Ofertas especiales',
+      vip: 'Experiencia VIP'
+    };
+
+    return labels[categoryId] ?? categoryId;
+  }
 
   resetFilters(): void {
     this.activeCategory = 'all';
@@ -257,15 +283,15 @@ export class Productos implements OnInit, OnDestroy {
 
   addToCart(product: Product): void {
     const existing = this.cartItems.find(item => item.product.id === product.id);
+
     if (existing) {
       existing.quantity++;
     } else {
       this.cartItems.push({ product, quantity: 1 });
     }
-    
-    // Activar animación de rebote
+
     this.triggerBounce();
-    
+
     this.toastMessage = `${product.name} agregado al carrito`;
     this.showToast = true;
     setTimeout(() => { this.showToast = false; }, 3000);

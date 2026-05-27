@@ -1,33 +1,45 @@
 <footer class="footer">
-  <div class="footer-top">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <div class="footer-logo">
-            <i class="bi bi-grid-fill"></i>
-            <span>Tu Negocio</span>
-          </div>
-          <p>Tu Slogan Aquí — Transformando vidas una experiencia a la vez.</p>
-          <div class="social-links">
-            <a *ngFor="let social of socialLinks" 
-               [href]="social.url" 
-               class="social-link" 
-               [title]="social.name">
-              <i class="bi" [class]="social.icon"></i>
-            </a>
-          </div>
+  <div class="footer-bg" aria-hidden="true">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+
+    <div class="bubble bubble-xl bubble-1"></div>
+    <div class="bubble bubble-lg bubble-2"></div>
+    <div class="bubble bubble-md bubble-3"></div>
+    <div class="bubble bubble-md bubble-4"></div>
+    <div class="bubble bubble-sm bubble-5"></div>
+    <div class="bubble bubble-sm bubble-6"></div>
+    <div class="bubble bubble-sm bubble-7"></div>
+    <div class="bubble bubble-sm bubble-8"></div>
+  </div>
+
+  <div class="container footer-shell">
+    <div class="footer-main-grid">
+      <div class="footer-about">
+        <div class="section-tag">
+          <i class="bi bi-stars"></i>
+          <span>Footer Premium</span>
         </div>
-        
-        <div class="footer-col">
-          <h4>Navegación</h4>
-          <ul>
-            <li *ngFor="let link of navigationLinks">
-              <a [href]="link.url">{{ link.label }}</a>
-            </li>
-          </ul>
-        </div>
-        
-        <div class="footer-col">
+
+        <h2>
+          Gracias por visitar
+          <span class="gradient-text">Tu Negocio</span>
+        </h2>
+
+        <p class="footer-intro">
+          Snacks virales, bebidas unicas y detalles llenos de sabor para seguir
+          disfrutando tu experiencia con estilo.
+        </p>
+
+        <p class="footer-body">
+          Encuentra tus favoritos, siguenos en redes y vuelve cuando quieras
+          descubrir algo nuevo.
+        </p>
+      </div>
+
+      <div class="footer-panels">
+        <div class="footer-card">
           <h4>Horarios</h4>
           <ul class="schedule">
             <li *ngFor="let item of schedule">
@@ -36,8 +48,8 @@
             </li>
           </ul>
         </div>
-        
-        <div class="footer-col">
+
+        <div class="footer-card">
           <h4>Contacto</h4>
           <ul class="contact-list">
             <li *ngFor="let contact of contactInfo">
@@ -46,14 +58,38 @@
             </li>
           </ul>
         </div>
+
+        <div class="footer-card footer-social-card">
+          <h4>Redes</h4>
+          <p class="footer-social-copy">
+            Síguenos para ver lanzamientos, promos y contenido fresco de la
+            marca.
+          </p>
+          <div class="social-links social-links-footer">
+            <a
+              *ngFor="let social of socialLinks"
+              [href]="social.url"
+              class="social-link"
+              [title]="social.name"
+            >
+              <i class="bi" [class]="social.icon"></i>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-  
+
   <div class="footer-bottom">
-    <div class="container">
-      <p>© {{ currentYear }} <strong>Tu Negocio</strong>. Todos los derechos reservados.</p>
-      <p class="footer-dev">Diseñado por <strong>AETHON INNOVATION</strong> · <a href="#">Aviso de Privacidad</a></p>
+    <div class="container footer-bottom-inner">
+      <p>
+        &copy; {{ currentYear }} <strong>Tu Negocio</strong>. Todos los
+        derechos reservados.
+      </p>
+      <p class="footer-dev">
+        Disenado por <strong>AETHON INNOVATION</strong> -
+        <a href="#">Aviso de Privacidad</a>
+      </p>
     </div>
   </div>
 </footer>

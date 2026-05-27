@@ -1,4 +1,4 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, computed, effect, signal } from '@angular/core';
 import { Product, products } from './data/product-mock';
 import {
   adminReportSummary,
@@ -21,10 +21,14 @@ export interface CartItem {
 
 @Injectable({ providedIn: 'root' })
 export class StoreService {
+  private readonly inventoryProductsKey = 'ukiuki.inventoryProducts';
+  private readonly inventoryCategoriesKey = 'ukiuki.inventoryCategories';
+  private readonly inventoryMovementsKey = 'ukiuki.inventoryMovements';
+
   products = products;
-  inventoryProducts = signal<InventoryProduct[]>(inventoryProducts);
-  inventoryCategories = signal<InventoryCategory[]>(inventoryCategories);
-  inventoryMovements = signal<InventoryMovement[]>(inventoryMovements);
+  inventoryProducts = signal<InventoryProduct[]>(this.readStorage(this.inventoryProductsKey, inventoryProducts));
+  inventoryCategories = signal<InventoryCategory[]>(this.readStorage(this.inventoryCategoriesKey, inventoryCategories));
+  inventoryMovements = signal<InventoryMovement[]>(this.readStorage(this.inventoryMovementsKey, inventoryMovements));
   employees = signal<EmployeeRecord[]>(employeeRecords);
   adminReportSummary = adminReportSummary;
   employeeReportSummary = employeeReportSummary;
@@ -36,6 +40,12 @@ export class StoreService {
 
   readonly cartCount = computed(() => this.cartItems().reduce((sum, item) => sum + item.quantity, 0));
   readonly cartTotal = computed(() => this.cartItems().reduce((sum, item) => sum + item.product.priceNum * item.quantity, 0));
+
+  constructor() {
+    effect(() => this.writeStorage(this.inventoryProductsKey, this.inventoryProducts()));
+    effect(() => this.writeStorage(this.inventoryCategoriesKey, this.inventoryCategories()));
+    effect(() => this.writeStorage(this.inventoryMovementsKey, this.inventoryMovements()));
+  }
 
   logout(): void {
     this.cartItems.set([]);
@@ -139,6 +149,81 @@ export class StoreService {
     return true;
   }
 
+  registerInventoryEntry(productId: number, quantity: number, reason?: string): boolean {
+    const product = this.inventoryProducts().find(item => item.id === productId);
+    const entryQuantity = Math.max(1, Math.floor(quantity));
+
+    if (!product || !Number.isFinite(quantity)) {
+      return false;
+    }
+
+    const nextStock = product.stock + entryQuantity;
+
+    this.updateProduct(productId, {
+      stock: nextStock,
+      status: this.getInventoryStatus(nextStock)
+    });
+
+    this.addMovement({
+      id: Math.max(0, ...this.inventoryMovements().map(item => item.id)) + 1,
+      type: 'Entrada',
+      product: product.name,
+      quantity: entryQuantity,
+      date: new Intl.DateTimeFormat('es-MX', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date()),
+      reason: reason?.trim() || 'Entrada registrada por empleado'
+    });
+
+    return true;
+  }
+
+  registerNewInventoryProductEntry(
+    productData: Pick<InventoryProduct, 'name' | 'price' | 'description' | 'category' | 'image'>,
+    quantity: number,
+    reason?: string
+  ): InventoryProduct | null {
+    const entryQuantity = Math.max(1, Math.floor(quantity));
+    const productName = productData.name.trim();
+    const existingProduct = this.inventoryProducts().find(
+      product => product.name.trim().toLowerCase() === productName.toLowerCase()
+    );
+
+    if (!productName || !Number.isFinite(productData.price) || productData.price < 0 || !Number.isFinite(quantity)) {
+      return null;
+    }
+
+    if (existingProduct) {
+      const registered = this.registerInventoryEntry(existingProduct.id, entryQuantity, reason);
+
+      return registered
+        ? this.inventoryProducts().find(product => product.id === existingProduct.id) ?? existingProduct
+        : null;
+    }
+
+    const nextId = Math.max(0, ...this.inventoryProducts().map(product => product.id)) + 1;
+    const newProduct: InventoryProduct = {
+      id: nextId,
+      image: productData.image || '/products/mochi-box.svg',
+      name: productName,
+      price: productData.price,
+      stock: entryQuantity,
+      description: productData.description.trim() || 'Producto registrado por empleado',
+      category: productData.category.trim() || 'General',
+      status: this.getInventoryStatus(entryQuantity)
+    };
+
+    this.addProduct(newProduct);
+    this.addMovement({
+      id: Math.max(0, ...this.inventoryMovements().map(item => item.id)) + 1,
+      type: 'Entrada',
+      product: newProduct.name,
+      quantity: entryQuantity,
+      date: new Intl.DateTimeFormat('es-MX', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date()),
+      reason: reason?.trim() || 'Alta de producto y entrada inicial'
+    });
+
+    return newProduct;
+  }
+
   removeProduct(productId: number): void {
     this.inventoryProducts.update(current => current.filter(product => product.id !== productId));
   }
@@ -189,5 +274,48 @@ export class StoreService {
     }
 
     return stock <= 10 ? 'Bajo stock' : 'Activo';
+  }
+
+  private readStorage<T>(key: string, fallback: T): T {
+    if (!this.canUseStorage()) {
+      return fallback;
+    }
+
+    try {
+      const saved = window.localStorage.getItem(key);
+
+      if (!saved) {
+        return fallback;
+      }
+
+      return JSON.parse(saved) as T;
+    } catch {
+      this.removeStorage(key);
+      return fallback;
+    }
+  }
+
+  private writeStorage<T>(key: string, value: T): void {
+    if (!this.canUseStorage()) {
+      return;
+    }
+
+    try {
+      window.localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      this.removeStorage(key);
+    }
+  }
+
+  private canUseStorage(): boolean {
+    return typeof window !== 'undefined' && !!window.localStorage;
+  }
+
+  private removeStorage(key: string): void {
+    try {
+      window.localStorage.removeItem(key);
+    } catch {
+      return;
+    }
   }
 }

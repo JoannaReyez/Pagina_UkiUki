@@ -1,8 +1,3 @@
-// ─────────────────────────────────────────────
-//  🍬 HANEUL SNACKS · Inventory Module Styles
-//  Rediseño con tabs: Stock / Historial
-// ─────────────────────────────────────────────
-
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Noto+Sans+KR:wght@400;500;700&display=swap');
 
 // ── TOKENS ──────────────────────────────────
@@ -95,7 +90,7 @@
   position: relative;
 
   &::after {
-    content: '🍬 ✿ 🍡 ✦ 🧁';
+    content: '✦ ✿ ✦ ✿ ✦';
     position: absolute;
     right: 220px; top: 50%;
     transform: translateY(-50%);
@@ -214,13 +209,15 @@ h1 {
   width: 46px; height: 46px;
   border-radius: var(--radius-md);
   display: flex; align-items: center; justify-content: center;
-  font-size: 22px;
+  font-size: 20px;
   flex-shrink: 0;
 
-  &.pink  { background: var(--pink-50);  }
-  &.lav   { background: var(--lav-50);   }
-  &.peach { background: var(--peach-50); }
-  &.red   { background: var(--straw-50); }
+  &.pink  { background: var(--pink-50);  color: var(--pink-600);  }
+  &.lav   { background: var(--lav-50);   color: var(--lav-600);   }
+  &.peach { background: var(--peach-50); color: var(--peach-600); }
+  &.red   { background: var(--straw-50); color: var(--straw-600); }
+
+  i { font-size: 20px; line-height: 1; }
 }
 
 .metric-label { font-size: 10px; font-weight: 700; color: var(--ink-500); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 2px; }
@@ -271,7 +268,12 @@ h1 {
     background: #fff;
   }
 
-  .tab-icon { font-size: 15px; }
+  .tab-icon {
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    i { font-size: 15px; line-height: 1; }
+  }
 
   .tab-count {
     background: var(--lav-100);
@@ -364,8 +366,6 @@ h1 {
   gap: 9px;
   font-weight: 700;
   color: var(--ink-900);
-
-  .prod-emoji { font-size: 18px; line-height: 1; }
 }
 
 .td-cat .cat-tag {
@@ -404,14 +404,15 @@ h1 {
   border: 1.5px solid var(--ink-100);
   background: #fff;
   cursor: pointer;
-  font-size: 18px;
-  font-weight: 900;
+  font-size: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all .15s;
   color: var(--ink-500);
   line-height: 1;
+
+  i { font-size: 14px; line-height: 1; }
 
   &.icon-in:hover  { background: var(--mint-50);  border-color: var(--mint-400);  color: var(--mint-600); }
   &.icon-out:hover { background: var(--pink-50);  border-color: var(--pink-400);  color: var(--pink-600); }
@@ -448,9 +449,11 @@ h1 {
   width: 40px; height: 40px;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 20px; font-weight: 900;
+  font-size: 16px;
   flex-shrink: 0;
   line-height: 1;
+
+  i { font-size: 16px; line-height: 1; }
 
   &.move-in  { background: var(--mint-50); color: var(--mint-600); }
   &.move-out { background: var(--pink-50); color: var(--pink-600); }
@@ -478,7 +481,12 @@ h1 {
 .empty-state {
   padding: 60px 20px; text-align: center; color: var(--ink-500);
 
-  .empty-icon { font-size: 36px; display: block; margin-bottom: 12px; }
+  .empty-icon {
+    font-size: 36px;
+    display: block;
+    margin-bottom: 12px;
+    i { font-size: 36px; }
+  }
   p { font-size: 13px; font-weight: 600; }
 }
 
@@ -534,11 +542,13 @@ h1 {
   width: 40px; height: 40px;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 22px; font-weight: 900;
+  font-size: 18px;
   background: #fff;
   box-shadow: var(--shadow-sm);
   color: var(--ink-700);
   line-height: 1;
+
+  i { font-size: 18px; line-height: 1; }
 }
 
 .modal-close {
@@ -638,6 +648,9 @@ h1 {
   border-radius: var(--radius-md);
   color: var(--straw-600);
   font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; gap: 6px;
+
+  i { font-size: 13px; flex-shrink: 0; }
 }
 
 .modal-footer {
@@ -703,8 +716,15 @@ h1 {
 }
 
 .prod-placeholder {
-  font-size: 20px; line-height: 1;
+  width: 32px; height: 32px;
+  border-radius: var(--radius-sm);
+  background: var(--lav-50);
+  border: 1px solid var(--ink-100);
+  display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
+  color: var(--lav-400);
+
+  i { font-size: 16px; line-height: 1; }
 }
 
 // ── MOVE META EXTRAS ─────────────────────────
@@ -718,4 +738,10 @@ h1 {
   font-size: 10px;
   color: var(--ink-500);
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  justify-content: flex-end;
+
+  i { font-size: 11px; }
 }

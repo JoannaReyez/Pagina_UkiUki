@@ -20,7 +20,9 @@
   <!-- ░░ METRIC CARDS ░░ -->
   <div class="metrics-row">
     <div class="metric-card">
-      <div class="metric-icon-wrap pink">🍬</div>
+      <div class="metric-icon-wrap pink">
+        <i class="bi bi-grid-fill"></i>
+      </div>
       <div class="metric-info">
         <p class="metric-label">Productos</p>
         <p class="metric-val">{{ totalProducts() }}</p>
@@ -28,7 +30,9 @@
       </div>
     </div>
     <div class="metric-card">
-      <div class="metric-icon-wrap lav">📦</div>
+      <div class="metric-icon-wrap lav">
+        <i class="bi bi-box-seam-fill"></i>
+      </div>
       <div class="metric-info">
         <p class="metric-label">Unidades totales</p>
         <p class="metric-val">{{ totalUnits() | number }}</p>
@@ -36,7 +40,9 @@
       </div>
     </div>
     <div class="metric-card metric-warn">
-      <div class="metric-icon-wrap peach">⚠️</div>
+      <div class="metric-icon-wrap peach">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+      </div>
       <div class="metric-info">
         <p class="metric-label">Stock bajo</p>
         <p class="metric-val warn">{{ lowStockCount() }}</p>
@@ -44,7 +50,9 @@
       </div>
     </div>
     <div class="metric-card metric-danger">
-      <div class="metric-icon-wrap red">🚫</div>
+      <div class="metric-icon-wrap red">
+        <i class="bi bi-x-circle-fill"></i>
+      </div>
       <div class="metric-info">
         <p class="metric-label">Agotados</p>
         <p class="metric-val danger">{{ outOfStockCount() }}</p>
@@ -61,14 +69,14 @@
       <button class="tab-btn"
         [class.tab-active]="activeTab() === 'stock'"
         (click)="activeTab.set('stock')">
-        <span class="tab-icon">📋</span>
+        <span class="tab-icon"><i class="bi bi-table"></i></span>
         <span>Stock actual</span>
         <span class="tab-count">{{ filteredProducts().length }}</span>
       </button>
       <button class="tab-btn"
         [class.tab-active]="activeTab() === 'history'"
         (click)="activeTab.set('history')">
-        <span class="tab-icon">🕐</span>
+        <span class="tab-icon"><i class="bi bi-clock-history"></i></span>
         <span>Historial</span>
         <span class="tab-count">{{ filteredMovements().length }}</span>
       </button>
@@ -107,7 +115,7 @@
                 [class.row-out]="getStatus(p) === 'out'">
               <td class="td-name">
                 <img *ngIf="p.image" [src]="p.image" class="prod-img" alt="" />
-                <span *ngIf="!p.image" class="prod-placeholder">📦</span>
+                <span *ngIf="!p.image" class="prod-placeholder"><i class="bi bi-box2"></i></span>
                 <span>{{ p.name }}</span>
               </td>
               <td class="td-cat"><span class="cat-tag">{{ p.category }}</span></td>
@@ -118,8 +126,12 @@
                 </span>
               </td>
               <td class="td-actions">
-                <button class="icon-btn icon-in"  title="Registrar entrada" (click)="openModal('Entrada', p.id)">+</button>
-                <button class="icon-btn icon-out" title="Registrar salida"  (click)="openModal('Salida', p.id)">−</button>
+                <button class="icon-btn icon-in"  title="Registrar entrada" (click)="openModal('Entrada', p.id)">
+                  <i class="bi bi-plus-lg"></i>
+                </button>
+                <button class="icon-btn icon-out" title="Registrar salida"  (click)="openModal('Salida', p.id)">
+                  <i class="bi bi-dash-lg"></i>
+                </button>
               </td>
             </tr>
             <tr *ngIf="filteredProducts().length === 0">
@@ -147,7 +159,7 @@
       <div class="movement-list" *ngIf="!loadingMovements()">
         <div class="movement-item" *ngFor="let m of filteredMovements()">
           <div class="move-icon" [class.move-in]="m.type === 'Entrada'" [class.move-out]="m.type === 'Salida'">
-            {{ m.type === 'Entrada' ? '+' : '−' }}
+            <i class="bi" [ngClass]="m.type === 'Entrada' ? 'bi-plus-lg' : 'bi-dash-lg'"></i>
           </div>
           <div class="move-body">
             <p class="move-product">{{ m.product }}</p>
@@ -158,13 +170,13 @@
               {{ m.type === 'Entrada' ? '+' : '−' }}{{ m.quantity }}
             </span>
             <span class="move-stock-change">{{ m.stockBefore }} → {{ m.stockAfter }}</span>
-            <span class="move-user">👤 {{ m.userName }}</span>
+            <span class="move-user"><i class="bi bi-person-fill"></i> {{ m.userName }}</span>
             <span class="move-date">{{ m.date }}</span>
           </div>
         </div>
 
         <div class="empty-state" *ngIf="filteredMovements().length === 0">
-          <span class="empty-icon">🍡</span>
+          <span class="empty-icon"><i class="bi bi-inbox"></i></span>
           <p>Sin movimientos registrados</p>
         </div>
       </div>
@@ -183,7 +195,9 @@
       [class.header-entrada]="form.type === 'Entrada'"
       [class.header-salida]="form.type === 'Salida'">
       <div class="modal-title-row">
-        <span class="modal-icon-big">{{ form.type === 'Entrada' ? '+' : '−' }}</span>
+        <span class="modal-icon-big">
+          <i class="bi" [ngClass]="form.type === 'Entrada' ? 'bi-plus-lg' : 'bi-dash-lg'"></i>
+        </span>
         <h3>{{ form.type === 'Entrada' ? 'Registrar entrada' : 'Registrar salida' }}</h3>
       </div>
       <button class="modal-close" (click)="closeModal()" aria-label="Cerrar">✕</button>
@@ -230,7 +244,9 @@
         <textarea class="field-input field-textarea" [(ngModel)]="form.reason" rows="3" placeholder="Descripción del movimiento…"></textarea>
       </div>
 
-      <div class="modal-error" *ngIf="formError()">⚠️ {{ formError() }}</div>
+      <div class="modal-error" *ngIf="formError()">
+        <i class="bi bi-exclamation-triangle-fill"></i> {{ formError() }}
+      </div>
     </div>
 
     <div class="modal-footer">

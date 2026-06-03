@@ -50,6 +50,7 @@ export class Http {
     return this.http
       .get<ApiResponse<InventoryCategory[]>>(`${this.API}?getCategorias`)
       .pipe(map(res => res.code === 200 ? res.data : []), catchError(() => of([])));
+      console.log('getCategorias called');
   }
 
   createCategoria(cat: Omit<InventoryCategory, 'id'>): Observable<InventoryCategory | null> {

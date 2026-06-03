@@ -1,48 +1,244 @@
-<section class="section-page">
-  <div class="page-header">
-    <div>
-      <p class="eyebrow">Administrador</p>
-      <h1>Inventario</h1>
-      <p>Entradas, salidas y control de stock con historial de movimientos.</p>
+<!-- admin-inventory.html -->
+<section class="inv-page">
+
+  <!-- ░░ PAGE HEADER ░░ -->
+  <header class="page-header">
+    <div class="header-left">
+      <span class="eyebrow">관리자 · Administrador</span>
+      <h1>Inventario <span class="title-accent">✦</span></h1>
+      <p class="header-sub">Control de stock · entradas &amp; salidas · historial</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-salida" (click)="openModal('Salida')">
+        <span class="btn-icon">−</span> Registrar salida
+      </button>
+      <button class="btn btn-primary" (click)="openModal('Entrada')">
+        <span class="btn-icon">+</span> Nueva entrada
+      </button>
+    </div>
+  </header>
+
+  <!-- ░░ METRIC CARDS ░░ -->
+  <div class="metrics-row">
+    <div class="metric-card">
+      <div class="metric-icon-wrap pink">🍬</div>
+      <div class="metric-info">
+        <p class="metric-label">Productos</p>
+        <p class="metric-val">{{ totalProducts }}</p>
+        <p class="metric-sub">SKUs activos</p>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon-wrap lav">📦</div>
+      <div class="metric-info">
+        <p class="metric-label">Unidades totales</p>
+        <p class="metric-val">{{ totalUnits | number }}</p>
+        <p class="metric-sub">En almacén</p>
+      </div>
+    </div>
+    <div class="metric-card metric-warn">
+      <div class="metric-icon-wrap peach">⚠️</div>
+      <div class="metric-info">
+        <p class="metric-label">Stock bajo</p>
+        <p class="metric-val warn">{{ lowStockCount }}</p>
+        <p class="metric-sub">Requieren reposición</p>
+      </div>
+    </div>
+    <div class="metric-card metric-danger">
+      <div class="metric-icon-wrap red">🚫</div>
+      <div class="metric-info">
+        <p class="metric-label">Agotados</p>
+        <p class="metric-val danger">{{ outOfStockCount }}</p>
+        <p class="metric-sub">Sin existencia</p>
+      </div>
     </div>
   </div>
 
-  <div class="page-grid">
-    <article class="panel form-panel">
-      <h2>Nuevo movimiento</h2>
-      <label>Tipo
-        <select [(ngModel)]="form.type">
-          <option>Entrada</option>
-          <option>Salida</option>
-        </select>
-      </label>
-      <label>Producto<input [(ngModel)]="form.product" /></label>
-      <label>Cantidad<input [(ngModel)]="form.quantity" type="number" min="0" /></label>
-      <label>Fecha<input [(ngModel)]="form.date" /></label>
-      <label>Motivo<textarea [(ngModel)]="form.reason" rows="4"></textarea></label>
-      <div class="form-actions">
-        <button type="button" class="btn-primary" (click)="save()">Registrar</button>
-      </div>
-    </article>
+  <!-- ░░ TAB PANEL ░░ -->
+  <div class="tab-panel">
 
-    <article class="panel list-panel">
-      <div class="table-head">
-        <h2>Historial de movimientos</h2>
-        <span>{{ store.inventoryMovements().length }} registros</span>
+    <!-- TAB NAV -->
+    <div class="tab-nav">
+      <button class="tab-btn" [class.tab-active]="activeTab === 'stock'" (click)="activeTab = 'stock'">
+        <span class="tab-icon">📋</span>
+        <span>Stock actual</span>
+        <span class="tab-count">{{ filteredProducts.length }}</span>
+      </button>
+      <button class="tab-btn" [class.tab-active]="activeTab === 'history'" (click)="activeTab = 'history'">
+        <span class="tab-icon">🕐</span>
+        <span>Historial</span>
+        <span class="tab-count">{{ filteredMovements.length }}</span>
+      </button>
+    </div>
+
+    <!-- ── LOADING ── -->
+    <div class="loading-row" *ngIf="loading && activeTab === 'stock'">
+      <span class="loading-spinner"></span> Cargando productos…
+    </div>
+
+    <!-- ── STOCK TAB ── -->
+    <div class="tab-content" *ngIf="activeTab === 'stock' && !loading">
+      <div class="content-toolbar">
+        <div class="filter-chips">
+          <button class="chip"             [class.active]="stockFilter === 'all'" (click)="setStockFilter('all')">Todos</button>
+          <button class="chip chip-ok"     [class.active]="stockFilter === 'ok'"  (click)="setStockFilter('ok')">En stock</button>
+          <button class="chip chip-warn"   [class.active]="stockFilter === 'low'" (click)="setStockFilter('low')">Stock bajo</button>
+          <button class="chip chip-danger" [class.active]="stockFilter === 'out'" (click)="setStockFilter('out')">Agotado</button>
+        </div>
       </div>
-      <div class="movement-list">
-        <article class="movement-item" *ngFor="let move of store.inventoryMovements()">
-          <div class="movement-badge" [class.out]="move.type === 'Salida'">{{ move.type === 'Entrada' ? '+' : '-' }}</div>
-          <div class="movement-copy">
-            <strong>{{ move.product }}</strong>
-            <p>{{ move.reason }}</p>
-          </div>
-          <div class="movement-meta">
-            <span>{{ move.date }}</span>
-            <strong>{{ move.quantity }}</strong>
-          </div>
-        </article>
+
+      <div class="table-wrap">
+        <table class="stock-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Categoría</th>
+              <th>Disponible</th>
+              <th>Estado</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of filteredProducts"
+                [class.row-low]="getStatus(p) === 'low'"
+                [class.row-out]="getStatus(p) === 'out'">
+              <td class="td-name">
+                <img *ngIf="p.image" [src]="p.image" class="prod-img" alt="" />
+                <span *ngIf="!p.image" class="prod-placeholder">📦</span>
+                <span>{{ p.name }}</span>
+              </td>
+              <td class="td-cat"><span class="cat-tag">{{ p.category }}</span></td>
+              <td class="td-stock"><strong>{{ p.stock }}</strong></td>
+              <td class="td-status">
+                <span class="status-pill" [ngClass]="'status-' + getStatus(p)">
+                  {{ getStatusLabel(p) }}
+                </span>
+              </td>
+              <td class="td-actions">
+                <button class="icon-btn icon-in"  title="Registrar entrada" (click)="openModal('Entrada', p.id)">+</button>
+                <button class="icon-btn icon-out" title="Registrar salida"  (click)="openModal('Salida', p.id)">−</button>
+              </td>
+            </tr>
+            <tr *ngIf="filteredProducts.length === 0">
+              <td colspan="5" class="empty-row">Sin productos en esta categoría</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-    </article>
-  </div>
+    </div>
+
+    <!-- ── HISTORY TAB ── -->
+    <div class="tab-content" *ngIf="activeTab === 'history'">
+      <div class="content-toolbar">
+        <div class="filter-chips">
+          <button class="chip"             [class.active]="histFilter === 'all'"     (click)="setHistFilter('all')">Todos</button>
+          <button class="chip chip-ok"     [class.active]="histFilter === 'Entrada'" (click)="setHistFilter('Entrada')">Entradas</button>
+          <button class="chip chip-danger" [class.active]="histFilter === 'Salida'"  (click)="setHistFilter('Salida')">Salidas</button>
+        </div>
+      </div>
+
+      <div class="loading-row" *ngIf="loadingMovements">
+        <span class="loading-spinner"></span> Cargando historial…
+      </div>
+
+      <div class="movement-list" *ngIf="!loadingMovements">
+        <div class="movement-item" *ngFor="let m of filteredMovements">
+          <div class="move-icon" [class.move-in]="m.type === 'Entrada'" [class.move-out]="m.type === 'Salida'">
+            {{ m.type === 'Entrada' ? '+' : '−' }}
+          </div>
+          <div class="move-body">
+            <p class="move-product">{{ m.product }}</p>
+            <p class="move-reason">{{ m.reason || '—' }}</p>
+          </div>
+          <div class="move-meta">
+            <span class="move-qty" [class.qty-in]="m.type === 'Entrada'" [class.qty-out]="m.type === 'Salida'">
+              {{ m.type === 'Entrada' ? '+' : '−' }}{{ m.quantity }}
+            </span>
+            <span class="move-stock-change">
+              {{ m.stockBefore }} → {{ m.stockAfter }}
+            </span>
+            <span class="move-user">👤 {{ m.userName }}</span>
+            <span class="move-date">{{ m.date }}</span>
+          </div>
+        </div>
+
+        <div class="empty-state" *ngIf="filteredMovements.length === 0">
+          <span class="empty-icon">🍡</span>
+          <p>Sin movimientos registrados</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-panel -->
+
 </section>
+
+
+<!-- ░░ MODAL ░░ -->
+<div class="modal-overlay" [class.open]="modalOpen" (click)="closeOnBackground($event)">
+  <div class="modal" role="dialog" aria-modal="true">
+
+    <div class="modal-header" [class.header-entrada]="form.type === 'Entrada'" [class.header-salida]="form.type === 'Salida'">
+      <div class="modal-title-row">
+        <span class="modal-icon-big">{{ form.type === 'Entrada' ? '+' : '−' }}</span>
+        <h3>{{ form.type === 'Entrada' ? 'Registrar entrada' : 'Registrar salida' }}</h3>
+      </div>
+      <button class="modal-close" (click)="closeModal()" aria-label="Cerrar">✕</button>
+    </div>
+
+    <div class="type-toggle">
+      <button class="toggle-opt" [class.toggle-entrada]="form.type === 'Entrada'" (click)="setModalType('Entrada')">
+        + Entrada
+      </button>
+      <button class="toggle-opt" [class.toggle-salida]="form.type === 'Salida'" (click)="setModalType('Salida')">
+        − Salida
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="field">
+        <label class="field-label">Producto</label>
+        <div class="field-product-row">
+          <select class="field-input" [(ngModel)]="form.productId" (change)="onProductChange()">
+            <option [ngValue]="null">Seleccionar producto…</option>
+            <option *ngFor="let p of products" [ngValue]="p.id">
+              {{ p.name }} — stock: {{ p.stock }}
+            </option>
+          </select>
+          <span class="stock-bubble" *ngIf="selectedProductStock !== null">
+            {{ selectedProductStock }} en stock
+          </span>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label">Cantidad</label>
+          <input class="field-input" type="number" min="1" [(ngModel)]="form.quantity" placeholder="0" />
+        </div>
+        <div class="field">
+          <label class="field-label">Fecha</label>
+          <input class="field-input" type="date" [(ngModel)]="form.date" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Motivo / nota</label>
+        <textarea class="field-input field-textarea" [(ngModel)]="form.reason" rows="3" placeholder="Descripción del movimiento…"></textarea>
+      </div>
+
+      <div class="modal-error" *ngIf="formError">⚠️ {{ formError }}</div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-outline" (click)="closeModal()">Cancelar</button>
+      <button class="btn"
+        [class.btn-primary]="form.type === 'Entrada'"
+        [class.btn-salida]="form.type === 'Salida'"
+        (click)="saveMovement()">
+        {{ form.type === 'Entrada' ? '+' : '−' }} Registrar {{ form.type === 'Entrada' ? 'entrada' : 'salida' }}
+      </button>
+    </div>
+
+  </div>
+</div>

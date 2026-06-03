@@ -21,6 +21,30 @@ export interface InventoryProduct {
   status: 'Activo' | 'Bajo stock' | 'Agotado';
 }
 
+// ── NUEVO ──────────────────────────────────────────────────────────────────
+export interface InventoryMovement {
+  id: number;
+  type: 'Entrada' | 'Salida';
+  productId: number;
+  product: string;
+  quantity: number;
+  stockBefore: number;
+  stockAfter: number;
+  reason: string;
+  userId: number;
+  userName: string;
+  date: string;
+}
+
+export interface CreateMovimientoPayload {
+  productId: number;
+  type: 'Entrada' | 'Salida';
+  quantity: number;
+  reason?: string;
+  userId: number;
+}
+// ──────────────────────────────────────────────────────────────────────────
+
 interface ApiResponse<T> {
   code: number;
   data: T;
@@ -50,7 +74,6 @@ export class Http {
     return this.http
       .get<ApiResponse<InventoryCategory[]>>(`${this.API}?getCategorias`)
       .pipe(map(res => res.code === 200 ? res.data : []), catchError(() => of([])));
-      console.log('getCategorias called');
   }
 
   createCategoria(cat: Omit<InventoryCategory, 'id'>): Observable<InventoryCategory | null> {
@@ -121,5 +144,20 @@ export class Http {
     return this.http
       .get<ApiResponse<any>>(`${this.API}?deleteEmpleado=${id}`)
       .pipe(map(res => res.code === 200), catchError(() => of(false)));
+  }
+
+  // ─── MOVIMIENTOS ───────────────────────────────────────────────────────────
+
+  getMovimientos(tipo?: 'Entrada' | 'Salida'): Observable<InventoryMovement[]> {
+    const query = tipo ? `?getMovimientos&tipo=${tipo}` : '?getMovimientos';
+    return this.http
+      .get<ApiResponse<InventoryMovement[]>>(`${this.API}${query}`)
+      .pipe(map(res => res.code === 200 ? res.data : []), catchError(() => of([])));
+  }
+
+  createMovimiento(payload: CreateMovimientoPayload): Observable<ApiResponse<any>> {
+    return this.http
+      .post<ApiResponse<any>>(`${this.API}?createMovimiento`, payload, { headers: this.headers })
+      .pipe(catchError(() => of({ code: 500, data: { message: 'Error de conexión.' } })));
   }
 }

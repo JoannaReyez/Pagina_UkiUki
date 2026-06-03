@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Http, InventoryProduct, InventoryMovement } from '../../../services/http';
 import Swal from 'sweetalert2';
@@ -24,24 +24,49 @@ interface MovementForm {
 })
 export class AdminInventoryPage implements OnInit {
 
-  // ── Tab y filtros ──────────────────────────────
-  activeTab: 'stock' | 'history' = 'stock';
-  stockFilter: StockStatus | 'all' = 'all';
-  histFilter: 'Entrada' | 'Salida' | 'all' = 'all';
+  // ── Datos como signals ─────────────────────────────────────────────────────
+  private allProducts  = signal<InventoryProduct[]>([]);
+  private allMovements = signal<InventoryMovement[]>([]);
 
-  // ── Estado UI ──────────────────────────────────
-  loading = false;
-  loadingMovements = false;
-  modalOpen = false;
-  formError = '';
-  selectedProductStock: number | null = null;
+  // ── Estado de carga ────────────────────────────────────────────────────────
+  loading          = signal(false);
+  loadingMovements = signal(false);
 
-  // ── Datos ──────────────────────────────────────
-  products: InventoryProduct[] = [];
-  movements: InventoryMovement[] = [];
+  // ── Tab y filtros ──────────────────────────────────────────────────────────
+  activeTab   = signal<'stock' | 'history'>('stock');
+  stockFilter = signal<StockStatus | 'all'>('all');
+  histFilter  = signal<'Entrada' | 'Salida' | 'all'>('all');
+
+  // ── Modal ──────────────────────────────────────────────────────────────────
+  modalOpen            = signal(false);
+  formError            = signal('');
+  selectedProductStock = signal<number | null>(null);
+
   form: MovementForm = this.emptyForm();
 
-  // ── Usuario en sesión ──────────────────────────
+  // ── Computed: métricas ─────────────────────────────────────────────────────
+  readonly totalProducts   = computed(() => this.allProducts().length);
+  readonly totalUnits      = computed(() => this.allProducts().reduce((s, p) => s + p.stock, 0));
+  readonly lowStockCount   = computed(() => this.allProducts().filter(p => this.getStatus(p) === 'low').length);
+  readonly outOfStockCount = computed(() => this.allProducts().filter(p => this.getStatus(p) === 'out').length);
+
+  // ── Computed: listas filtradas ─────────────────────────────────────────────
+  readonly filteredProducts = computed(() => {
+    const filter = this.stockFilter();
+    if (filter === 'all') return this.allProducts();
+    return this.allProducts().filter(p => this.getStatus(p) === filter);
+  });
+
+  readonly filteredMovements = computed(() => {
+    const filter = this.histFilter();
+    if (filter === 'all') return this.allMovements();
+    return this.allMovements().filter(m => m.type === filter);
+  });
+
+  // ── Computed: productos para el select del modal ───────────────────────────
+  readonly products = computed(() => this.allProducts());
+
+  // ── Usuario en sesión ──────────────────────────────────────────────────────
   private get currentUserId(): number {
     const user = JSON.parse(localStorage.getItem('user') ?? '{}');
     return user?.id ? Number(user.id) : 1;
@@ -54,56 +79,40 @@ export class AdminInventoryPage implements OnInit {
     this.loadMovements();
   }
 
-  // ── Carga de datos ─────────────────────────────
+  // ── Carga de datos ─────────────────────────────────────────────────────────
 
   loadProducts(): void {
-    this.loading = true;
-    this.httpService.getProductos().subscribe((data: InventoryProduct[]) => {
-      this.products = data;
-      this.loading = false;
+    this.loading.set(true);
+    this.httpService.getProductos().subscribe({
+      next: data => {
+        this.allProducts.set(data);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.loading.set(false);
+        this.swalError('No se pudieron cargar los productos.');
+      }
     });
   }
 
   loadMovements(): void {
-    this.loadingMovements = true;
-    this.httpService.getMovimientos().subscribe((data: InventoryMovement[]) => {
-      this.movements = data;
-      this.loadingMovements = false;
+    this.loadingMovements.set(true);
+    this.httpService.getMovimientos().subscribe({
+      next: data => {
+        this.allMovements.set(data);
+        this.loadingMovements.set(false);
+      },
+      error: () => {
+        this.loadingMovements.set(false);
+        this.swalError('No se pudo cargar el historial.');
+      }
     });
   }
 
-  // ── Métricas ───────────────────────────────────
-
-  get totalProducts(): number { return this.products.length; }
-
-  get totalUnits(): number {
-    return this.products.reduce((sum, p) => sum + p.stock, 0);
-  }
-
-  get lowStockCount(): number {
-    return this.products.filter(p => this.getStatus(p) === 'low').length;
-  }
-
-  get outOfStockCount(): number {
-    return this.products.filter(p => this.getStatus(p) === 'out').length;
-  }
-
-  // ── Listas filtradas ───────────────────────────
-
-  get filteredProducts(): InventoryProduct[] {
-    if (this.stockFilter === 'all') return this.products;
-    return this.products.filter(p => this.getStatus(p) === this.stockFilter);
-  }
-
-  get filteredMovements(): InventoryMovement[] {
-    if (this.histFilter === 'all') return this.movements;
-    return this.movements.filter(m => m.type === this.histFilter);
-  }
-
-  // ── Estado del producto ────────────────────────
+  // ── Estado del producto ────────────────────────────────────────────────────
 
   getStatus(p: InventoryProduct): StockStatus {
-    if (p.stock <= 0) return 'out';
+    if (p.stock <= 0)             return 'out';
     if (p.status === 'Bajo stock') return 'low';
     return 'ok';
   }
@@ -117,26 +126,29 @@ export class AdminInventoryPage implements OnInit {
     return map[this.getStatus(p)];
   }
 
-  // ── Filtros ────────────────────────────────────
+  // ── Filtros ────────────────────────────────────────────────────────────────
 
-  setStockFilter(f: StockStatus | 'all'): void { this.stockFilter = f; }
-  setHistFilter(f: 'Entrada' | 'Salida' | 'all'): void { this.histFilter = f; }
+  setStockFilter(f: StockStatus | 'all'): void { this.stockFilter.set(f); }
+  setHistFilter(f: 'Entrada' | 'Salida' | 'all'): void { this.histFilter.set(f); }
 
-  // ── Modal ──────────────────────────────────────
+  // ── Modal ──────────────────────────────────────────────────────────────────
 
   openModal(type: 'Entrada' | 'Salida', productId?: number): void {
     this.form = this.emptyForm();
     this.form.type = type;
-    this.formError = '';
-    this.selectedProductStock = null;
+    this.formError.set('');
+    this.selectedProductStock.set(null);
     if (productId !== undefined) {
       this.form.productId = productId;
       this.onProductChange();
     }
-    this.modalOpen = true;
+    this.modalOpen.set(true);
   }
 
-  closeModal(): void { this.modalOpen = false; this.formError = ''; }
+  closeModal(): void {
+    this.modalOpen.set(false);
+    this.formError.set('');
+  }
 
   closeOnBackground(event: MouseEvent): void {
     if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
@@ -146,35 +158,35 @@ export class AdminInventoryPage implements OnInit {
 
   setModalType(type: 'Entrada' | 'Salida'): void {
     this.form.type = type;
-    this.formError = '';
+    this.formError.set('');
   }
 
   onProductChange(): void {
-    const p = this.products.find(p => p.id === this.form.productId);
-    this.selectedProductStock = p ? p.stock : null;
-    this.formError = '';
+    const p = this.allProducts().find(p => p.id === this.form.productId);
+    this.selectedProductStock.set(p ? p.stock : null);
+    this.formError.set('');
   }
 
-  // ── Guardar movimiento ─────────────────────────
+  // ── Guardar movimiento ─────────────────────────────────────────────────────
 
   saveMovement(): void {
-    this.formError = '';
+    this.formError.set('');
 
     if (!this.form.productId) {
-      this.formError = 'Selecciona un producto para continuar.'; return;
+      this.formError.set('Selecciona un producto para continuar.'); return;
     }
     if (!this.form.quantity || this.form.quantity < 1) {
-      this.formError = 'La cantidad debe ser mayor a 0.'; return;
+      this.formError.set('La cantidad debe ser mayor a 0.'); return;
     }
     if (!this.form.date) {
-      this.formError = 'Ingresa una fecha válida.'; return;
+      this.formError.set('Ingresa una fecha válida.'); return;
     }
 
-    const product = this.products.find(p => p.id === this.form.productId);
-    if (!product) { this.formError = 'Producto no encontrado.'; return; }
+    const product = this.allProducts().find(p => p.id === this.form.productId);
+    if (!product) { this.formError.set('Producto no encontrado.'); return; }
 
     if (this.form.type === 'Salida' && product.stock < this.form.quantity) {
-      this.formError = `Stock insuficiente. Disponible: ${product.stock} unidades.`; return;
+      this.formError.set(`Stock insuficiente. Disponible: ${product.stock} unidades.`); return;
     }
 
     this.httpService.createMovimiento({
@@ -185,13 +197,17 @@ export class AdminInventoryPage implements OnInit {
       userId:    this.currentUserId,
     }).subscribe((res: { code: number; data: any }) => {
       if (res.code === 201) {
+
+        // Actualiza stock del producto en la signal
         const updated = res.data?.updatedProduct;
         if (updated) {
-          this.products = this.products.map((p: InventoryProduct) =>
-            p.id === updated.id ? { ...p, stock: updated.stock, status: updated.status } : p
+          this.allProducts.update(list =>
+            list.map(p => p.id === updated.id ? { ...p, stock: updated.stock, status: updated.status } : p)
           );
         }
-        this.movements = [{
+
+        // Añade el nuevo movimiento al inicio de la signal
+        this.allMovements.update(list => [{
           id:          res.data.id,
           type:        res.data.type,
           productId:   res.data.productId,
@@ -203,11 +219,11 @@ export class AdminInventoryPage implements OnInit {
           userId:      res.data.userId,
           userName:    res.data.userName ?? '',
           date:        this.form.date,
-        }, ...this.movements];
+        }, ...list]);
 
-        const movementType = this.form.type === 'Entrada' ? 'entrada' : 'salida';
-        this.modalOpen = false;
-        this.formError = '';
+        this.modalOpen.set(false);
+        this.formError.set('');
+
         Swal.fire({
           icon: 'success',
           title: this.form.type === 'Entrada' ? '¡Entrada registrada!' : '¡Salida registrada!',
@@ -216,21 +232,22 @@ export class AdminInventoryPage implements OnInit {
           timer: 2500,
           timerProgressBar: true
         }).then(() => {
-          this.activeTab = 'history';
+          this.activeTab.set('history');
         });
+
       } else {
         this.swalError(res.data?.message ?? 'Error al registrar el movimiento.');
       }
     });
   }
 
-  // ── Utilidades ─────────────────────────────────
+  // ── Utilidades ─────────────────────────────────────────────────────────────
 
   private swalError(text: string): void {
     Swal.fire({
       icon: 'error',
       title: 'Error',
-      text: text,
+      text,
       confirmButtonColor: '#ef4444',
       confirmButtonText: 'Entendido'
     });

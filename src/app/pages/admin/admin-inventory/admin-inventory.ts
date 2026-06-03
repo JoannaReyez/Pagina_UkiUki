@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Http, InventoryProduct, InventoryMovement } from '../../../services/http';
+import Swal from 'sweetalert2';
 
 export type StockStatus = 'ok' | 'low' | 'out';
 
@@ -204,15 +205,36 @@ export class AdminInventoryPage implements OnInit {
           date:        this.form.date,
         }, ...this.movements];
 
-        this.activeTab = 'history';
-        this.closeModal();
+        const movementType = this.form.type === 'Entrada' ? 'entrada' : 'salida';
+        this.modalOpen = false;
+        this.formError = '';
+        Swal.fire({
+          icon: 'success',
+          title: this.form.type === 'Entrada' ? '¡Entrada registrada!' : '¡Salida registrada!',
+          html: `<strong>${product.name}</strong><br>Cantidad: ${this.form.quantity} unidades<br>Stock: ${res.data.stockBefore} → ${res.data.stockAfter}`,
+          confirmButtonColor: '#10b981',
+          timer: 2500,
+          timerProgressBar: true
+        }).then(() => {
+          this.activeTab = 'history';
+        });
       } else {
-        this.formError = res.data?.message ?? 'Error al registrar el movimiento.';
+        this.swalError(res.data?.message ?? 'Error al registrar el movimiento.');
       }
     });
   }
 
   // ── Utilidades ─────────────────────────────────
+
+  private swalError(text: string): void {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: text,
+      confirmButtonColor: '#ef4444',
+      confirmButtonText: 'Entendido'
+    });
+  }
 
   private emptyForm(): MovementForm {
     return {

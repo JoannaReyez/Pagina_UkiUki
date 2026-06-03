@@ -254,3 +254,66 @@ select:focus {
     flex: 1;
   }
 }
+
+/* Page header con botón */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(31, 35, 85, 0.45);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 40px 20px;
+}
+
+.modal-box {
+  background: #fff;
+  border-radius: 28px;
+  padding: 32px 36px;
+  width: 100%;
+  max-width: 620px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  box-shadow: 0 24px 80px rgba(79, 74, 124, 0.18);
+  animation: modal-in 0.22s ease;
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+
+  h2 { margin: 0; }
+}
+
+.modal-close {
+  border: none;
+  background: #eef1fb;
+  color: #4d567e;
+  border-radius: 12px;
+  width: 36px;
+  height: 36px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background 0.2s;
+
+  &:hover { background: #e2e7f8; }
+}

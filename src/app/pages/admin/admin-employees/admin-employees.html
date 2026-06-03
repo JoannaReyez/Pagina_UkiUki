@@ -5,49 +5,136 @@
       <h1>Empleados</h1>
       <p>Solo el administrador puede crear, editar, eliminar y asignar credenciales.</p>
     </div>
+    <button type="button" class="btn-primary" (click)="openModal()">
+      + Nuevo empleado
+    </button>
   </div>
 
-  <div class="page-grid">
-    <article class="panel form-panel">
-      <h2>{{ editingId ? 'Editar empleado' : 'Nuevo empleado' }}</h2>
-      <label>Nombre<input [(ngModel)]="form.name" /></label>
-      <label>Email<input [(ngModel)]="form.email" type="email" /></label>
-      <label>Iniciales<input [(ngModel)]="form.avatarText" maxlength="2" /></label>
-      <label>Actividad<textarea [(ngModel)]="form.activity" rows="4"></textarea></label>
-      <label>Status
+  <article class="panel list-panel">
+    <div class="table-head">
+      <h2>Registro de empleados</h2>
+      <span>{{ activeCount() }} activos</span>
+    </div>
+
+    <!-- LOADING -->
+    <div class="loading-state" *ngIf="isLoading">
+      <p>Cargando empleados...</p>
+    </div>
+
+    <!-- LISTA -->
+    <div class="employee-list" *ngIf="!isLoading">
+
+      <!-- EMPTY -->
+      <div class="empty-state" *ngIf="employees().length === 0">
+        <i class="bi bi-people"></i>
+        <p>No hay empleados registrados.</p>
+        <button type="button" class="btn-primary" (click)="openModal()">+ Agregar empleado</button>
+      </div>
+
+      <article class="employee-item" *ngFor="let employee of employees()">
+
+        <div class="avatar">{{ employee.avatarText }}</div>
+
+        <div class="employee-copy">
+          <strong>{{ employee.name }}</strong>
+          <p>{{ employee.email }}</p>
+          <small>{{ employee.activity }}</small>
+        </div>
+
+        <div class="employee-meta">
+          <span class="status-pill" [class.inactive]="employee.status === 'Inactivo'">
+            {{ employee.status }}
+          </span>
+          <div class="actions">
+            <button type="button" (click)="startEdit(employee)">Editar</button>
+            <button type="button" class="danger" (click)="remove(employee.id)">Eliminar</button>
+          </div>
+        </div>
+
+      </article>
+    </div>
+  </article>
+</section>
+
+<!-- MODAL -->
+<div class="modal-backdrop" *ngIf="modalOpen" (click)="closeModal()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <div>
+        <span class="modal-badge">Empleado</span>
+        <h2>{{ editingId ? 'Editar empleado' : 'Nuevo empleado' }}</h2>
+        <p>{{ editingId ? 'Modifica los datos del empleado.' : 'Completa el formulario para registrar un nuevo empleado.' }}</p>
+      </div>
+      <button type="button" class="modal-close" (click)="closeModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+
+      <label>
+        <span>Nombre <span class="required">*</span></span>
+        <input
+          [(ngModel)]="form.name"
+          type="text"
+          placeholder="Ej. María López"
+          [class.input-error]="!form.name.trim() && submitted" />
+      </label>
+
+      <label>
+        <span>Email <span class="required">*</span></span>
+        <input
+          [(ngModel)]="form.email"
+          type="email"
+          placeholder="correo@empresa.com"
+          [class.input-error]="!form.email.trim() && submitted" />
+      </label>
+
+      <label>
+        <span>Contraseña
+          <small *ngIf="editingId">(dejar vacío para no cambiar)</small>
+          <small *ngIf="!editingId">(por defecto: empleado123)</small>
+        </span>
+        <input
+          [(ngModel)]="form.password"
+          type="password"
+          [placeholder]="editingId ? 'Nueva contraseña...' : 'empleado123'" />
+      </label>
+
+      <label>
+        <span>Iniciales</span>
+        <input
+          [(ngModel)]="form.avatarText"
+          type="text"
+          maxlength="2"
+          placeholder="ML"
+          style="text-transform: uppercase" />
+      </label>
+
+      <label>
+        <span>Actividad</span>
+        <textarea
+          [(ngModel)]="form.activity"
+          rows="3"
+          placeholder="Describe la actividad del empleado..."></textarea>
+      </label>
+
+      <label>
+        <span>Estado</span>
         <select [(ngModel)]="form.status">
-          <option>Activo</option>
-          <option>Inactivo</option>
+          <option value="Activo">Activo</option>
+          <option value="Inactivo">Inactivo</option>
         </select>
       </label>
-      <div class="form-actions">
-        <button type="button" class="btn-secondary" (click)="reset()">Limpiar</button>
-        <button type="button" class="btn-primary" (click)="save()">{{ editingId ? 'Guardar' : 'Crear' }}</button>
-      </div>
-    </article>
 
-    <article class="panel list-panel">
-      <div class="table-head">
-        <h2>Registro de empleados</h2>
-        <span>{{ store.getActiveEmployees().length }} activos</span>
-      </div>
-      <div class="employee-list">
-        <article class="employee-item" *ngFor="let employee of store.employees()">
-          <div class="avatar">{{ employee.avatarText }}</div>
-          <div class="employee-copy">
-            <strong>{{ employee.name }}</strong>
-            <p>{{ employee.email }}</p>
-            <small>{{ employee.activity }}</small>
-          </div>
-          <div class="employee-meta">
-            <span class="status-pill" [class.inactive]="employee.status === 'Inactivo'">{{ employee.status }}</span>
-            <div class="actions">
-              <button type="button" (click)="startEdit(employee)">Editar</button>
-              <button type="button" class="danger" (click)="remove(employee.id)">Eliminar</button>
-            </div>
-          </div>
-        </article>
-      </div>
-    </article>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-secondary" (click)="reset()">Limpiar</button>
+      <button type="button" class="btn-primary" [disabled]="isSaving" (click)="save()">
+        <span *ngIf="!isSaving">{{ editingId ? 'Guardar cambios' : 'Crear empleado' }}</span>
+        <span *ngIf="isSaving">Guardando...</span>
+      </button>
+    </div>
+
   </div>
-</section>
+</div>

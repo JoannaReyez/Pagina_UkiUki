@@ -188,6 +188,103 @@ p { color: #727a9e; line-height: 1.6; }
   box-shadow: inset 0 0 0 1px rgba(215, 70, 115, 0.12);
 }
 
+.pending-state,
+.pending-list {
+  position: relative;
+}
+
+.pending-state {
+  min-height: 150px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  padding: 18px;
+  text-align: center;
+  color: #7f86aa;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.58);
+  box-shadow: inset 0 0 0 1px rgba(115, 124, 179, 0.09);
+}
+
+.pending-state i {
+  font-size: 2rem;
+  color: #5d76bc;
+}
+
+.pending-state strong {
+  color: #1f2355;
+}
+
+.pending-state p {
+  margin: 0;
+}
+
+.pending-list {
+  display: grid;
+  gap: 12px;
+}
+
+.pending-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.66);
+  box-shadow: inset 0 0 0 1px rgba(115, 124, 179, 0.09);
+}
+
+.pending-copy {
+  min-width: 0;
+}
+
+.pending-copy strong {
+  color: #1f2355;
+}
+
+.pending-copy p {
+  margin: 4px 0;
+  color: #7f86aa;
+}
+
+.pending-copy small {
+  color: #9aa1be;
+}
+
+.pending-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.accept-btn,
+.reject-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 118px;
+}
+
+.accept-btn {
+  color: #fff;
+  background: #1e8f5f;
+  box-shadow: 0 14px 26px rgba(30, 143, 95, 0.2);
+}
+
+.reject-btn {
+  color: #fff;
+  background: #b8325c;
+  box-shadow: 0 14px 26px rgba(184, 50, 92, 0.18);
+}
+
+.accept-btn:disabled,
+.reject-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
 @keyframes softReveal {
   from {
     opacity: 0;
@@ -235,6 +332,10 @@ button { cursor: pointer; }
   .entry-head { align-items: flex-start; flex-direction: column; }
   .entry-stock { width: 100%; text-align: left; }
   .entry-submit { width: 100%; }
+  .pending-row { grid-template-columns: 1fr; align-items: start; }
+  .pending-actions { width: 100%; }
+  .accept-btn,
+  .reject-btn { flex: 1; min-width: 0; }
   .table-head { align-items: flex-start; flex-direction: column; }
   .history-row { grid-template-columns: 46px minmax(0, 1fr); align-items: start; }
   .history-meta { grid-column: 1 / -1; text-align: left; display: flex; justify-content: space-between; }

@@ -32,10 +32,6 @@
         <input type="search" placeholder="Buscar producto..." [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" />
       </label>
 
-      <select [ngModel]="selectedCategory()" (ngModelChange)="selectedCategory.set($event)" aria-label="Filtrar por categoria">
-        <option *ngFor="let category of categories()" [value]="category">{{ category }}</option>
-      </select>
-
       <select [ngModel]="selectedStatus()" (ngModelChange)="selectedStatus.set($event)" aria-label="Filtrar por estado">
         <option *ngFor="let status of statuses()" [value]="status">{{ status }}</option>
       </select>
@@ -50,7 +46,7 @@
 
     <div class="table-head">
       <h2>Catalogo visible</h2>
-      <span>{{ filteredProducts().length }} de {{ store.inventoryProducts().length }} productos</span>
+      <span>{{ filteredProducts().length }} de {{ store.employeeInventory().length }} productos</span>
     </div>
 
     <div class="sale-alert" *ngIf="saleMessage()">
@@ -66,12 +62,14 @@
 
     <div class="product-list" *ngIf="filteredProducts().length > 0">
       <div class="product-row" *ngFor="let product of filteredProducts()">
+        <label class="select-checkbox">
+          <input type="checkbox" [checked]="isSelected(product.productId)" (change)="toggleSelect(product.productId)" />
+        </label>
         <img [src]="product.image" [alt]="product.name" />
         <div class="product-copy">
           <strong>{{ product.name }}</strong>
-          <p>{{ product.description }}</p>
+          <p>{{ product.category }}</p>
           <div class="tags">
-            <span>{{ product.category }}</span>
             <span [class.warning]="product.stock <= 10">{{ product.status }}</span>
           </div>
         </div>
@@ -81,11 +79,11 @@
         </div>
         <div class="sale-controls">
           <div class="stepper" [class.disabled]="product.stock === 0">
-            <button type="button" (click)="decreaseQuantity(product)" [disabled]="product.stock === 0 || quantityFor(product.id) <= 1" aria-label="Disminuir cantidad">
+            <button type="button" (click)="decreaseQuantity(product)" [disabled]="product.stock === 0 || quantityFor(product.productId) <= 1" aria-label="Disminuir cantidad">
               <i class="bi bi-dash"></i>
             </button>
-            <input type="number" min="1" [max]="product.stock" [ngModel]="quantityFor(product.id)" (ngModelChange)="setQuantity(product, $event)" [disabled]="product.stock === 0" aria-label="Cantidad a vender" />
-            <button type="button" (click)="increaseQuantity(product)" [disabled]="product.stock === 0 || quantityFor(product.id) >= product.stock" aria-label="Aumentar cantidad">
+            <input type="number" min="1" [max]="product.stock" [ngModel]="quantityFor(product.productId)" (ngModelChange)="setQuantity(product, $event)" [disabled]="product.stock === 0" aria-label="Cantidad a vender" />
+            <button type="button" (click)="increaseQuantity(product)" [disabled]="product.stock === 0 || quantityFor(product.productId) >= product.stock" aria-label="Aumentar cantidad">
               <i class="bi bi-plus"></i>
             </button>
           </div>

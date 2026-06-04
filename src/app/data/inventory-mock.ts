@@ -19,7 +19,7 @@ export interface InventoryProduct {
 
 export interface InventoryMovement {
   id: number;
-  type: 'Entrada' | 'Salida';
+  type: 'Entrada' | 'Salida' | 'Entrada Aceptada' | 'Entrada Rechazada';
   product: string;
   quantity: number;
   date: string;

@@ -80,6 +80,13 @@
         <span>Historial</span>
         <span class="tab-count">{{ filteredMovements().length }}</span>
       </button>
+      <button class="tab-btn"
+        [class.tab-active]="activeTab() === 'supply'"
+        (click)="activeTab.set('supply')">
+        <span class="tab-icon"><i class="bi bi-person-fill"></i></span>
+        <span>Surtir a empleado</span>
+        <span class="tab-count">{{ employees().length }}</span>
+      </button>
     </div>
 
     <!-- ── LOADING STOCK ── -->
@@ -182,7 +189,100 @@
       </div>
     </div>
 
+    <!-- ── SUPPLY TAB ── -->
+    <div class="tab-content" *ngIf="activeTab() === 'supply'">
+      <div class="loading-row" *ngIf="loadingEmployees()">
+        <span class="loading-spinner"></span> Cargando empleados…
+      </div>
+
+      <div class="supply-section" *ngIf="!loadingEmployees()">
+        <div class="section-header">
+          <h3>Surtir inventario a empleados</h3>
+          <p>Asigna productos del inventario general a los empleados</p>
+        </div>
+
+        <button class="btn btn-primary" (click)="openSupplyModal()" style="margin-bottom: 20px;">
+          <i class="bi bi-plus-circle"></i> Crear nuevo surtido
+        </button>
+
+        <div class="info-box" *ngIf="employees().length === 0">
+          <i class="bi bi-info-circle"></i>
+          <span>No hay empleados activos para surtir</span>
+        </div>
+
+        <div class="empty-state" *ngIf="employees().length === 0">
+          <span class="empty-icon"><i class="bi bi-people"></i></span>
+          <p>Crea empleados activos primero</p>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /tab-panel -->
+
+  <!-- ░░ SUPPLY MODAL ░░ -->
+  <div class="modal-overlay" [class.open]="supplyModalOpen()" (click)="closeSupplyOnBackground($event)">
+    <div class="modal" role="dialog" aria-modal="true">
+
+      <div class="modal-header header-supply">
+        <div class="modal-title-row">
+          <span class="modal-icon-big">
+            <i class="bi bi-person-fill"></i>
+          </span>
+          <h3>Surtir producto a empleado</h3>
+        </div>
+        <button class="modal-close" (click)="closeSupplyModal()" aria-label="Cerrar">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="field">
+          <label class="field-label">Empleado</label>
+          <select class="field-input" [(ngModel)]="supplyForm.employeeId">
+            <option [ngValue]="null">Seleccionar empleado…</option>
+            <option *ngFor="let emp of employees()" [ngValue]="emp.id">
+              {{ emp.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Producto</label>
+          <div class="field-product-row">
+            <select class="field-input" [(ngModel)]="supplyForm.productId" (change)="onSupplyProductChange()">
+              <option [ngValue]="null">Seleccionar producto…</option>
+              <option *ngFor="let p of products()" [ngValue]="p.id">
+                {{ p.name }} — stock: {{ p.stock }}
+              </option>
+            </select>
+            <span class="stock-bubble" *ngIf="selectedSupplyProductStock() !== null">
+              {{ selectedSupplyProductStock() }} disponibles
+            </span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Cantidad a surtir</label>
+          <input class="field-input" type="number" min="1" [(ngModel)]="supplyForm.quantity" placeholder="0" />
+        </div>
+
+        <div class="field">
+          <label class="field-label">Motivo / nota</label>
+          <textarea class="field-input field-textarea" [(ngModel)]="supplyForm.reason" rows="3" placeholder="Ej. Surtido semanal…"></textarea>
+        </div>
+
+        <div class="modal-error" *ngIf="supplyFormError()">
+          <i class="bi bi-exclamation-triangle-fill"></i> {{ supplyFormError() }}
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" (click)="closeSupplyModal()">Cancelar</button>
+        <button class="btn btn-primary" (click)="saveSupply()" [disabled]="supplyLoading()">
+          <i class="bi bi-check-circle"></i> {{ supplyLoading() ? 'Procesando...' : 'Registrar surtido' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
 
 </section>
 

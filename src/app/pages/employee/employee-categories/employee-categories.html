@@ -39,11 +39,10 @@
           <strong>{{ category.name }}</strong>
           <p>{{ category.description }}</p>
           <span class="status-pill" [class.inactive]="!category.active">{{ category.active ? 'Activa' : 'Inactiva' }}</span>
-        </div>
-        <div class="category-meta">
-          <strong>{{ productsInCategory(category.name) }}</strong>
-          <span>productos vinculados</span>
-          <small>{{ category.productsCount }} registrados</small>
+          <p>Esta sección no está disponible para usuarios con rol Empleado.</p>
+          <div class="category-meta">
+            <strong>{{ productsInCategory(category.name) }}</strong>
+          </div>
         </div>
       </article>
     </div>

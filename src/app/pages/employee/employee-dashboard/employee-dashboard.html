@@ -39,7 +39,7 @@
         <div class="sold-row" *ngFor="let item of lowStockProducts()">
           <div>
             <strong>{{ item.name }}</strong>
-            <p>{{ item.category }}</p>
+            <p>{{ item.status }}</p>
           </div>
           <span>Stock: {{ item.stock }}</span>
         </div>

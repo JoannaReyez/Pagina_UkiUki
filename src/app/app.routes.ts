@@ -17,6 +17,7 @@ import { EmployeeDashboardPage } from './pages/employee/employee-dashboard/emplo
 import { EmployeeProductsPage } from './pages/employee/employee-products/employee-products';
 import { EmployeeCategoriesPage } from './pages/employee/employee-categories/employee-categories';
 import { EmployeeReportPage } from './pages/employee/employee-report/employee-report';
+import { EmployeeCashCutPage } from './pages/employee/employee-cash-cut/employee-cash-cut';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'web', pathMatch: 'full' },
@@ -49,7 +50,8 @@ export const routes: Routes = [
       { path: 'dashboard', component: EmployeeDashboardPage },
       { path: 'productos', component: EmployeeProductsPage },
       { path: 'categorias', component: EmployeeCategoriesPage },
-      { path: 'mi-reporte', component: EmployeeReportPage }
+      { path: 'mi-reporte', component: EmployeeReportPage },
+      { path: 'corte-de-caja', component: EmployeeCashCutPage }
     ]
   }
 ];

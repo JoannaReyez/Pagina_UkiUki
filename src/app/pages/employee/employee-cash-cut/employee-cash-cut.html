@@ -1,0 +1,96 @@
+<section class="section-page">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Empleado</p>
+      <h1>Corte de Caja</h1>
+      <p>Resumen de ventas del día y cierre de turno.</p>
+    </div>
+  </div>
+
+  <div class="summary-grid">
+    <article>
+      <span>Transacciones</span>
+      <strong>{{ totalSalesCount() }}</strong>
+      <small>Ventas registradas</small>
+    </article>
+    <article>
+      <span>Unidades vendidas</span>
+      <strong>{{ totalUnitsSOld() }}</strong>
+      <small>Total de productos</small>
+    </article>
+    <article>
+      <span>Efectivo esperado</span>
+      <strong>${{ totalCashExpected().toFixed(2) }}</strong>
+      <small>Total del día</small>
+    </article>
+  </div>
+
+  <article class="panel">
+    <div class="toolbar">
+      <label class="search-box">
+        <i class="bi bi-search"></i>
+        <input type="search" placeholder="Buscar producto vendido..." [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" />
+      </label>
+
+      <button type="button" class="clear-btn" (click)="clearFilters()">Limpiar</button>
+    </div>
+
+    <div class="table-head">
+      <h2>Productos vendidos</h2>
+      <span>{{ filteredSoldProducts().length }} productos únicos</span>
+    </div>
+
+    <div class="empty-state" *ngIf="filteredSoldProducts().length === 0">
+      <i class="bi bi-bag-x"></i>
+      <strong>Sin ventas</strong>
+      <p>No hay productos vendidos para mostrar en el corte de hoy.</p>
+    </div>
+
+    <div class="sold-list" *ngIf="filteredSoldProducts().length > 0">
+      <div class="sold-row" *ngFor="let product of filteredSoldProducts()">
+        <div class="product-info">
+          <strong>{{ product.name }}</strong>
+          <p>Precio unitario: ${{ product.unitPrice.toFixed(2) }}</p>
+        </div>
+        <div class="product-meta">
+          <span>Cantidad: {{ product.quantity }}</span>
+          <strong>${{ product.totalPrice.toFixed(2) }}</strong>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="panel finalization-panel">
+    <div class="entry-head">
+      <div>
+        <span class="entry-kicker">Cierre</span>
+        <h2>Finalizar corte de caja</h2>
+      </div>
+    </div>
+
+    <div class="finalization-summary">
+      <div class="summary-item">
+        <span>Total de transacciones</span>
+        <strong>{{ totalSalesCount() }}</strong>
+      </div>
+      <div class="summary-item">
+        <span>Total de unidades</span>
+        <strong>{{ totalUnitsSOld() }}</strong>
+      </div>
+      <div class="summary-item highlight">
+        <span>Efectivo esperado en caja</span>
+        <strong>${{ totalCashExpected().toFixed(2) }}</strong>
+      </div>
+    </div>
+
+    <button type="button" class="finalize-btn" (click)="finalizeCashCut()" [disabled]="totalSalesCount() === 0">
+      <i class="bi bi-check-circle"></i>
+      Finalizar corte de caja
+    </button>
+
+    <div class="entry-message" *ngIf="finalizationMessage()" [class.success]="true">
+      <i class="bi bi-check-circle"></i>
+      <span>{{ finalizationMessage() }}</span>
+    </div>
+  </article>
+</section>

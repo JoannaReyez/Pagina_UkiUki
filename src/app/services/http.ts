@@ -24,7 +24,7 @@ export interface InventoryProduct {
 // ── NUEVO ──────────────────────────────────────────────────────────────────
 export interface InventoryMovement {
   id: number;
-  type: 'Entrada' | 'Salida';
+  type: 'Entrada' | 'Salida' | 'Entrada Aceptada' | 'Entrada Rechazada';
   productId: number;
   product: string;
   quantity: number;
@@ -42,6 +42,94 @@ export interface CreateMovimientoPayload {
   quantity: number;
   reason?: string;
   userId: number;
+}
+
+// ── INVENTARIO DE EMPLEADO ─────────────────────────────────────────────────
+export interface EmployeeInventoryProduct {
+  productId: number;
+  image: string;
+  name: string;
+  price: number;
+  stock: number;
+  status: 'Activo' | 'Bajo stock' | 'Agotado';
+  category: string;
+}
+
+export interface SupplyEmployeePayload {
+  productId: number;
+  employeeId: number;
+  quantity: number;
+  reason?: string;
+}
+
+export interface SaleEmployeePayload {
+  productId: number;
+  employeeId: number;
+  quantity: number;
+  reason?: string;
+}
+
+export interface SupplyEmployeeResponse {
+  pendingId?: number;
+  productId: number;
+  employeeId: number;
+  quantity: number;
+  adminStockBefore: number;
+  adminStockAfter: number;
+  employeeStockBefore?: number;
+  employeeStockAfter?: number;
+  updatedProduct: InventoryProduct;
+  updatedEmployeeStock?: {
+    employeeId: number;
+    productId: number;
+    stock: number;
+    status: string;
+  };
+}
+
+export interface SaleEmployeeResponse {
+  productId: number;
+  employeeId: number;
+  quantity: number;
+  employeeStockBefore: number;
+  employeeStockAfter: number;
+  updatedEmployeeStock: {
+    employeeId: number;
+    productId: number;
+    stock: number;
+    status: string;
+  };
+}
+
+export interface PendingEmployeeDelivery {
+  id: number;
+  productId: number;
+  employeeId: number;
+  quantity: number;
+  status: 'Pendiente' | 'Aceptada' | 'Rechazada';
+  sentAt: string;
+  answeredAt?: string | null;
+  product?: string;
+  productName?: string;
+  name?: string;
+  image?: string;
+  category?: string;
+}
+
+export interface DeliveryResponse {
+  deliveryId: number;
+  productId: number;
+  employeeId: number;
+  quantity: number;
+  status: 'Aceptada' | 'Rechazada';
+  updatedProduct?: InventoryProduct;
+  updatedEmployeeStock?: {
+    employeeId: number;
+    productId: number;
+    stock: number;
+    status: string;
+  };
+  movement?: InventoryMovement;
 }
 // ──────────────────────────────────────────────────────────────────────────
 
@@ -102,6 +190,18 @@ export class Http {
       .pipe(map(res => res.code === 200 ? res.data : []), catchError(() => of([])));
   }
 
+  getProducto(id: number): Observable<InventoryProduct | null> {
+    return this.http
+      .get<ApiResponse<InventoryProduct>>(`${this.API}?getProducto=${id}`)
+      .pipe(map(res => res.code === 200 ? res.data : null), catchError(() => of(null)));
+  }
+
+  getProductoStock(id: number): Observable<{ id: number; name: string; stock: number; status: string } | null> {
+    return this.http
+      .get<ApiResponse<any>>(`${this.API}?getProductoStock=${id}`)
+      .pipe(map(res => (res.code === 200 ? res.data : null)), catchError(() => of(null)));
+  }
+
   createProducto(product: Omit<InventoryProduct, 'id'>): Observable<InventoryProduct | null> {
     return this.http
       .post<ApiResponse<InventoryProduct>>(`${this.API}?createProducto`, product, { headers: this.headers })
@@ -159,5 +259,55 @@ export class Http {
     return this.http
       .post<ApiResponse<any>>(`${this.API}?createMovimiento`, payload, { headers: this.headers })
       .pipe(catchError(() => of({ code: 500, data: { message: 'Error de conexión.' } })));
+  }
+
+  // ─── INVENTARIO ADMINISTRADOR / EMPLEADO ────────────────────────────────────
+
+  getInventarioAdmin(): Observable<InventoryProduct[]> {
+    return this.http
+      .get<ApiResponse<InventoryProduct[]>>(`${this.API}?getInventarioAdmin`)
+      .pipe(map(res => res.code === 200 ? res.data : []), catchError(() => of([])));
+  }
+
+  getInventarioEmpleado(employeeId: number): Observable<EmployeeInventoryProduct[]> {
+    return this.http
+      .get<ApiResponse<EmployeeInventoryProduct[]>>(`${this.API}?getInventarioEmpleado=${employeeId}`)
+      .pipe(map(res => res.code === 200 ? res.data : []), catchError(() => of([])));
+  }
+
+  getProductosEmpleado(employeeId: number): Observable<EmployeeInventoryProduct[]> {
+    return this.http
+      .get<ApiResponse<EmployeeInventoryProduct[]>>(`${this.API}?getProductosEmpleado=${employeeId}`)
+      .pipe(map(res => res.code === 200 ? res.data : []), catchError(() => of([])));
+  }
+
+  supplyEmpleado(payload: SupplyEmployeePayload): Observable<ApiResponse<SupplyEmployeeResponse>> {
+    return this.http
+      .post<ApiResponse<SupplyEmployeeResponse>>(`${this.API}?supplyEmpleado`, payload, { headers: this.headers })
+      .pipe(catchError(() => of({ code: 500, data: { message: 'Error de conexión.' } as any })));
+  }
+
+  getPendientesEmpleado(employeeId: number): Observable<PendingEmployeeDelivery[]> {
+    return this.http
+      .get<ApiResponse<PendingEmployeeDelivery[]>>(`${this.API}?getPendientesEmpleado=${employeeId}`)
+      .pipe(map(res => res.code === 200 ? res.data : []), catchError(() => of([])));
+  }
+
+  aceptarEntrega(deliveryId: number): Observable<ApiResponse<DeliveryResponse>> {
+    return this.http
+      .post<ApiResponse<DeliveryResponse>>(`${this.API}?aceptarEntrega`, { entregaId: deliveryId }, { headers: this.headers })
+      .pipe(catchError(() => of({ code: 500, data: { message: 'Error de conexión.' } as any })));
+  }
+
+  rechazarEntrega(deliveryId: number): Observable<ApiResponse<DeliveryResponse>> {
+    return this.http
+      .post<ApiResponse<DeliveryResponse>>(`${this.API}?rechazarEntrega`, { entregaId: deliveryId }, { headers: this.headers })
+      .pipe(catchError(() => of({ code: 500, data: { message: 'Error de conexión.' } as any })));
+  }
+
+  ventaEmpleado(payload: SaleEmployeePayload): Observable<ApiResponse<SaleEmployeeResponse>> {
+    return this.http
+      .post<ApiResponse<SaleEmployeeResponse>>(`${this.API}?ventaEmpleado`, payload, { headers: this.headers })
+      .pipe(catchError(() => of({ code: 500, data: { message: 'Error de conexión.' } as any })));
   }
 }

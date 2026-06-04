@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Http, InventoryProduct, InventoryMovement } from '../../../services/http';
+import { Http, InventoryProduct, InventoryMovement, EmployeeRecord, SupplyEmployeePayload } from '../../../services/http';
 import Swal from 'sweetalert2';
 
 export type StockStatus = 'ok' | 'low' | 'out';
@@ -11,6 +11,13 @@ interface MovementForm {
   productId: number | null;
   quantity: number;
   date: string;
+  reason: string;
+}
+
+interface SupplyForm {
+  employeeId: number | null;
+  productId: number | null;
+  quantity: number;
   reason: string;
 }
 
@@ -27,13 +34,15 @@ export class AdminInventoryPage implements OnInit {
   // ── Datos como signals ─────────────────────────────────────────────────────
   private allProducts  = signal<InventoryProduct[]>([]);
   private allMovements = signal<InventoryMovement[]>([]);
+  private allEmployees = signal<EmployeeRecord[]>([]);
 
   // ── Estado de carga ────────────────────────────────────────────────────────
   loading          = signal(false);
   loadingMovements = signal(false);
+  loadingEmployees = signal(false);
 
   // ── Tab y filtros ──────────────────────────────────────────────────────────
-  activeTab   = signal<'stock' | 'history'>('stock');
+  activeTab   = signal<'stock' | 'history' | 'supply'>('stock');
   stockFilter = signal<StockStatus | 'all'>('all');
   histFilter  = signal<'Entrada' | 'Salida' | 'all'>('all');
 
@@ -42,7 +51,15 @@ export class AdminInventoryPage implements OnInit {
   formError            = signal('');
   selectedProductStock = signal<number | null>(null);
 
+  // ── Surtida de empleado ────────────────────────────────────────────────────
+  supplyModalOpen      = signal(false);
+  supplyFormError      = signal('');
+  supplyLoading        = signal(false);
+  selectedEmployeeId   = signal<number | null>(null);
+  selectedSupplyProductStock = signal<number | null>(null);
+
   form: MovementForm = this.emptyForm();
+  supplyForm: SupplyForm = this.emptySupplyForm();
 
   // ── Computed: métricas ─────────────────────────────────────────────────────
   readonly totalProducts   = computed(() => this.allProducts().length);
@@ -66,6 +83,11 @@ export class AdminInventoryPage implements OnInit {
   // ── Computed: productos para el select del modal ───────────────────────────
   readonly products = computed(() => this.allProducts());
 
+  // ── Computed: empleados activos ────────────────────────────────────────────
+  readonly employees = computed(() => 
+    this.allEmployees().filter(emp => emp.status === 'Activo')
+  );
+
   // ── Usuario en sesión ──────────────────────────────────────────────────────
   private get currentUserId(): number {
     const user = JSON.parse(localStorage.getItem('user') ?? '{}');
@@ -77,6 +99,7 @@ export class AdminInventoryPage implements OnInit {
   ngOnInit(): void {
     this.loadProducts();
     this.loadMovements();
+    this.loadEmployees();
   }
 
   // ── Carga de datos ─────────────────────────────────────────────────────────
@@ -105,6 +128,20 @@ export class AdminInventoryPage implements OnInit {
       error: () => {
         this.loadingMovements.set(false);
         this.swalError('No se pudo cargar el historial.');
+      }
+    });
+  }
+
+  loadEmployees(): void {
+    this.loadingEmployees.set(true);
+    this.httpService.getEmpleados().subscribe({
+      next: data => {
+        this.allEmployees.set(data);
+        this.loadingEmployees.set(false);
+      },
+      error: () => {
+        this.loadingEmployees.set(false);
+        this.swalError('No se pudieron cargar los empleados.');
       }
     });
   }
@@ -253,6 +290,112 @@ export class AdminInventoryPage implements OnInit {
     });
   }
 
+  // ── Surtida de Empleado ────────────────────────────────────────────────────
+
+  openSupplyModal(): void {
+    this.supplyForm = this.emptySupplyForm();
+    this.supplyFormError.set('');
+    this.selectedEmployeeId.set(null);
+    this.selectedSupplyProductStock.set(null);
+    this.supplyModalOpen.set(true);
+  }
+
+  closeSupplyModal(): void {
+    this.supplyModalOpen.set(false);
+    this.supplyFormError.set('');
+  }
+
+  closeSupplyOnBackground(event: MouseEvent): void {
+    if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
+      this.closeSupplyModal();
+    }
+  }
+
+  onSupplyProductChange(): void {
+    const p = this.allProducts().find(prod => prod.id === this.supplyForm.productId);
+    this.selectedSupplyProductStock.set(p ? p.stock : null);
+    this.supplyFormError.set('');
+  }
+
+  saveSupply(): void {
+    this.supplyFormError.set('');
+
+    if (!this.supplyForm.employeeId) {
+      this.supplyFormError.set('Selecciona un empleado para continuar.');
+      return;
+    }
+    if (!this.supplyForm.productId) {
+      this.supplyFormError.set('Selecciona un producto para continuar.');
+      return;
+    }
+    if (!this.supplyForm.quantity || this.supplyForm.quantity < 1) {
+      this.supplyFormError.set('La cantidad debe ser mayor a 0.');
+      return;
+    }
+
+    const product = this.allProducts().find(p => p.id === this.supplyForm.productId);
+    const employee = this.allEmployees().find(e => e.id === this.supplyForm.employeeId);
+
+    if (!product) {
+      this.supplyFormError.set('Producto no encontrado.');
+      return;
+    }
+    if (!employee) {
+      this.supplyFormError.set('Empleado no encontrado.');
+      return;
+    }
+
+    if (product.stock < this.supplyForm.quantity) {
+      this.supplyFormError.set(`Stock insuficiente. Disponible: ${product.stock} unidades en inventario general.`);
+      return;
+    }
+
+    this.supplyLoading.set(true);
+
+    const payload: SupplyEmployeePayload = {
+      productId: this.supplyForm.productId,
+      employeeId: this.supplyForm.employeeId,
+      quantity: this.supplyForm.quantity,
+      reason: this.supplyForm.reason || 'Surtido del administrador'
+    };
+
+    this.httpService.supplyEmpleado(payload).subscribe({
+      next: (res: any) => {
+        this.supplyLoading.set(false);
+
+        if (res.code === 201) {
+          const data = res.data;
+
+          // Actualizar stock del producto administrador
+          const updated = data.updatedProduct;
+          if (updated) {
+            this.allProducts.update(list =>
+              list.map(p => p.id === updated.id ? { ...p, stock: updated.stock, status: updated.status } : p)
+            );
+          }
+
+          this.supplyModalOpen.set(false);
+          this.supplyFormError.set('');
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Entrega pendiente creada',
+            html: `<strong>${product.name}</strong> enviado a <strong>${employee.name}</strong><br>Cantidad: ${data.quantity} unidades<br>Stock administrador: ${data.adminStockBefore} -> ${data.adminStockAfter}<br><small>El empleado debe aceptar la entrega para sumarla a su inventario.</small>`,
+            confirmButtonColor: '#10b981',
+            timer: 3600,
+            timerProgressBar: true
+          });
+        } else {
+          this.swalError(res.data?.message ?? 'Error al registrar el surtido.');
+        }
+      },
+      error: () => {
+        this.supplyLoading.set(false);
+        this.swalError('Error de conexión al registrar el surtido.');
+      }
+    });
+  }
+
   private emptyForm(): MovementForm {
     return {
       type:      'Entrada',
@@ -260,6 +403,15 @@ export class AdminInventoryPage implements OnInit {
       quantity:  0,
       date:      new Date().toISOString().slice(0, 10),
       reason:    '',
+    };
+  }
+
+  private emptySupplyForm(): SupplyForm {
+    return {
+      employeeId: null,
+      productId: null,
+      quantity: 0,
+      reason: '',
     };
   }
 }

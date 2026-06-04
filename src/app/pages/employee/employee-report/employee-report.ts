@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, signal } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../auth/auth.service';
-import { InventoryProduct } from '../../../data/inventory-mock';
 import { StoreService } from '../../../store.service';
+import { Http, PendingEmployeeDelivery } from '../../../services/http';
 
 @Component({
   selector: 'app-employee-report-page',
@@ -12,34 +12,28 @@ import { StoreService } from '../../../store.service';
   templateUrl: './employee-report.html',
   styleUrl: './employee-report.scss'
 })
-export class EmployeeReportPage {
+export class EmployeeReportPage implements OnInit {
   readonly searchTerm = signal('');
   readonly selectedType = signal('Todos');
-  readonly productSelection = signal<number | 'new' | null>(null);
-  readonly selectedProductId = signal<number | null>(null);
-  readonly entryQuantity = signal(1);
-  readonly entryReason = signal('');
   readonly entryMessage = signal('');
   readonly entryMessageType = signal<'success' | 'error'>('success');
-  readonly isCreatingProduct = signal(false);
-  readonly newProductName = signal('');
-  readonly newProductPrice = signal(0);
-  readonly newProductCategory = signal('Snacks');
-  readonly newProductDescription = signal('');
+  readonly loadingInventory = signal(false);
+  readonly loadingPending = signal(false);
+  readonly pendingDeliveries = signal<PendingEmployeeDelivery[]>([]);
+  readonly processingDeliveryId = signal<number | null>(null);
 
-  constructor(public auth: AuthService, public store: StoreService) {}
+  constructor(public auth: AuthService, public store: StoreService, private api: Http) {}
 
-  readonly selectedProduct = computed(() =>
-    this.store.inventoryProducts().find(product => product.id === this.selectedProductId()) ?? null
-  );
+  ngOnInit(): void {
+    const user = this.auth.user();
+    if (user?.id) {
+      const employeeId = Number(user.id);
+      this.loadEmployeeInventory(employeeId);
+      this.loadPendingDeliveries(employeeId);
+    }
+  }
 
-  readonly productCategories = computed(() => {
-    const categories = new Set(this.store.inventoryProducts().map(product => product.category));
-
-    return ['Snacks', 'Bebidas', 'Dulces', 'Ramen', ...Array.from(categories)].filter(
-      (category, index, list) => list.indexOf(category) === index
-    );
-  });
+  readonly employeeProducts = computed(() => this.store.employeeInventory());
 
   readonly filteredMovements = computed(() => {
     const term = this.searchTerm().trim().toLowerCase();
@@ -50,7 +44,10 @@ export class EmployeeReportPage {
         movement.product.toLowerCase().includes(term) ||
         movement.reason.toLowerCase().includes(term) ||
         movement.date.toLowerCase().includes(term);
-      const matchesType = this.selectedType() === 'Todos' || movement.type === this.selectedType();
+      const matchesType =
+        this.selectedType() === 'Todos' ||
+        movement.type === this.selectedType() ||
+        (this.selectedType() === 'Entrada' && movement.type === 'Entrada Aceptada');
 
       return matchesTerm && matchesType;
     });
@@ -64,7 +61,7 @@ export class EmployeeReportPage {
 
   readonly inputUnits = computed(() =>
     this.filteredMovements()
-      .filter(movement => movement.type === 'Entrada')
+      .filter(movement => movement.type === 'Entrada' || movement.type === 'Entrada Aceptada')
       .reduce((total, movement) => total + movement.quantity, 0)
   );
 
@@ -72,154 +69,129 @@ export class EmployeeReportPage {
     this.filteredMovements()
       .filter(movement => movement.type === 'Salida')
       .reduce((total, movement) => {
-        const product = this.store.inventoryProducts().find(item => item.name === movement.product);
+        const product = this.store.employeeInventory().find(item => item.name === movement.product);
         return total + movement.quantity * (product?.price ?? 0);
       }, 0)
   );
+
+  private loadEmployeeInventory(employeeId: number): void {
+    this.loadingInventory.set(true);
+    this.api.getInventarioEmpleado(employeeId).subscribe({
+      next: (products) => {
+        this.store.employeeInventory.set(products);
+        this.loadingInventory.set(false);
+      },
+      error: () => {
+        this.loadingInventory.set(false);
+        this.showEntryMessage('Error al cargar el inventario. Recarga la pagina.', 'error');
+      }
+    });
+  }
+
+  private loadPendingDeliveries(employeeId: number): void {
+    this.loadingPending.set(true);
+    this.api.getPendientesEmpleado(employeeId).subscribe({
+      next: (deliveries) => {
+        this.pendingDeliveries.set(deliveries);
+        this.loadingPending.set(false);
+      },
+      error: () => {
+        this.loadingPending.set(false);
+        this.showEntryMessage('Error al cargar las entradas pendientes.', 'error');
+      }
+    });
+  }
+
+  private loadMovements(): void {
+    this.api.getMovimientos().subscribe(movements => {
+      this.store.inventoryMovements.set(movements as any);
+    });
+  }
 
   clearFilters(): void {
     this.searchTerm.set('');
     this.selectedType.set('Todos');
   }
 
-  setSelectedProduct(value: number | 'new' | string | null): void {
-    if (value === 'new') {
-      this.productSelection.set('new');
-      this.isCreatingProduct.set(true);
-      this.selectedProductId.set(null);
-      this.entryMessage.set('');
+  acceptDelivery(delivery: PendingEmployeeDelivery): void {
+    const user = this.auth.user();
+    if (!user?.id) {
+      this.showEntryMessage('No se pudo determinar tu ID. Vuelve a iniciar sesion.', 'error');
       return;
     }
 
-    if (value === null || value === '') {
-      this.productSelection.set(null);
-      this.isCreatingProduct.set(false);
-      this.selectedProductId.set(null);
-      this.entryMessage.set('');
-      return;
-    }
+    this.processingDeliveryId.set(delivery.id);
+    this.api.aceptarEntrega(delivery.id).subscribe({
+      next: (res) => {
+        this.processingDeliveryId.set(null);
 
-    const productId = Number(value);
-    this.productSelection.set(Number.isFinite(productId) ? productId : null);
-    this.isCreatingProduct.set(false);
-    this.selectedProductId.set(Number.isFinite(productId) ? productId : null);
-    this.entryMessage.set('');
-  }
+        if (res.code !== 200) {
+          this.showEntryMessage((res.data as any)?.message ?? 'No se pudo aceptar la entrega.', 'error');
+          return;
+        }
 
-  setEntryQuantity(value: number | string): void {
-    const parsed = Number(value);
-    const quantity = Number.isFinite(parsed) ? Math.floor(parsed) : 1;
+        const updatedEmployeeStock = res.data.updatedEmployeeStock;
+        if (updatedEmployeeStock) {
+          this.store.updateEmployeeInventoryProduct(
+            updatedEmployeeStock.employeeId,
+            updatedEmployeeStock.productId,
+            updatedEmployeeStock.stock,
+            updatedEmployeeStock.status
+          );
+        }
 
-    this.entryQuantity.set(Math.max(quantity, 1));
-    this.entryMessage.set('');
-  }
-
-  registerEntry(): void {
-    if (this.isCreatingProduct()) {
-      this.registerNewProductEntry();
-      return;
-    }
-
-    const product = this.selectedProduct();
-    const quantity = this.entryQuantity();
-
-    if (!product) {
-      this.showEntryMessage('Selecciona un producto para registrar la entrada.', 'error');
-      return;
-    }
-
-    if (!Number.isFinite(quantity) || quantity < 1) {
-      this.showEntryMessage('Ingresa una cantidad valida mayor a cero.', 'error');
-      return;
-    }
-
-    const registered = this.store.registerInventoryEntry(product.id, quantity, this.entryReason());
-
-    if (!registered) {
-      this.showEntryMessage('No se pudo registrar la entrada. Revisa los datos.', 'error');
-      return;
-    }
-
-    this.entryQuantity.set(1);
-    this.entryReason.set('');
-    this.showEntryMessage(`Entrada registrada: ${quantity} ${product.name}.`, 'success');
-  }
-
-  setNewProductPrice(value: number | string): void {
-    const parsed = Number(value);
-
-    this.newProductPrice.set(Number.isFinite(parsed) ? Math.max(parsed, 0) : 0);
-    this.entryMessage.set('');
-  }
-
-  private registerNewProductEntry(): void {
-    const quantity = this.entryQuantity();
-    const name = this.newProductName().trim();
-    const price = this.newProductPrice();
-    const category = this.newProductCategory().trim();
-
-    if (!name) {
-      this.showEntryMessage('Escribe el nombre del nuevo producto.', 'error');
-      return;
-    }
-
-    if (!Number.isFinite(quantity) || quantity < 1) {
-      this.showEntryMessage('Ingresa una cantidad valida mayor a cero.', 'error');
-      return;
-    }
-
-    if (!Number.isFinite(price) || price < 0) {
-      this.showEntryMessage('Ingresa un precio valido para el producto.', 'error');
-      return;
-    }
-
-    if (!category) {
-      this.showEntryMessage('Selecciona una categoria para el producto.', 'error');
-      return;
-    }
-
-    const product = this.store.registerNewInventoryProductEntry(
-      {
-        image: this.defaultProductImage(category),
-        name,
-        price,
-        description: this.newProductDescription(),
-        category
+        this.pendingDeliveries.update(list => list.filter(item => item.id !== delivery.id));
+        this.loadEmployeeInventory(Number(user.id));
+        this.loadMovements();
+        this.showEntryMessage(
+          `Entrada aceptada: ${delivery.quantity} unidades de ${this.getDeliveryProductName(delivery)}.`,
+          'success'
+        );
       },
-      quantity,
-      this.entryReason()
-    );
+      error: () => {
+        this.processingDeliveryId.set(null);
+        this.showEntryMessage('Error de conexion al aceptar la entrega.', 'error');
+      }
+    });
+  }
 
-    if (!product) {
-      this.showEntryMessage('No se pudo crear el producto. Revisa los datos.', 'error');
+  rejectDelivery(delivery: PendingEmployeeDelivery): void {
+    const user = this.auth.user();
+    if (!user?.id) {
+      this.showEntryMessage('No se pudo determinar tu ID. Vuelve a iniciar sesion.', 'error');
       return;
     }
 
-    this.resetNewProductForm(product);
-    this.showEntryMessage(`Producto registrado y entrada agregada: ${quantity} ${product.name}.`, 'success');
+    this.processingDeliveryId.set(delivery.id);
+    this.api.rechazarEntrega(delivery.id).subscribe({
+      next: (res) => {
+        this.processingDeliveryId.set(null);
+
+        if (res.code !== 200) {
+          this.showEntryMessage((res.data as any)?.message ?? 'No se pudo rechazar la entrega.', 'error');
+          return;
+        }
+
+        this.pendingDeliveries.update(list => list.filter(item => item.id !== delivery.id));
+        this.loadMovements();
+        this.showEntryMessage(
+          `Entrada rechazada: ${delivery.quantity} unidades de ${this.getDeliveryProductName(delivery)} regresaron al administrador.`,
+          'success'
+        );
+      },
+      error: () => {
+        this.processingDeliveryId.set(null);
+        this.showEntryMessage('Error de conexion al rechazar la entrega.', 'error');
+      }
+    });
   }
 
-  private resetNewProductForm(product: InventoryProduct): void {
-    this.productSelection.set(product.id);
-    this.selectedProductId.set(product.id);
-    this.isCreatingProduct.set(false);
-    this.entryQuantity.set(1);
-    this.entryReason.set('');
-    this.newProductName.set('');
-    this.newProductPrice.set(0);
-    this.newProductCategory.set('Snacks');
-    this.newProductDescription.set('');
+  getDeliveryProductName(delivery: PendingEmployeeDelivery): string {
+    return delivery.productName ?? delivery.product ?? delivery.name ?? `Producto #${delivery.productId}`;
   }
 
-  private defaultProductImage(category: string): string {
-    const images: Record<string, string> = {
-      Bebidas: '/products/melon-soda.svg',
-      Dulces: '/products/pepero-original.svg',
-      Ramen: '/products/buldak-ramen.svg',
-      Snacks: '/products/pepero-original.svg'
-    };
-
-    return images[category] ?? '/products/mochi-box.svg';
+  isEntradaType(movement: { type: string }): boolean {
+    return movement.type.startsWith('Entrada');
   }
 
   private showEntryMessage(message: string, type: 'success' | 'error'): void {

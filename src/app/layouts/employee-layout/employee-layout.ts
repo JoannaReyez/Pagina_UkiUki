@@ -17,8 +17,8 @@ export class EmployeeLayout {
   readonly menuItems = [
     { path: '/empleado', label: 'Dashboard', icon: 'bi-grid-1x2' },
     { path: '/empleado/productos', label: 'Productos', icon: 'bi-box-seam' },
-    { path: '/empleado/categorias', label: 'Categorias', icon: 'bi-tags' },
-    { path: '/empleado/mi-reporte', label: 'Mi Reporte', icon: 'bi-file-earmark-text' }
+    { path: '/empleado/mi-reporte', label: 'Mi Reporte', icon: 'bi-file-earmark-text' },
+    { path: '/empleado/corte-de-caja', label: 'Corte de Caja', icon: 'bi-cash-coin' }
   ];
 
   constructor(

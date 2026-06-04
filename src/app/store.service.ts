@@ -13,6 +13,7 @@ import {
   InventoryMovement,
   InventoryProduct
 } from './data/inventory-mock';
+import { Http, EmployeeInventoryProduct } from './services/http';
 
 export interface CartItem {
   product: Product;
@@ -24,11 +25,13 @@ export class StoreService {
   private readonly inventoryProductsKey = 'ukiuki.inventoryProducts';
   private readonly inventoryCategoriesKey = 'ukiuki.inventoryCategories';
   private readonly inventoryMovementsKey = 'ukiuki.inventoryMovements';
+  private readonly employeeInventoryKey = 'ukiuki.employeeInventory';
 
   products = products;
   inventoryProducts = signal<InventoryProduct[]>(this.readStorage(this.inventoryProductsKey, inventoryProducts));
   inventoryCategories = signal<InventoryCategory[]>(this.readStorage(this.inventoryCategoriesKey, inventoryCategories));
   inventoryMovements = signal<InventoryMovement[]>(this.readStorage(this.inventoryMovementsKey, inventoryMovements));
+  employeeInventory = signal<EmployeeInventoryProduct[]>(this.readStorage(this.employeeInventoryKey, []));
   employees = signal<EmployeeRecord[]>(employeeRecords);
   adminReportSummary = adminReportSummary;
   employeeReportSummary = employeeReportSummary;
@@ -41,10 +44,27 @@ export class StoreService {
   readonly cartCount = computed(() => this.cartItems().reduce((sum, item) => sum + item.quantity, 0));
   readonly cartTotal = computed(() => this.cartItems().reduce((sum, item) => sum + item.product.priceNum * item.quantity, 0));
 
-  constructor() {
+  constructor(private api: Http) {
     effect(() => this.writeStorage(this.inventoryProductsKey, this.inventoryProducts()));
     effect(() => this.writeStorage(this.inventoryCategoriesKey, this.inventoryCategories()));
     effect(() => this.writeStorage(this.inventoryMovementsKey, this.inventoryMovements()));
+    effect(() => this.writeStorage(this.employeeInventoryKey, this.employeeInventory()));
+
+    this.loadFromApi();
+  }
+
+  private loadFromApi(): void {
+    this.api.getProductos().subscribe(products => {
+      if (products && products.length) {
+        this.inventoryProducts.set(products as InventoryProduct[]);
+      }
+    });
+
+    this.api.getMovimientos().subscribe(movements => {
+      if (movements && movements.length) {
+        this.inventoryMovements.set(movements as any);
+      }
+    });
   }
 
   logout(): void {
@@ -266,6 +286,32 @@ export class StoreService {
 
   toggleNotifications(): void {
     this.notificationsEnabled.set(!this.notificationsEnabled());
+  }
+
+  // ─── INVENTARIO DE EMPLEADO ───────────────────────────────────────────────
+
+  loadEmployeeInventory(employeeId: number): void {
+    this.api.getInventarioEmpleado(employeeId).subscribe(products => {
+      if (products && products.length) {
+        this.employeeInventory.set(products);
+      } else {
+        this.employeeInventory.set([]);
+      }
+    });
+  }
+
+  updateEmployeeInventoryProduct(employeeId: number, productId: number, stock: number, status: string): void {
+    this.employeeInventory.update(current =>
+      current.map(product => 
+        product.productId === productId 
+          ? { ...product, stock, status: status as any } 
+          : product
+      )
+    );
+  }
+
+  getEmployeeProductById(productId: number): EmployeeInventoryProduct | null {
+    return this.employeeInventory().find(p => p.productId === productId) ?? null;
   }
 
   private getInventoryStatus(stock: number): InventoryProduct['status'] {

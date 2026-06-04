@@ -11,7 +11,7 @@
     <article class="stat-card">
       <span>Salidas</span>
       <strong>{{ outputUnits() }}</strong>
-      <small>Unidades vendidas</small>
+      <small>Unidades registradas</small>
     </article>
     <article class="stat-card">
       <span>Total estimado</span>
@@ -19,9 +19,9 @@
       <small>Segun productos filtrados</small>
     </article>
     <article class="stat-card">
-      <span>Entradas</span>
+      <span>Entradas aceptadas</span>
       <strong>{{ inputUnits() }}</strong>
-      <small>Unidades repuestas</small>
+      <small>Unidades recibidas</small>
     </article>
   </div>
 
@@ -29,64 +29,42 @@
     <div class="entry-head">
       <div>
         <span class="entry-kicker">Inventario</span>
-        <h2>Registrar entrada de inventario</h2>
+        <h2>Productos Pendientes por Recibir</h2>
       </div>
-      <div class="entry-stock" *ngIf="selectedProduct() as product">
-        <span>Stock actual</span>
-        <strong>{{ product.stock }}</strong>
+      <div class="entry-stock">
+        <span>Pendientes</span>
+        <strong>{{ pendingDeliveries().length }}</strong>
       </div>
     </div>
 
-    <form class="entry-form" (ngSubmit)="registerEntry()">
-      <label>
-        <span>Producto</span>
-        <select [ngModel]="productSelection()" (ngModelChange)="setSelectedProduct($event)" name="entryProduct" required>
-          <option [ngValue]="null">Seleccionar producto</option>
-          <option [ngValue]="'new'">+ Agregar nuevo producto</option>
-          <option *ngFor="let product of store.inventoryProducts()" [ngValue]="product.id">
-            {{ product.name }} - Stock {{ product.stock }}
-          </option>
-        </select>
-      </label>
+    <div *ngIf="loadingPending()" class="pending-state">
+      <p>Cargando entradas pendientes...</p>
+    </div>
 
-      <label>
-        <span>Cantidad</span>
-        <input type="number" min="1" step="1" [ngModel]="entryQuantity()" (ngModelChange)="setEntryQuantity($event)" name="entryQuantity" required />
-      </label>
+    <div *ngIf="!loadingPending() && pendingDeliveries().length === 0" class="pending-state">
+      <i class="bi bi-inbox"></i>
+      <strong>Sin entradas pendientes</strong>
+      <p>Cuando el administrador envie producto, aparecera aqui para aceptar o rechazar.</p>
+    </div>
 
-      <label class="reason-field">
-        <span>Motivo / descripcion</span>
-        <input type="text" maxlength="80" placeholder="Ej. Reposicion semanal" [ngModel]="entryReason()" (ngModelChange)="entryReason.set($event)" name="entryReason" />
-      </label>
-
-      <button type="submit" class="entry-submit">
-        <i class="bi bi-plus-circle"></i>
-        {{ isCreatingProduct() ? 'Crear y registrar' : 'Registrar entrada' }}
-      </button>
-    </form>
-
-    <div class="new-product-form" *ngIf="isCreatingProduct()">
-      <label>
-        <span>Nombre del producto</span>
-        <input type="text" maxlength="60" placeholder="Ej. Buldak Carbonara" [ngModel]="newProductName()" (ngModelChange)="newProductName.set($event)" name="newProductName" />
-      </label>
-
-      <label>
-        <span>Precio</span>
-        <input type="number" min="0" step="1" placeholder="$0" [ngModel]="newProductPrice()" (ngModelChange)="setNewProductPrice($event)" name="newProductPrice" />
-      </label>
-
-      <label>
-        <span>Categoria</span>
-        <select [ngModel]="newProductCategory()" (ngModelChange)="newProductCategory.set($event)" name="newProductCategory">
-          <option *ngFor="let category of productCategories()" [value]="category">{{ category }}</option>
-        </select>
-      </label>
-
-      <label class="new-product-description">
-        <span>Descripcion del producto</span>
-        <input type="text" maxlength="90" placeholder="Ej. Ramen picante premium" [ngModel]="newProductDescription()" (ngModelChange)="newProductDescription.set($event)" name="newProductDescription" />
-      </label>
+    <div class="pending-list" *ngIf="!loadingPending() && pendingDeliveries().length > 0">
+      <div class="pending-row" *ngFor="let delivery of pendingDeliveries()">
+        <div class="pending-copy">
+          <strong>{{ getDeliveryProductName(delivery) }}</strong>
+          <p>{{ delivery.quantity }} unidades pendientes</p>
+          <small>Enviado: {{ delivery.sentAt }}</small>
+        </div>
+        <div class="pending-actions">
+          <button type="button" class="accept-btn" (click)="acceptDelivery(delivery)" [disabled]="processingDeliveryId() === delivery.id">
+            <i class="bi bi-check-circle"></i>
+            Aceptar
+          </button>
+          <button type="button" class="reject-btn" (click)="rejectDelivery(delivery)" [disabled]="processingDeliveryId() === delivery.id">
+            <i class="bi bi-x-circle"></i>
+            Rechazar
+          </button>
+        </div>
+      </div>
     </div>
 
     <div class="entry-message" *ngIf="entryMessage()" [class.error]="entryMessageType() === 'error'">
@@ -105,6 +83,7 @@
       <select [ngModel]="selectedType()" (ngModelChange)="selectedType.set($event)" aria-label="Filtrar por tipo de movimiento">
         <option>Todos</option>
         <option>Entrada</option>
+        <option>Entrada Rechazada</option>
         <option>Salida</option>
       </select>
 
@@ -124,15 +103,15 @@
 
     <div class="history-list" *ngIf="filteredMovements().length > 0">
       <div class="history-row" *ngFor="let movement of filteredMovements()">
-        <div class="movement-icon" [class.in]="movement.type === 'Entrada'">
-          <i class="bi" [ngClass]="movement.type === 'Entrada' ? 'bi-arrow-down-left' : 'bi-arrow-up-right'"></i>
+        <div class="movement-icon" [class.in]="isEntradaType(movement)">
+          <i class="bi" [ngClass]="isEntradaType(movement) ? 'bi-arrow-down-left' : 'bi-arrow-up-right'"></i>
         </div>
         <div class="history-copy">
           <strong>{{ movement.product }}</strong>
           <p>{{ movement.reason }}</p>
         </div>
         <div class="history-meta">
-          <span>{{ movement.type }} · {{ movement.quantity }}</span>
+          <span>{{ movement.type }} - {{ movement.quantity }}</span>
           <small>{{ movement.date }}</small>
         </div>
       </div>
